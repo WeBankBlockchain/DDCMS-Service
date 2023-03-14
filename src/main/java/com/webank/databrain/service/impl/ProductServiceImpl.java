@@ -22,20 +22,17 @@ import com.webank.databrain.vo.common.PageListData;
 import com.webank.databrain.vo.request.product.ApproveProductRequest;
 import com.webank.databrain.vo.request.product.CreateProductRequest;
 import com.webank.databrain.vo.request.product.UpdateProductRequest;
-import com.webank.databrain.vo.response.product.ProductDetailResponse;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
 import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
 import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
 import org.fisco.bcos.sdk.v3.transaction.codec.decode.TransactionDecoderInterface;
 import org.fisco.bcos.sdk.v3.transaction.model.exception.TransactionException;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
