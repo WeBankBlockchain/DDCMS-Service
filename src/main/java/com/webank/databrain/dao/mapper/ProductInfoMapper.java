@@ -1,5 +1,6 @@
 package com.webank.databrain.dao.mapper;
 
+import com.webank.databrain.bo.HotProductBO;
 import com.webank.databrain.dao.entity.ProductInfoEntity;
 import com.webank.databrain.bo.ProductInfoBO;
 import org.apache.ibatis.annotations.*;
@@ -16,8 +17,12 @@ public interface ProductInfoMapper {
     @ResultType(ProductInfoBO.class)
     List<ProductInfoBO> pageQueryProduct(@Param("start") long start, @Param("pageSize")int pageSize);
 
-    @Select("SELECT * FROM t_product_info ORDER BY create_time DESC LIMIT 1, #{topCount}")
-    List<ProductInfoEntity> getHotProduct(int topCount);
+    @Select("SELECT a.product_gid as productGid, c.company_name as productName, a.pk_id as productId FROM t_product_info a " +
+            "JOIN t_account_info b ON a.provider_id = b.pk_id " +
+            "JOIN t_company_info c ON a.provider_id = c.account_id " +
+            "ORDER BY a.create_time DESC LIMIT 1, #{topN}")
+    @ResultType(HotProductBO.class)
+    List<HotProductBO> getHotProduct(@Param("topN") int topN);
 
     @Select("SELECT a.pk_id as productId, a.product_gid, a.product_name,a.product_desc,a.status,a.review_time,a.create_time,b.did,c.company_name" +
             " FROM t_product_info a" +

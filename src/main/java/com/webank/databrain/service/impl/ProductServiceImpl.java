@@ -1,6 +1,7 @@
 package com.webank.databrain.service.impl;
 
 import cn.hutool.core.codec.Base64;
+import com.webank.databrain.bo.HotProductBO;
 import com.webank.databrain.bo.ProductInfoBO;
 import com.webank.databrain.config.SysConfig;
 import com.webank.databrain.dao.bc.contract.ProductModule;
@@ -61,7 +62,7 @@ public class ProductServiceImpl implements ProductService {
     private ProductInfoMapper productInfoMapper;
 
     public CommonResponse getHotProducts(HotDataRequest request) {
-        List<ProductInfoEntity> productInfoEntities = productInfoMapper.getHotProduct(request.getTopCount());
+        List<HotProductBO> productInfoEntities = productInfoMapper.getHotProduct(request.getTopCount());
         return CommonResponse.success(productInfoEntities);
     }
 
