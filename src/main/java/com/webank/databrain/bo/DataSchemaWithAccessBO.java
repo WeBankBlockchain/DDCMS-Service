@@ -1,6 +1,7 @@
 package com.webank.databrain.bo;
 
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 public class DataSchemaWithAccessBO {
@@ -39,10 +40,10 @@ public class DataSchemaWithAccessBO {
     /**
      * 生效时间
      */
-    private Date effectTime;
+    private Timestamp effectTime;
 
     /**
      * 失效时间
      */
-    private Date expireTime;
+    private Timestamp expireTime;
 }

@@ -15,6 +15,10 @@ public enum CodeEnum {
     PWD_NOT_RIGHT(202, "账户密码不正确"),
     ACCOUNT_HAS_APPROVED(203, "账户已审核"),
 
+    PRODUCT_NOT_EXISTS(400, "产品不存在"),
+
+    FILE_NOT_EXIST(800, "文件不存在"),
+
     TX_TIME_OUT(901, "系统超时"),
     UNKNOWN_ERROR(9999, "系统错误");
 

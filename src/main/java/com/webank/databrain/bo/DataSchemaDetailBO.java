@@ -2,6 +2,7 @@ package com.webank.databrain.bo;
 
 import lombok.Data;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 @Data
@@ -69,5 +70,5 @@ public class DataSchemaDetailBO {
      */
     private Integer price;
 
-    private Date createTime;
+    private Timestamp createTime;
 }

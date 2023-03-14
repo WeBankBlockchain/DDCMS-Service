@@ -22,7 +22,7 @@ import com.webank.databrain.vo.common.CommonResponse;
 import com.webank.databrain.vo.request.account.ApproveAccountRequest;
 import com.webank.databrain.vo.request.account.LoginRequest;
 import com.webank.databrain.vo.request.account.RegisterRequest;
-import com.webank.databrain.vo.response.account.LoginResponse;
+import com.webank.databrain.vo.response.LoginResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;

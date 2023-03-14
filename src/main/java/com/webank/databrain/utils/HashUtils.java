@@ -1,6 +1,6 @@
 package com.webank.databrain.utils;
 
-import com.webank.databrain.enums.ErrorEnums;
+import com.webank.databrain.enums.CodeEnum;
 import com.webank.databrain.exception.DataBrainException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,7 +21,7 @@ public class HashUtils {
         }
         catch (NoSuchAlgorithmException ex){
             log.error("", ex);
-            throw new DataBrainException(ErrorEnums.UnknownError);
+            throw new DataBrainException(CodeEnum.UNKNOWN_ERROR);
         }
 
     }

@@ -10,7 +10,6 @@ import com.webank.databrain.dao.entity.DataSchemaInfoEntity;
 import com.webank.databrain.dao.entity.DataSchemaTagsEntity;
 import com.webank.databrain.dao.mapper.*;
 import com.webank.databrain.enums.CodeEnum;
-import com.webank.databrain.enums.ErrorEnums;
 import com.webank.databrain.exception.DataBrainException;
 import com.webank.databrain.handler.key.ThreadLocalKeyPairHandler;
 import com.webank.databrain.service.DataSchemaService;
@@ -105,7 +104,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         }
         ProductInfoBO product = productInfoMapper.getProductByGId(schemaRequest.getProductGId());
         if(product == null){
-            throw new DataBrainException(ErrorEnums.ProductNotExists);
+            return CommonResponse.error(CodeEnum.PRODUCT_NOT_EXISTS);
         }
         String privateKey = entity.getPrivateKey();
         CryptoKeyPair keyPair = cryptoSuite.loadKeyPair(privateKey);

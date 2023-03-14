@@ -5,7 +5,7 @@ import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.HexUtil;
 import cn.hutool.core.util.StrUtil;
 import com.webank.databrain.config.SysConfig;
-import com.webank.databrain.enums.ErrorEnums;
+import com.webank.databrain.enums.CodeEnum;
 import com.webank.databrain.exception.DataBrainException;
 import com.webank.databrain.utils.HashUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +50,7 @@ public class FileService {
     public ResponseEntity<Resource> downloadFile(String filename) {
         File file = new File(this.fileUploadFolder, filename);
         if(!file.exists() || file.isDirectory()){
-            throw new DataBrainException(ErrorEnums.FileNotExists);
+            throw new DataBrainException(CodeEnum.FILE_NOT_EXIST);
         }
 
         HttpHeaders headers = new HttpHeaders();

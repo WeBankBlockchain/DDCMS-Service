@@ -1,13 +1,12 @@
 package com.webank.databrain.exception;
 
-import com.webank.databrain.enums.ErrorEnums;
+import com.webank.databrain.enums.CodeEnum;
 import lombok.Getter;
 
 @Getter
 public class DataBrainException extends RuntimeException{
-    private ErrorEnums error;
-    public DataBrainException(ErrorEnums error){
-        super(error.getMessage());
+    private CodeEnum error;
+    public DataBrainException(CodeEnum error){
+        super(error.getMsg());
     }
-
 }

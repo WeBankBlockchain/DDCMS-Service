@@ -2,7 +2,7 @@ package com.webank.databrain.bo;
 
 import lombok.Data;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 @Data
 public class AccAndPersonInfoBO {
@@ -15,5 +15,5 @@ public class AccAndPersonInfoBO {
     private String personEmail;
     private String personCertType;
     private String personCertNo;
-    private Date createTime;
+    private Timestamp createTime;
 }

@@ -2,7 +2,7 @@ package com.webank.databrain.bo;
 
 import lombok.Data;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 @Data
 public class ProductInfoBO {
@@ -35,9 +35,9 @@ public class ProductInfoBO {
     /**
      * 审核时间
      */
-    private Date reviewTime;
+    private Timestamp reviewTime;
 
-    private Date createTime;
+    private Timestamp createTime;
 
     private String did;
 
