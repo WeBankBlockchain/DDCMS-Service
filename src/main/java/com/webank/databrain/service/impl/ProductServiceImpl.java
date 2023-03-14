@@ -70,17 +70,8 @@ public class ProductServiceImpl implements ProductService {
 
         int total = productInfoMapper.count();
         List<ProductInfoBO> productInfoPOList = productInfoMapper.pageQueryProduct(request.getPageNo(), request.getPageSize());
-        List<ProductDetailResponse> productDetails = new ArrayList<>();
-
-        productInfoPOList.forEach(product -> {
-            ProductDetailResponse productDetail = new ProductDetailResponse();
-            BeanUtils.copyProperties(product, productDetail);
-            productDetail.setProductGid(product.getDid());
-            productDetail.setProviderName(product.getCompanyName());
-            productDetails.add(productDetail);
-        });
-        PageListData<ProductDetailResponse> pageListData = new PageListData<>();
-        pageListData.setItemList(productDetails);
+        PageListData<ProductInfoBO> pageListData = new PageListData<>();
+        pageListData.setItemList(productInfoPOList);
         pageListData.setPageCount((total + request.getPageSize() - 1) / request.getPageSize());
         pageListData.setTotalCount(total);
         return CommonResponse.success(pageListData);
@@ -88,11 +79,7 @@ public class ProductServiceImpl implements ProductService {
 
     public CommonResponse getProductDetail(String productId) {
         ProductInfoBO product = productInfoMapper.getProductByGId(productId);
-        ProductDetailResponse productDetail = new ProductDetailResponse();
-        BeanUtils.copyProperties(product, productDetail);
-        productDetail.setProviderGid(product.getDid());
-        productDetail.setProviderName(product.getCompanyName());
-        return CommonResponse.success(productDetail);
+        return CommonResponse.success(product);
     }
 
     public CommonResponse createProduct(CreateProductRequest productRequest) throws TransactionException {
