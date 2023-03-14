@@ -23,7 +23,6 @@ public class DataSchemaController {
     @Autowired
     private DataSchemaService schemaService;
 
-
     @PostMapping(value = "/pageQuerySchema")
     public CommonResponse pageQuerySchema(@RequestBody @Valid PageQueryDataSchemaRequest querySchemaRequest) {
         return schemaService.pageQuerySchema(querySchemaRequest);
@@ -34,17 +33,8 @@ public class DataSchemaController {
         return schemaService.createDataSchema(createDataSchemaRequest);
     }
 
-    //
-//    @PostMapping(value = "/updateSchema")
-//    public CommonResponse<UpdateDataSchemaResponse> updateSchema(@RequestBody UpdateDataSchemaRequest updateDataSchemaRequest) throws Exception{
-//        String did = SessionUtils.currentAccountDid();
-//        UpdateDataSchemaResponse response = schemaService.updateDataSchema(did, updateDataSchemaRequest);;
-//        return CommonResponse.success(response);
-//    }
-//
     @PostMapping(value = "/querySchemaById")
-    public CommonResponse querySchemaById(@RequestBody @Valid QuerySchemaByIdRequest request
-    ) {
+    public CommonResponse querySchemaById(@RequestBody @Valid QuerySchemaByIdRequest request) {
         return schemaService.getDataSchemaByGid(request.getSchemaGid());
     }
 

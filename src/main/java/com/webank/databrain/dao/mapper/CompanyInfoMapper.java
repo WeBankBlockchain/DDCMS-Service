@@ -23,10 +23,11 @@ public interface CompanyInfoMapper {
     @Select("<script>" +
             "SELECT a.*, c.* FROM t_company_info c INNER JOIN t_account_info a ON c.account_id = a.pk_id WHERE 1 = 1 " +
             "<if test='status &gt; 0'> AND a.status = #{status} </if>" +
+            "<if test='keyWord != null'> AND c.company_name LIKE CONCAT('%', #{keyWord}, '%') </if>" +
             "ORDER BY c.pk_id DESC LIMIT #{offset}, #{pageSize}" +
             "</script>")
     @ResultType(AccAndComInfoBO.class)
-    List<AccAndComInfoBO> listCompanyWithStatus(int status, long offset, int pageSize);
+    List<AccAndComInfoBO> listCompanyWithStatus(int status, String keyWord, long offset, int pageSize);
 
     @Insert("INSERT INTO t_company_info (account_id, company_name, company_desc, company_cert_type, company_cert_no, company_cert_file_uri, company_contact) VALUES(#{accountId},#{companyName},#{companyDesc},#{companyCertType},#{companyCertNo},#{companyCertFileUri},#{companyContact})")
     void insertCompany(CompanyInfoEntity companyInfoEntity);

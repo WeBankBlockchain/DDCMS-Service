@@ -84,7 +84,6 @@ public class AccountServiceImpl implements AccountService {
         TransactionReceipt txReceipt = accountContract.register(BigInteger.valueOf(request.getAccountType().ordinal()), cryptoSuite.hash(request.getUserName().getBytes()));
         byte[] didBytes = accountContract.getRegisterOutput(txReceipt).getValue1();
         BlockchainUtils.ensureTransactionSuccess(txReceipt, txDecoder);
-        log.info("blockchain generate did : {}", AccountUtils.encode(didBytes));
 
         AccountInfoEntity accountInfoEntity = new AccountInfoEntity();
         accountInfoEntity.setAccountType(request.getAccountType().ordinal());

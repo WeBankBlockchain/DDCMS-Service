@@ -27,12 +27,10 @@ public class ProductController {
 
     @PostMapping(value = "/pageQueryProduct")
     public CommonResponse pageQueryProduct(@RequestBody @Valid CommonPageQueryRequest request){
-        log.info("pageQueryProduct pageNo = {}, pageSize = {}",request.getPageNo(),request.getPageSize());
         return productService.pageQueryProducts(request);
     }
     @PostMapping(value = "/queryProductById")
     public CommonResponse queryProductById(@RequestBody @Valid QueryProductByIdRequest queryProductRequest) {
-        log.info("pageQueryProduct productId = {}", queryProductRequest.getProductGid());
         return productService.getProductDetail(queryProductRequest.getProductGid());
     }
     @PostMapping(value = "/getHotProducts")

@@ -20,8 +20,13 @@ public interface AccountInfoMapper {
     AccountInfoEntity selectByUserName(String userName);
 
     @Select("<script>" +
-            "SELECT COUNT(1) FROM t_account_info WHERE account_type = #{accountType} " +
-            "<if test='status &gt; 0'> AND status = #{status} </if>" +
+            "SELECT COUNT(1) FROM t_account_info a " +
+            "<if test='accountType == 0'> INNER JOIN t_person_info p ON a.pk_id = p.account_id </if>" +
+            "<if test='accountType == 1'> LEFT JOIN t_company_info c ON a.pk_id = c.account_id </if>" +
+            "WHERE 1 = 1" +
+            "<if test='status &gt; 0'> AND a.account_type = #{accountType} </if>" +
+            "<if test='keyWord != null and accountType == 0'> AND p.person_name LIKE CONCAT('%', #{keyWord}, '%') </if>" +
+            "<if test='keyWord != null and accountType == 1'> AND c.company_name LIKE CONCAT('%', #{keyWord}, '%') </if>" +
             "</script>")
-    int totalCountWithStatus(int accountType, int status);
+    int totalCountWithStatus(int accountType, String keyWord, int status);
 }

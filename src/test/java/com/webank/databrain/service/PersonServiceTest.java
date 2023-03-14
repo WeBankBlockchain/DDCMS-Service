@@ -19,8 +19,9 @@ public class PersonServiceTest extends ServerApplicationTests {
     public void testSearch() throws Exception{
         SearchAccountRequest request = new SearchAccountRequest();
         request.setPageNo(1);
-        request.setPageSize(5);
-        request.setAccountStatus(1);
+        request.setPageSize(10);
+//        request.setAccountStatus(0);
+        request.setKeyWord("1");
 
         CommonResponse companyResponse = personService.searchPersons(request);
         log.info("response: {}", objectMapper.writeValueAsString(companyResponse));

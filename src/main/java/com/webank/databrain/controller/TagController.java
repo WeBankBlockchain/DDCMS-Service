@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @Slf4j
 @RequestMapping("api/tag")
@@ -19,7 +21,7 @@ public class TagController {
     private TagService tagService;
 
     @PostMapping("getHotTags")
-    public CommonResponse getHotTags(@RequestBody HotDataRequest request) {
+    public CommonResponse getHotTags(@RequestBody @Valid HotDataRequest request) {
         return tagService.listHotTags(request);
     }
 }

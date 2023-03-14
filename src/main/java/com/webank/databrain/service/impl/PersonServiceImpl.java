@@ -33,7 +33,7 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public CommonResponse searchPersons(SearchAccountRequest request) {
 
-        int totalCount = accountInfoMapper.totalCountWithStatus(AccountType.Personal.ordinal(), request.getAccountStatus());
+        int totalCount = accountInfoMapper.totalCountWithStatus(AccountType.Personal.ordinal(), request.getKeyWord(), request.getAccountStatus());
         int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
 
         PageListData pageListData = new PageListData<>();
@@ -42,7 +42,8 @@ public class PersonServiceImpl implements PersonService {
 
         int offset = (request.getPageNo() - 1) * request.getPageSize();
 
-        List<AccAndPersonInfoBO> boList = personInfoMapper.listPersonWithStatus(request.getAccountStatus(), offset, request.getPageSize());
+        List<AccAndPersonInfoBO> boList = personInfoMapper.listPersonWithStatus(request.getAccountStatus(),
+                request.getKeyWord(), offset, request.getPageSize());
         pageListData.setItemList(boList);
         return CommonResponse.success(pageListData);
     }

@@ -13,6 +13,7 @@ import com.webank.databrain.vo.request.dataschema.CreateDataSchemaRequest;
 import com.webank.databrain.vo.request.dataschema.PageQueryDataSchemaRequest;
 import com.webank.databrain.vo.request.product.ApproveProductRequest;
 import com.webank.databrain.vo.request.product.CreateProductRequest;
+import org.fisco.bcos.sdk.v3.transaction.model.exception.TransactionException;
 import org.fisco.bcos.sdk.v3.transaction.tools.JsonUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,6 +100,12 @@ public class SchemaServiceTest  extends ServerApplicationTests {
         System.out.println(JSONUtil.toJsonStr(result));
     }
 
+
+    @Test
+    void getSchemaDetailTest() throws TransactionException {
+        CommonResponse response = schemaService.getDataSchemaByGid("AAAQGayMdnmwj5IbY/O5ZaN/wdCoB8BcEbeT2CwCpHwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAd==");
+        System.out.println("response = " + JSONUtil.toJsonStr(response));
+    }
 
 
 }

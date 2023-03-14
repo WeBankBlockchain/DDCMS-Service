@@ -16,10 +16,11 @@ public interface PersonInfoMapper {
     @Select("<script>" +
             "SELECT a.*, p.* FROM t_person_info p INNER  JOIN t_account_info a ON p.account_id = a.pk_id WHERE 1 = 1 " +
             "<if test='status &gt; 0'> AND a.status = #{status} </if>" +
+            "<if test='keyWord != null'> AND p.person_name LIKE CONCAT('%', #{keyWord}, '%') </if>" +
             "ORDER BY p.pk_id DESC LIMIT #{offset}, #{pageSize}" +
             "</script>")
     @ResultType(AccAndPersonInfoBO.class)
-    List<AccAndPersonInfoBO> listPersonWithStatus(int status, long offset, int pageSize);
+    List<AccAndPersonInfoBO> listPersonWithStatus(int status, String keyWord, long offset, int pageSize);
 
     @Insert("INSERT INTO t_person_info (account_id, person_name, person_contact, person_email, person_cert_type, person_cert_no) VALUES(#{accountId},#{personName},#{personContact},#{personEmail},#{personCertType},#{personCertNo})")
     void insertPerson(PersonInfoEntity entity);

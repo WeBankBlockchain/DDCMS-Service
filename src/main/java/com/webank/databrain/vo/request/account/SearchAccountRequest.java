@@ -13,4 +13,5 @@ import javax.validation.constraints.Min;
 public class SearchAccountRequest extends CommonPageQueryRequest {
     @Min(value = 0, message = "账户状态不正确.")
     private int accountStatus = 0;
+    private String keyWord;
 }
