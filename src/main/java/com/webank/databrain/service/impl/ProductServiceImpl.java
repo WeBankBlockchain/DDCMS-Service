@@ -14,6 +14,7 @@ import com.webank.databrain.enums.ReviewStatus;
 import com.webank.databrain.handler.key.ThreadLocalKeyPairHandler;
 import com.webank.databrain.service.ProductService;
 import com.webank.databrain.utils.BlockchainUtils;
+import com.webank.databrain.utils.PagingUtils;
 import com.webank.databrain.utils.SessionUtils;
 import com.webank.databrain.vo.common.CommonPageQueryRequest;
 import com.webank.databrain.vo.common.CommonResponse;
@@ -66,7 +67,9 @@ public class ProductServiceImpl implements ProductService {
     public CommonResponse pageQueryProducts(CommonPageQueryRequest request) {
 
         int total = productInfoMapper.count();
-        List<ProductInfoBO> productInfoPOList = productInfoMapper.pageQueryProduct(request.getPageNo(), request.getPageSize());
+        List<ProductInfoBO> productInfoPOList = productInfoMapper.pageQueryProduct(
+                PagingUtils.getStartOffset(request.getPageNo(),request.getPageSize()),
+                request.getPageSize());
         PageListData<ProductInfoBO> pageListData = new PageListData<>();
         pageListData.setItemList(productInfoPOList);
         pageListData.setPageCount((total + request.getPageSize() - 1) / request.getPageSize());

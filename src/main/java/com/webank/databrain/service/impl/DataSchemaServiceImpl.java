@@ -16,6 +16,7 @@ import com.webank.databrain.handler.key.ThreadLocalKeyPairHandler;
 import com.webank.databrain.service.DataSchemaService;
 import com.webank.databrain.service.TagService;
 import com.webank.databrain.utils.BlockchainUtils;
+import com.webank.databrain.utils.PagingUtils;
 import com.webank.databrain.vo.common.CommonResponse;
 import com.webank.databrain.vo.common.PageListData;
 import com.webank.databrain.vo.request.dataschema.CreateDataSchemaRequest;
@@ -76,7 +77,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
     public CommonResponse pageQuerySchema(PageQueryDataSchemaRequest request) {
         int total = dataSchemaInfoMapper.count();
         List<DataSchemaDetailBO> dataSchemaDetailBOList = dataSchemaInfoMapper.pageQuerySchema(
-                request.getPageNo(),
+                PagingUtils.getStartOffset(request.getPageNo(),request.getPageSize()),
                 request.getPageSize(),
                 request.getProductId(),
                 request.getProviderId(),
