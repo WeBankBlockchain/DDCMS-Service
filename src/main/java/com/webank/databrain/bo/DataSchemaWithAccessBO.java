@@ -1,9 +1,14 @@
 package com.webank.databrain.bo;
 
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 import java.util.Date;
 
-public class DataSchemaWithAccessBO {
+@EqualsAndHashCode(callSuper = true)
+@Data
+public class DataSchemaWithAccessBO extends DataSchemaDetailBO{
 
     private Long accessId;
 

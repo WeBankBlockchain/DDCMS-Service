@@ -65,6 +65,7 @@ public interface DataSchemaInfoMapper {
 
 
     @Select("SELECT " +
+            "a.pk_id as schemaId," +
             "a.data_schema_gid," +
             "a.data_schema_name," +
             "a.provider_id, " +
@@ -80,14 +81,14 @@ public interface DataSchemaInfoMapper {
             "d.product_name," +
             "d.product_gid as productGid," +
             "e.company_name as providerName," +
-            "f.did as providerGid " +
-            "g.pk_id as accessId " +
-            "g.data_format " +
-            "g.data_protocol " +
-            "g.content_schema " +
-            "g.access_condition " +
-            "g.uri " +
-            "g.effect_time " +
+            "f.did as providerGid, " +
+            "g.pk_id as accessId, " +
+            "g.data_format, " +
+            "g.data_protocol, " +
+            "g.content_schema, " +
+            "g.access_condition, " +
+            "g.uri, " +
+            "g.effect_time, " +
             "g.expire_time " +
             "from t_data_schema_info a " +
             "left join " +
@@ -102,7 +103,7 @@ public interface DataSchemaInfoMapper {
             "t_account_info f on e.account_id = f.pk_id " +
             " left join " +
             "t_data_schema_access_info g on a.pk_id = g.data_schema_id" +
-            "where a.data_schema_gid = #{schemaId}")
+            " where a.data_schema_gid = #{schemaId}")
     @ResultType(DataSchemaWithAccessBO.class)
     DataSchemaWithAccessBO getSchemaWithAccessByGid(String schemaId);
 
