@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @Slf4j
 @RequestMapping("api/schema")
@@ -23,17 +25,16 @@ public class DataSchemaController {
 
 
     @PostMapping(value = "/pageQuerySchema")
-    public CommonResponse pageQuerySchema(@RequestBody PageQueryDataSchemaRequest querySchemaRequest){
-
+    public CommonResponse pageQuerySchema(@RequestBody @Valid PageQueryDataSchemaRequest querySchemaRequest) {
         return schemaService.pageQuerySchema(querySchemaRequest);
     }
-//
-//
+
     @PostMapping(value = "/createSchema")
-    public CommonResponse createSchema(@RequestBody CreateDataSchemaRequest createDataSchemaRequest) throws Exception{
+    public CommonResponse createSchema(@RequestBody @Valid CreateDataSchemaRequest createDataSchemaRequest) throws Exception {
         return schemaService.createDataSchema(createDataSchemaRequest);
     }
-//
+
+    //
 //    @PostMapping(value = "/updateSchema")
 //    public CommonResponse<UpdateDataSchemaResponse> updateSchema(@RequestBody UpdateDataSchemaRequest updateDataSchemaRequest) throws Exception{
 //        String did = SessionUtils.currentAccountDid();
@@ -42,9 +43,8 @@ public class DataSchemaController {
 //    }
 //
     @PostMapping(value = "/querySchemaById")
-    public CommonResponse querySchemaById(@RequestBody QuerySchemaByIdRequest request
-    ){
-        log.info("querySchemaById schemaId = {}",request.getSchemaGid());
+    public CommonResponse querySchemaById(@RequestBody @Valid QuerySchemaByIdRequest request
+    ) {
         return schemaService.getDataSchemaByGid(request.getSchemaGid());
     }
 

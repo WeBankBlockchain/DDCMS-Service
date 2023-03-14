@@ -107,7 +107,7 @@ public class AccountServiceImpl implements AccountService {
             companyInfo.setAccountId(accountInfoEntity.getPkId());
             companyInfoMapper.insertCompany(companyInfo);
         }
-        return CommonResponse.success();
+        return CommonResponse.success(accountInfoEntity.getDid());
     }
 
     @Override

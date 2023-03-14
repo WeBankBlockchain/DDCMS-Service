@@ -1,11 +1,12 @@
-package com.webank.databrain.vo.response.product;
+package com.webank.databrain.bo;
 
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
-public class ProductDetailResponse {
+public class ProductInfoBO {
+
 
     private Long productId;
 
@@ -16,15 +17,10 @@ public class ProductDetailResponse {
      */
     private String productName;
 
-
+    /**
+     * 提供方外键ID
+     */
     private Long providerId;
-
-
-    private String providerGid;
-
-
-    private String providerName;
-
 
     /**
      * 产品详情
@@ -43,4 +39,7 @@ public class ProductDetailResponse {
 
     private Date createTime;
 
+    private String did;
+
+    private String companyName;
 }

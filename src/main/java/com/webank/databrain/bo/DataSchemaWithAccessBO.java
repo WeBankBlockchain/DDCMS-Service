@@ -1,9 +1,9 @@
-package com.webank.databrain.vo.response.dataschema;
+package com.webank.databrain.bo;
 
 
 import java.util.Date;
 
-public class DataSchemaWithAccessResponse {
+public class DataSchemaWithAccessBO {
 
     private Long accessId;
 
