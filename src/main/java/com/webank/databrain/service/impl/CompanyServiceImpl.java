@@ -3,7 +3,9 @@ package com.webank.databrain.service.impl;
 
 import com.webank.databrain.bo.AccAndComInfoBO;
 import com.webank.databrain.dao.entity.CompanyInfoEntity;
+import com.webank.databrain.dao.mapper.AccountInfoMapper;
 import com.webank.databrain.dao.mapper.CompanyInfoMapper;
+import com.webank.databrain.enums.AccountType;
 import com.webank.databrain.service.CompanyService;
 import com.webank.databrain.vo.common.CommonPageQueryRequest;
 import com.webank.databrain.vo.common.CommonResponse;
@@ -20,6 +22,8 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Autowired
     private CompanyInfoMapper companyInfoMapper;
+    @Autowired
+    private AccountInfoMapper accountInfoMapper;
 
     @Override
     public CommonResponse listHotCompanies(HotDataRequest request) {
@@ -54,7 +58,7 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public CommonResponse searchCompanies(SearchAccountRequest request) {
 
-        int totalCount = companyInfoMapper.totalCountWithStatus(request.getAccountStatus());
+        int totalCount = accountInfoMapper.totalCountWithStatus(AccountType.Company.ordinal(), request.getAccountStatus());
         int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
 
         PageListData pageListData = new PageListData<>();
