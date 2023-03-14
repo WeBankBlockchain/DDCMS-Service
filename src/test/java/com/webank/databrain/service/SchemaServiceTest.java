@@ -13,11 +13,9 @@ import com.webank.databrain.vo.request.dataschema.CreateDataSchemaRequest;
 import com.webank.databrain.vo.request.dataschema.PageQueryDataSchemaRequest;
 import com.webank.databrain.vo.request.product.ApproveProductRequest;
 import com.webank.databrain.vo.request.product.CreateProductRequest;
-import com.webank.databrain.vo.response.account.RegisterResponse;
 import org.fisco.bcos.sdk.v3.transaction.tools.JsonUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 
 import java.util.Date;
 
