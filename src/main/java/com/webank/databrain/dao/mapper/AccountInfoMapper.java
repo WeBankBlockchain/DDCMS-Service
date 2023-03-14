@@ -18,4 +18,10 @@ public interface AccountInfoMapper {
     @Select("SELECT * FROM t_account_info WHERE user_name=#{userName}")
     @ResultType(AccountInfoEntity.class)
     AccountInfoEntity selectByUserName(String userName);
+
+    @Select("<script>" +
+            "SELECT COUNT(1) FROM t_account_info WHERE account_type = #{accountType} " +
+            "<if test='status &gt; 0'> AND status = #{status} </if>" +
+            "</script>")
+    int totalCountWithStatus(int accountType, int status);
 }

@@ -2,7 +2,9 @@ package com.webank.databrain.service.impl;
 
 
 import com.webank.databrain.bo.AccAndPersonInfoBO;
+import com.webank.databrain.dao.mapper.AccountInfoMapper;
 import com.webank.databrain.dao.mapper.PersonInfoMapper;
+import com.webank.databrain.enums.AccountType;
 import com.webank.databrain.service.PersonService;
 import com.webank.databrain.vo.common.CommonResponse;
 import com.webank.databrain.vo.common.PageListData;
@@ -19,6 +21,8 @@ public class PersonServiceImpl implements PersonService {
 
     @Autowired
     private PersonInfoMapper personInfoMapper;
+    @Autowired
+    private AccountInfoMapper accountInfoMapper;
 
     @Override
     public CommonResponse getPersonByUsername(QueryByUsernameRequest request) {
@@ -28,8 +32,8 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public CommonResponse searchPersons(SearchAccountRequest request) {
-        int totalCount = personInfoMapper.totalCountWithStatus(request.getAccountStatus());
 
+        int totalCount = accountInfoMapper.totalCountWithStatus(AccountType.Personal.ordinal(), request.getAccountStatus());
         int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
 
         PageListData pageListData = new PageListData<>();

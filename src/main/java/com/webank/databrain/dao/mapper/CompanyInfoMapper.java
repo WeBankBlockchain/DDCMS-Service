@@ -29,7 +29,4 @@ public interface CompanyInfoMapper {
 
     @Select("SELECT COUNT(1) FROM t_company_info")
     int totalCount();
-
-    @Select("SELECT COUNT(1) FROM t_company_info c INNER JOIN t_account_info a  ON c.account_id = a.pk_id WHERE a.status=#{status}")
-    int totalCountWithStatus(int status);
 }
