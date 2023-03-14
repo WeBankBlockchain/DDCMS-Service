@@ -12,9 +12,14 @@ public interface PersonInfoMapper {
     @ResultType(AccAndPersonInfoBO.class)
     AccAndPersonInfoBO queryPersonByUsername(@Param("username") String username);
 
-    @Select("SELECT a.*, p.* FROM t_person_info p INNER  JOIN t_account_info a ON p.account_id = a.pk_id WHERE a.status=#{status} ORDER BY p.pk_id DESC LIMIT #{start}, #{limit}")
+
+    @Select("<script>" +
+            "SELECT a.*, p.* FROM t_person_info p INNER  JOIN t_account_info a ON p.account_id = a.pk_id WHERE 1 = 1 " +
+            "<if test='status &gt; 0'> AND a.status = #{status} </if>" +
+            "ORDER BY p.pk_id DESC LIMIT #{offset}, #{pageSize}" +
+            "</script>")
     @ResultType(AccAndPersonInfoBO.class)
-    List<AccAndPersonInfoBO> listPersonWithStatus(int status, long start, int limit);
+    List<AccAndPersonInfoBO> listPersonWithStatus(int status, long offset, int pageSize);
 
     @Insert("INSERT INTO t_person_info (account_id, person_name, person_contact, person_email, person_cert_type, person_cert_no) VALUES(#{accountId},#{personName},#{personContact},#{personEmail},#{personCertType},#{personCertNo})")
     void insertPerson(PersonInfoEntity entity);
