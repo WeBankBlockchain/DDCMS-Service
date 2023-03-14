@@ -85,7 +85,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
                 request.getKeyWord());
         PageListData<DataSchemaDetailBO> pageListData = new PageListData<>();
         pageListData.setItemList(dataSchemaDetailBOList);
-        pageListData.setPageCount((total + request.getPageSize() - 1)/request.getPageSize());
+        pageListData.setPageCount(PagingUtils.getPageCount(total,request.getPageSize()));
         pageListData.setTotalCount(total);
         return CommonResponse.success(pageListData);
     }

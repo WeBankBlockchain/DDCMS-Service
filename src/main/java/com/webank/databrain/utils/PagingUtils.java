@@ -9,4 +9,8 @@ public class PagingUtils {
     public static int toPageCount(int itemsCount, int pageSize) {
         return (int)Math.ceil((double)itemsCount / pageSize);
     }
+
+    public static int getPageCount(int total, int pageSize) {
+        return (total + pageSize - 1) / pageSize;
+    }
 }

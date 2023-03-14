@@ -72,7 +72,7 @@ public class ProductServiceImpl implements ProductService {
                 request.getPageSize());
         PageListData<ProductInfoBO> pageListData = new PageListData<>();
         pageListData.setItemList(productInfoPOList);
-        pageListData.setPageCount((total + request.getPageSize() - 1) / request.getPageSize());
+        pageListData.setPageCount(PagingUtils.getPageCount(total,request.getPageSize()));
         pageListData.setTotalCount(total);
         return CommonResponse.success(pageListData);
     }
