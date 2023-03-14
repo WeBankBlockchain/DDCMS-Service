@@ -50,23 +50,12 @@ public class CompanyServiceTest extends ServerApplicationTests {
 
     @Test
     public void testSearch() throws Exception{
-//        SearchAccountRequest companyRequest = new SearchAccountRequest();
-//        companyRequest.setPageNo(1);
-//        companyRequest.setPageSize(5);
-//        companyRequest.setCondition(new SearchAccountRequest.SearchCondition(AccountStatus.Registered.name()));
-//        System.out.println(JsonUtils.toJson(companyRequest));
-//
-//
-//        CommonResponse companyResponse = companyService.searchCompanies(companyRequest);
-//        System.out.println(JsonUtils.toJson(companyResponse));
-////
-//        SearchPersonRequest personRequest = new SearchPersonRequest();
-//        personRequest.setPageNo(1);
-//        personRequest.setPageSize(5);
-//        personRequest.setCondition(new SearchPersonRequest.SearchCondition(AccountStatus.Approved.name()));
+        SearchAccountRequest companyRequest = new SearchAccountRequest();
+        companyRequest.setPageNo(1);
+        companyRequest.setPageSize(5);
+        companyRequest.setAccountStatus(1);
 
-//        CommonResponse personResponse = accountService.searchPersons(personRequest);
-//        System.out.println(JsonUtils.toJson(personResponse));
-
+        CommonResponse companyResponse = companyService.searchCompanies(companyRequest);
+        log.info("response: {}", objectMapper.writeValueAsString(companyResponse));
     }
 }
