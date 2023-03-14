@@ -3,7 +3,7 @@ package com.webank.databrain.dao.mapper;
 
 import com.webank.databrain.bo.DataSchemaDetailBO;
 import com.webank.databrain.dao.entity.DataSchemaInfoEntity;
-import com.webank.databrain.vo.response.dataschema.DataSchemaWithAccessResponse;
+import com.webank.databrain.bo.DataSchemaWithAccessBO;
 import org.apache.ibatis.annotations.*;
 import java.util.List;
 
@@ -55,6 +55,9 @@ public interface DataSchemaInfoMapper {
                                            @Param("tagId") Long tagId,
                                            @Param("keyWord") String keyWord);
 
+    @Select("SELECT COUNT(*) FROM t_data_schema_info")
+    int count();
+
     @Select("select * from t_data_schema_info where data_schema_gid = #{schemaId}")
     @ResultType(DataSchemaInfoEntity.class)
     DataSchemaInfoEntity getSchemaByGId(String schemaId);
@@ -99,8 +102,8 @@ public interface DataSchemaInfoMapper {
             " left join " +
             "t_data_schema_access_info g on a.pk_id = g.data_schema_id" +
             "where a.data_schema_gid = #{schemaId}")
-    @ResultType(DataSchemaWithAccessResponse.class)
-    DataSchemaWithAccessResponse getSchemaWithAccessByGid(String schemaId);
+    @ResultType(DataSchemaWithAccessBO.class)
+    DataSchemaWithAccessBO getSchemaWithAccessByGid(String schemaId);
 
 
     @Insert("INSERT INTO t_data_schema_info(" +

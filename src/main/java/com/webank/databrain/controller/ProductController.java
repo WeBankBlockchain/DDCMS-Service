@@ -1,6 +1,6 @@
 package com.webank.databrain.controller;
 
-import com.webank.databrain.service.ProductService;
+import com.webank.databrain.service.impl.ProductServiceImpl;
 import com.webank.databrain.vo.common.CommonPageQueryRequest;
 import com.webank.databrain.vo.common.CommonResponse;
 import com.webank.databrain.vo.common.HotDataRequest;
@@ -20,30 +20,30 @@ import javax.validation.Valid;
 public class ProductController {
 
     @Autowired
-    private ProductService productService;
+    private ProductServiceImpl productServiceImpl;
 
     @PostMapping(value = "/pageQueryProduct")
     public CommonResponse pageQueryProduct(@RequestBody @Valid CommonPageQueryRequest request){
         log.info("pageQueryProduct pageNo = {}, pageSize = {}",request.getPageNo(),request.getPageSize());
-        return productService.pageQueryProducts(request);
+        return productServiceImpl.pageQueryProducts(request);
     }
     @PostMapping(value = "/queryProductById")
-    public CommonResponse queryProductById(@RequestBody QueryProductByIdRequest queryProductRequest) {
+    public CommonResponse queryProductById(@RequestBody @Valid QueryProductByIdRequest queryProductRequest) {
         log.info("pageQueryProduct productId = {}", queryProductRequest.getProductGid());
-        return productService.getProductDetail(queryProductRequest.getProductGid());
+        return productServiceImpl.getProductDetail(queryProductRequest.getProductGid());
     }
     @PostMapping(value = "/getHotProducts")
-    public CommonResponse getHotProducts(@RequestBody HotDataRequest request){
-        return productService.getHotProducts(request);
+    public CommonResponse getHotProducts(@RequestBody @Valid HotDataRequest request){
+        return productServiceImpl.getHotProducts(request);
     }
     @PostMapping(value = "/createProduct")
-    public CommonResponse createProduct(@RequestBody CreateProductRequest createProductRequest) throws Exception{
-        return productService.createProduct(createProductRequest);
+    public CommonResponse createProduct(@RequestBody @Valid CreateProductRequest createProductRequest) throws Exception{
+        return productServiceImpl.createProduct(createProductRequest);
     }
 
     @PostMapping(value = "/updateProduct")
-    public CommonResponse updateProduct(@RequestBody UpdateProductRequest updateProductRequest) throws Exception{
-        return productService.updateProduct(updateProductRequest);
+    public CommonResponse updateProduct(@RequestBody @Valid UpdateProductRequest updateProductRequest) throws Exception{
+        return productServiceImpl.updateProduct(updateProductRequest);
     }
 
 

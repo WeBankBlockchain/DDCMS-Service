@@ -1,11 +1,11 @@
-package com.webank.databrain.vo.response.product;
+package com.webank.databrain.bo;
 
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
-public class ProductInfoResponse {
+public class ProductInfoBO {
 
 
     private Long productId;

@@ -2,6 +2,7 @@ package com.webank.databrain.vo.request.dataschema;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 @Data
@@ -10,29 +11,26 @@ public class CreateDataSchemaRequest {
 
     private String did;
 
+    @NotBlank(message = "dataSchemaName不能为空.")
     private String dataSchemaName;
 
-    /**
-     * 提供方外键id
-     */
+    @NotBlank(message = "providerId不能为空.")
     private Long providerId;
 
+    @NotBlank(message = "providerGId不能为空.")
     private String providerGId;
-
 
     private String providerName;
 
-    /**
-     * 产品外键ID
-     */
+    @NotBlank(message = "productId不能为空.")
     private Long productId;
 
-
+    @NotBlank(message = "productGId不能为空.")
     private String productGId;
 
     private String productName;
 
-
+    @NotBlank(message = "tagId不能为空.")
     private Long tagId;
 
     /**
@@ -40,14 +38,10 @@ public class CreateDataSchemaRequest {
      */
     private Integer version;
 
-    /**
-     * 是否可见
-     */
+    @NotBlank(message = "visible不能为空.")
     private Integer visible;
 
-    /**
-     * 描述
-     */
+    @NotBlank(message = "dataSchemaDesc不能为空.")
     private String dataSchemaDesc;
 
     /**
