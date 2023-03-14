@@ -28,6 +28,10 @@ public class DataSchemaDetailBO {
 
     private String providerName;
 
+    private Long tagId;
+
+    private String tagName;
+
 
     /**
      * 产品外键ID

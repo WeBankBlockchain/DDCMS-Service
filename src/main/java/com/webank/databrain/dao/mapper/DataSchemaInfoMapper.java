@@ -12,6 +12,7 @@ public interface DataSchemaInfoMapper {
 
     @Select("<script>" +
             "SELECT " +
+            "a.pk_id as schemaId," +
             "a.data_schema_gid," +
             "a.data_schema_name," +
             "a.provider_id, " +
