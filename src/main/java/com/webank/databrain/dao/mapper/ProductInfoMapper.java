@@ -56,7 +56,7 @@ public interface ProductInfoMapper {
             "#{createTime}" +
             ")")
     @Options(useGeneratedKeys = true, keyProperty = "pkId", keyColumn = "pk_id")
-    void insertProductInfoPO(ProductInfoEntity productInfoEntity);
+    void insertProductInfo(ProductInfoEntity productInfoEntity);
 
 
     @Update("UPDATE t_product_info SET " +

@@ -4,10 +4,7 @@ import cn.hutool.core.codec.Base64;
 import com.webank.databrain.bo.DataSchemaDetailBO;
 import com.webank.databrain.config.SysConfig;
 import com.webank.databrain.dao.bc.contract.DataSchemaModule;
-import com.webank.databrain.dao.entity.AccountInfoEntity;
-import com.webank.databrain.dao.entity.DataSchemaAccessInfoEntity;
-import com.webank.databrain.dao.entity.DataSchemaInfoEntity;
-import com.webank.databrain.dao.entity.DataSchemaTagsEntity;
+import com.webank.databrain.dao.entity.*;
 import com.webank.databrain.dao.mapper.*;
 import com.webank.databrain.enums.CodeEnum;
 import com.webank.databrain.exception.DataBrainException;
@@ -58,7 +55,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
     private ThreadLocalKeyPairHandler keyPairHandler;
 
     @Autowired
-    private TagService tagService;
+    private TagInfoMapper tagInfoMapper;
 
     @Autowired
     private TransactionDecoderInterface txDecoder;
@@ -123,7 +120,6 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
 
         String dataSchemaId = Base64.encode(dataSchemaModule.getCreateDataSchemaOutput(receipt).getValue1());
-
         DataSchemaInfoEntity dataSchemaInfoEntity = new DataSchemaInfoEntity();
         BeanUtils.copyProperties(schemaRequest, dataSchemaInfoEntity);
         dataSchemaInfoEntity.setDataSchemaGid(dataSchemaId);
@@ -136,10 +132,19 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         dataSchemaAccessInfoMapper.insertDataSchemaAccessInfo(dataSchemaAccessInfoEntity);
         log.info("save dataSchemaAccessInfoEntity finish, schemaId = {}", dataSchemaId);
 
-        DataSchemaTagsEntity dataSchemaTagsEntity = new DataSchemaTagsEntity();
-        dataSchemaTagsEntity.setDataSchemaId(dataSchemaInfoEntity.getPkId());
-        dataSchemaTagsEntity.setTagId(schemaRequest.getTagId());
-        dataSchemaTagsMapper.insertDataSchemaTag(dataSchemaTagsEntity);
+        List<String> tagNames = schemaRequest.getTagNameList();
+        tagNames.forEach(tagName -> {
+            TagInfoEntity tagInfo = tagInfoMapper.queryTagByName(tagName);
+            if (tagInfo == null){
+                tagInfo = new TagInfoEntity();
+                tagInfo.setTagName(tagName);
+                tagInfoMapper.insertItem(tagInfo);
+            }
+            DataSchemaTagsEntity dataSchemaTagsEntity = new DataSchemaTagsEntity();
+            dataSchemaTagsEntity.setDataSchemaId(dataSchemaInfoEntity.getPkId());
+            dataSchemaTagsEntity.setTagId(tagInfo.getPkId());
+            dataSchemaTagsMapper.insertDataSchemaTag(dataSchemaTagsEntity);
+        });
         log.info("save dataSchemaTagsEntity finish, schemaId = {}", dataSchemaId);
 
         return CommonResponse.success(dataSchemaId);

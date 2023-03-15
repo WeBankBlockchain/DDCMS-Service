@@ -1,12 +1,14 @@
 package com.webank.databrain.vo.request.dataschema;
 
+import com.webank.databrain.vo.common.CommonRequest;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
+import java.util.List;
 
 @Data
-public class CreateDataSchemaRequest {
+public class CreateDataSchemaRequest extends CommonRequest {
 
 
     private String did;
@@ -30,8 +32,7 @@ public class CreateDataSchemaRequest {
 
     private String productName;
 
-    @NotBlank(message = "tagId不能为空.")
-    private Long tagId;
+    private List<String> tagNameList;
 
     /**
      * 版本号
