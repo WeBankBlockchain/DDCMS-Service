@@ -13,7 +13,7 @@ import com.webank.databrain.dao.mapper.PersonInfoMapper;
 import com.webank.databrain.enums.AccountStatus;
 import com.webank.databrain.enums.AccountType;
 import com.webank.databrain.enums.CodeEnum;
-import com.webank.databrain.handler.key.ThreadLocalKeyPairHandler;
+import com.webank.databrain.handler.ThreadLocalKeyPairHandler;
 import com.webank.databrain.handler.token.ITokenHandler;
 import com.webank.databrain.service.AccountService;
 import com.webank.databrain.utils.AccountUtils;

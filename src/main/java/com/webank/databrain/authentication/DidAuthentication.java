@@ -10,8 +10,7 @@ import java.util.Collection;
 @AllArgsConstructor
 public class DidAuthentication implements Authentication {
 
-    private AccountInfoEntity currentAccount;
-
+    private String did;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -25,12 +24,12 @@ public class DidAuthentication implements Authentication {
 
     @Override
     public Object getDetails() {
-        return currentAccount;
+        return did;
     }
 
     @Override
     public Object getPrincipal() {
-        return currentAccount;
+        return did;
     }
 
     @Override
@@ -45,6 +44,6 @@ public class DidAuthentication implements Authentication {
 
     @Override
     public String getName() {
-        return currentAccount.getDid();
+        return did;
     }
 }

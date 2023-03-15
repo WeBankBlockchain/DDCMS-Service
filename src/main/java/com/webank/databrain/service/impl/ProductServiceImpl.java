@@ -11,7 +11,7 @@ import com.webank.databrain.dao.mapper.AccountInfoMapper;
 import com.webank.databrain.dao.mapper.ProductInfoMapper;
 import com.webank.databrain.enums.CodeEnum;
 import com.webank.databrain.enums.ReviewStatus;
-import com.webank.databrain.handler.key.ThreadLocalKeyPairHandler;
+import com.webank.databrain.handler.ThreadLocalKeyPairHandler;
 import com.webank.databrain.service.ProductService;
 import com.webank.databrain.utils.BlockchainUtils;
 import com.webank.databrain.utils.PagingUtils;

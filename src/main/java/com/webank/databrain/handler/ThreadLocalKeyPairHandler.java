@@ -1,10 +1,9 @@
-package com.webank.databrain.handler.key;
+package com.webank.databrain.handler;
 
 import com.webank.databrain.config.SysConfig;
 import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import javax.annotation.PostConstruct;
 import java.util.function.Supplier;
 
@@ -26,7 +25,6 @@ public class ThreadLocalKeyPairHandler {
             }
         });
     }
-
 
     public CryptoSuite getCryptoSuite() {
         return cryptoSuite.get();

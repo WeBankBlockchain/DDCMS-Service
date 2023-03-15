@@ -35,6 +35,10 @@ mybatis:
     configuration:
         map-underscore-to-camel-case: true
 
+jwt:
+    secret: JWTSecret
+    expiration: 86400000
+
 system:
     bcos-cfg: "config/config.toml"
     bcos-group-id: "group0"
