@@ -1,6 +1,7 @@
 package com.webank.databrain.service.impl;
 
 import cn.hutool.core.codec.Base64;
+import cn.hutool.core.collection.CollectionUtil;
 import com.webank.databrain.bo.DataSchemaDetailBO;
 import com.webank.databrain.config.SysConfig;
 import com.webank.databrain.dao.bc.contract.DataSchemaModule;
@@ -30,7 +31,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -88,6 +92,19 @@ public class DataSchemaServiceImpl implements DataSchemaService {
 
     public CommonResponse getDataSchemaByGid(String schemaGid){
         DataSchemaWithAccessBO dataSchemaWithAccessResponse = dataSchemaInfoMapper.getSchemaWithAccessByGid(schemaGid);
+        List<DataSchemaTagsEntity> schemaTagsEntityList = dataSchemaTagsMapper.getSchemaTagsMap(dataSchemaWithAccessResponse.getSchemaId());
+        if (CollectionUtil.isNotEmpty(schemaTagsEntityList)){
+            List<Long> tagIds = schemaTagsEntityList.stream()
+                    .filter(Objects::nonNull)
+                    .map(DataSchemaTagsEntity::getTagId)
+                    .collect(Collectors.toList());
+            List<TagInfoEntity> tagInfoEntityList = tagInfoMapper.queryTagByIds(tagIds);
+            List<String> tagNames = tagInfoEntityList.stream()
+                    .filter(Objects::nonNull)
+                    .map(TagInfoEntity::getTagName)
+                    .collect(Collectors.toList());
+            dataSchemaWithAccessResponse.setTagNameList(tagNames);
+        }
         return CommonResponse.success(dataSchemaWithAccessResponse);
     }
 

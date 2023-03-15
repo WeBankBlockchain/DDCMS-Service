@@ -76,8 +76,6 @@ public interface DataSchemaInfoMapper {
             "a.data_schema_usage," +
             "a.price," +
             "a.create_time," +
-            "b.tag_id," +
-            "c.tag_name," +
             "d.product_name," +
             "d.product_gid as productGid," +
             "e.company_name as providerName," +
@@ -91,10 +89,6 @@ public interface DataSchemaInfoMapper {
             "g.effect_time, " +
             "g.expire_time " +
             "from t_data_schema_info a " +
-            "left join " +
-            "t_data_schema_tags b on a.pk_id = b.data_schema_id " +
-            "left join " +
-            "t_tag_info c on b.tag_id = c.pk_id " +
             "left join " +
             "t_product_info d on a.product_id = d.pk_id " +
             "left join " +
