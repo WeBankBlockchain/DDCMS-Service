@@ -14,7 +14,7 @@ public interface PersonInfoMapper {
 
 
     @Select("<script>" +
-            "SELECT a.*, p.* FROM t_person_info p INNER  JOIN t_account_info a ON p.account_id = a.pk_id WHERE 1 = 1 " +
+            "SELECT a.*, p.* FROM t_person_info p INNER JOIN t_account_info a ON p.account_id = a.pk_id WHERE 1 = 1 " +
             "<if test='status &gt; 0'> AND a.status = #{status} </if>" +
             "<if test='keyWord != null'> AND p.person_name LIKE CONCAT('%', #{keyWord}, '%') </if>" +
             "ORDER BY p.pk_id DESC LIMIT #{offset}, #{pageSize}" +
