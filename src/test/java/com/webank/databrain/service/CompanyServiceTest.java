@@ -52,8 +52,7 @@ public class CompanyServiceTest extends ServerApplicationTests {
     public void testSearch() throws Exception{
         SearchAccountRequest companyRequest = new SearchAccountRequest();
         companyRequest.setPageNo(1);
-        companyRequest.setPageSize(5);
-        companyRequest.setAccountStatus(1);
+        companyRequest.setPageSize(10);
 
         CommonResponse companyResponse = companyService.searchCompanies(companyRequest);
         log.info("response: {}", objectMapper.writeValueAsString(companyResponse));
