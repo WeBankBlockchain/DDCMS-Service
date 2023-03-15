@@ -20,40 +20,4 @@ public class AccountUtils {
     public static String getPwdHash(CryptoSuite cryptoSuite, String password, String salt) {
         return cryptoSuite.hash(password+":"+salt);
     }
-
-//    public static CompanyInfoResponse companyBOToVO(CryptoSuite cryptoSuite, CompanyInfoBO bo){
-//        if (bo == null){
-//            return null;
-//        }
-//        CompanyInfoResponse vo = new CompanyInfoResponse();
-//        vo.setUserName(bo.getUserName());
-//        vo.setCompanyContact(bo.getCompanyContact());
-//        vo.setDid(bo.getDid());
-//        vo.setCompanyName(bo.getCompanyName());
-//        vo.setCompanyDesc(bo.getCompanyDesc());
-//        vo.setCompanyCertType(bo.getCompanyCertType());
-//        vo.setKeyAddress(cryptoSuite.loadKeyPair(bo.getPrivateKey()).getAddress());
-//        vo.setStatus(bo.getStatus());
-//        vo.setCreateTime(bo.getCreateTime().getTime());
-//        vo.setCompanyCertFileUri(bo.getCompanyCertFileUri());
-//        return vo;
-//    }
-//
-//    public static PersonInfoResponse personBOToVO(CryptoSuite cryptoSuite, PersonInfoBO bo){
-//        if (bo == null){
-//            return null;
-//        }
-//        PersonInfoResponse vo = new PersonInfoResponse();
-//        vo.setUserName(bo.getUserName());
-//        vo.setDid(bo.getDid());
-//        vo.setStatus(bo.getStatus());
-//        vo.setPersonContact(bo.getPersonContact());
-//        vo.setPersonEmail(bo.getPersonEmail());
-//        vo.setPersonCertNo(bo.getPersonCertNo());
-//        vo.setKeyAddress(cryptoSuite.loadKeyPair(bo.getPrivateKey()).getAddress());
-//        vo.setPersonName(bo.getPersonName());
-//        vo.setPersonCertType(bo.getPersonCertType());
-//        vo.setCreateTime(bo.getCreateTime().getTime());
-//        return vo;
-//    }
 }

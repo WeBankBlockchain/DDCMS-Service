@@ -1,13 +1,16 @@
 package com.webank.databrain.vo.request.account;
 
+import com.webank.databrain.vo.common.CommonRequest;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotBlank;
 
 @Data
-public class ApproveAccountRequest {
+@EqualsAndHashCode(callSuper = true)
+public class ApproveAccountRequest extends CommonRequest {
     @NotBlank(message = "用户名不能为空.")
     private String did;
-    private boolean approved;
+    private boolean approved = false;
 }
 

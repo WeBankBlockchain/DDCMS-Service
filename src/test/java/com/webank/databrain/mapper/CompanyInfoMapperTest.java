@@ -14,7 +14,7 @@ public class CompanyInfoMapperTest extends ServerApplicationTests {
 
     @Test
     public void testTotalCountWithStatus(){
-        int totalCount = mapper.totalCountWithStatus(0, "",-1);
+        int totalCount = mapper.totalCountWithStatus(1, null,0);
         log.info("totalCount: {}", totalCount);
     }
 }
