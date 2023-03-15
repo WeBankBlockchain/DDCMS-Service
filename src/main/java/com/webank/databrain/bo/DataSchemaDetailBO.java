@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class DataSchemaDetailBO {
@@ -29,9 +30,7 @@ public class DataSchemaDetailBO {
 
     private String providerName;
 
-    private Long tagId;
-
-    private String tagName;
+    private List<String> tagNameList;
 
 
     /**

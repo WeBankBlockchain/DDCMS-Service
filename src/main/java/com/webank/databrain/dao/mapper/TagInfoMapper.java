@@ -20,4 +20,14 @@ public interface TagInfoMapper {
     @Select("SELECT * FROM t_tag_info where tag_name = #{name}")
     @ResultType(TagInfoEntity.class)
     TagInfoEntity queryTagByName(String name);
+
+
+    @Select("<script>" +
+            "SELECT * FROM t_tag_info where pk_id in" +
+            "   <foreach item='id' index='index' collection='ids' open='(' separator=',' close=')'>" +
+            "       #{id}" +
+            "   </foreach>" +
+            "</script>")
+    @ResultType(TagInfoEntity.class)
+    List<TagInfoEntity> queryTagByIds(List<Long> ids);
 }

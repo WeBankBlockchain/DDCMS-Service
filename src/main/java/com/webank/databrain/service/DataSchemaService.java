@@ -10,5 +10,7 @@ public interface DataSchemaService {
 
     CommonResponse getDataSchemaByGid(String schemaGid);
 
+    CommonResponse getDataSchemaAccessById(Long accessId);
+
     CommonResponse createDataSchema(CreateDataSchemaRequest schemaRequest) throws Exception;
 }

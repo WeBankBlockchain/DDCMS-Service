@@ -8,9 +8,7 @@ import javax.validation.constraints.NotBlank;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class QuerySchemaByIdRequest extends CommonRequest {
+public class QuerySchemaAccessByIdRequest extends CommonRequest {
 
-    @NotBlank(message = "schemaGid不能为空.")
-    private String schemaGid;
-
+    private Long accessId;
 }
