@@ -23,8 +23,6 @@ public interface DataSchemaInfoMapper {
             "a.data_schema_usage," +
             "a.price," +
             "a.create_time," +
-            "b.tag_id," +
-            "c.tag_name," +
             "d.product_name," +
             "d.product_gid as productGid," +
             "e.company_name as providerName," +

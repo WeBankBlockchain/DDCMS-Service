@@ -1,6 +1,7 @@
 package com.webank.databrain.dao.mapper;
 
 import com.webank.databrain.dao.entity.DataSchemaTagsEntity;
+import com.webank.databrain.dao.entity.TagInfoEntity;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -22,5 +23,15 @@ public interface DataSchemaTagsMapper {
     @Select("select * from t_data_schema_tags where data_schema_id = #{schemaId}")
     @ResultType(DataSchemaTagsEntity.class)
     List<DataSchemaTagsEntity> getSchemaTagsMap(Long schemaId);
+
+
+    @Select("<script>" +
+            "SELECT * FROM t_data_schema_tags where data_schema_id in" +
+            "   <foreach item='id' index='index' collection='ids' open='(' separator=',' close=')'>" +
+            "       #{id}" +
+            "   </foreach>" +
+            "</script>")
+    @ResultType(DataSchemaTagsEntity.class)
+    List<DataSchemaTagsEntity> getSchemaTagsMapByIds(List<Long> ids);
 
 }

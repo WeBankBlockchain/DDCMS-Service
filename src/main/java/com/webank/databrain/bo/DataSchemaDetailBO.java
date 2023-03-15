@@ -30,10 +30,6 @@ public class DataSchemaDetailBO {
 
     private String providerName;
 
-    private Long tagId;
-
-    private String tagName;
-
     private List<String> tagNameList;
 
 

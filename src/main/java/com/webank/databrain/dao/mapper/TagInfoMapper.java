@@ -23,7 +23,7 @@ public interface TagInfoMapper {
 
 
     @Select("<script>" +
-            "SELECT tag_name FROM t_tag_info where pk_id in" +
+            "SELECT * FROM t_tag_info where pk_id in" +
             "   <foreach item='id' index='index' collection='ids' open='(' separator=',' close=')'>" +
             "       #{id}" +
             "   </foreach>" +
