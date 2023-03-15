@@ -2,6 +2,7 @@ package com.webank.databrain.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.webank.databrain.bo.LoginInfoBo;
 import com.webank.databrain.config.SysConfig;
 import com.webank.databrain.dao.bc.contract.AccountModule;
 import com.webank.databrain.dao.entity.AccountInfoEntity;
@@ -31,9 +32,11 @@ import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
 import org.fisco.bcos.sdk.v3.transaction.codec.decode.TransactionDecoderInterface;
 import org.fisco.bcos.sdk.v3.transaction.model.exception.TransactionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigInteger;
 
 @Service
@@ -69,6 +72,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private JwtTokenHandler tokenHandler;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -111,20 +117,29 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public CommonResponse login(LoginRequest request) {
-        CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
+
         AccountInfoEntity accountInfo = accountInfoMapper.selectByUserName(request.getUserName());
         if (accountInfo == null){
             return CommonResponse.error(CodeEnum.USER_NOT_EXISTS);
         }
-        String pwdHash = AccountUtils.getPwdHash(cryptoSuite, request.getPassword(), accountInfo.getSalt());
-        if (!pwdHash.equals(accountInfo.getPwdHash())) {
-            return CommonResponse.error(CodeEnum.PWD_NOT_RIGHT);
+
+        // 使用auth进行用户认证
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(request.getUserName(), request.getPassword());
+        // 调用UserDetailService实现类的认证方法
+        Authentication authentication =authenticationManager.authenticate(authenticationToken);
+
+        // 认证没通过，则给出提示
+        if(null == authentication){
+            throw new RuntimeException("登录失败.");
         }
-        String token = tokenHandler.generateToken(accountInfo.getDid());
+
+        // 认证通过，则生成token，并返回
+        LoginInfoBo loginInfoBo = (LoginInfoBo)authentication.getPrincipal();
+
+        String token = tokenHandler.generateToken(loginInfoBo.getEntity().getDid());
         LoginResponse response = new LoginResponse();
         response.setToken(token);
-        response.setAccountType(accountInfo.getAccountType().intValue());
-        response.setDid(accountInfo.getDid());
+
         return CommonResponse.success(response);
     }
 

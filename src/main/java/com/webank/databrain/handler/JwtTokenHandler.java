@@ -39,13 +39,8 @@ public class JwtTokenHandler {
         return Jwts.parserBuilder().setSigningKey(signKey).build().parseClaimsJws(token).getBody().getExpiration();
     }
 
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parserBuilder().setSigningKey(signKey).build().parseClaimsJws(token).getBody();
-            return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            return false;
-        }
+    public Claims parseToken(String token) {
+        return Jwts.parserBuilder().setSigningKey(signKey).build().parseClaimsJws(token).getBody();
     }
 
     public boolean isTokenExpired(String token){
