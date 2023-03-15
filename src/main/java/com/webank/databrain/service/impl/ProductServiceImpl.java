@@ -15,7 +15,6 @@ import com.webank.databrain.handler.ThreadLocalKeyPairHandler;
 import com.webank.databrain.service.ProductService;
 import com.webank.databrain.utils.BlockchainUtils;
 import com.webank.databrain.utils.PagingUtils;
-import com.webank.databrain.utils.SessionUtils;
 import com.webank.databrain.vo.common.CommonPageQueryRequest;
 import com.webank.databrain.vo.common.CommonResponse;
 import com.webank.databrain.vo.common.HotDataRequest;
@@ -30,6 +29,7 @@ import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
 import org.fisco.bcos.sdk.v3.transaction.codec.decode.TransactionDecoderInterface;
 import org.fisco.bcos.sdk.v3.transaction.model.exception.TransactionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,6 +58,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductInfoMapper productInfoMapper;
+
+
 
     public CommonResponse getHotProducts(HotDataRequest request) {
         List<HotProductBO> productInfoEntities = productInfoMapper.getHotProduct(request.getTopCount());
@@ -112,7 +114,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     public CommonResponse updateProduct(UpdateProductRequest productRequest) throws TransactionException {
-        String did = SessionUtils.currentAccountDid();
+
+        String did = SecurityContextHolder.getContext().getAuthentication().getName();
         AccountInfoEntity entity = accountInfoMapper.selectByDid(did);
         if (entity == null) {
             return CommonResponse.error(CodeEnum.USER_NOT_EXISTS);

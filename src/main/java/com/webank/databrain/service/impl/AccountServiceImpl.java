@@ -13,8 +13,8 @@ import com.webank.databrain.dao.mapper.PersonInfoMapper;
 import com.webank.databrain.enums.AccountStatus;
 import com.webank.databrain.enums.AccountType;
 import com.webank.databrain.enums.CodeEnum;
+import com.webank.databrain.handler.JwtTokenHandler;
 import com.webank.databrain.handler.ThreadLocalKeyPairHandler;
-import com.webank.databrain.handler.token.ITokenHandler;
 import com.webank.databrain.service.AccountService;
 import com.webank.databrain.utils.AccountUtils;
 import com.webank.databrain.utils.BlockchainUtils;
@@ -56,9 +56,6 @@ public class AccountServiceImpl implements AccountService {
     private TransactionDecoderInterface txDecoder;
 
     @Autowired
-    private ITokenHandler tokenHandler;
-
-    @Autowired
     private AccountInfoMapper accountInfoMapper;
 
     @Autowired
@@ -69,6 +66,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private JwtTokenHandler tokenHandler;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
