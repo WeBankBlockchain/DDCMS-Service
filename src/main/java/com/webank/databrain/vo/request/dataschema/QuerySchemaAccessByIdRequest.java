@@ -10,6 +10,5 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class QuerySchemaAccessByIdRequest extends CommonRequest {
 
-    @NotBlank(message = "accessId不能为空.")
     private Long accessId;
 }
