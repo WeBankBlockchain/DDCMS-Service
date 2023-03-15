@@ -107,7 +107,7 @@ public class ProductServiceImpl implements ProductService {
         product.setStatus(ReviewStatus.NotReviewed.ordinal());
         product.setProductName(productRequest.getProductName());
         product.setProductDesc(productRequest.getProductDesc());
-        productInfoMapper.insertProductInfoPO(product);
+        productInfoMapper.insertProductInfo(product);
         return CommonResponse.success(productId);
     }
 

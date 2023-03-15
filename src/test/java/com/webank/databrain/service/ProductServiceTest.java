@@ -50,7 +50,7 @@ public class ProductServiceTest extends ServerApplicationTests {
 
         private String CertNo;
 
-        private String companyCertType;
+        private String companyCertType = "1";
 
 
         private String companyCertNo = "123";
