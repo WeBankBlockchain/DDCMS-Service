@@ -121,7 +121,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
     }
 
     public CommonResponse getDataSchemaByGid(String schemaGid){
-        DataSchemaWithAccessBO dataSchemaWithAccessResponse = dataSchemaInfoMapper.getSchemaWithAccessByGid(schemaGid);
+        DataSchemaWithAccessBO dataSchemaWithAccessResponse = dataSchemaInfoMapper.getSchemaByGid(schemaGid);
         List<DataSchemaTagsEntity> schemaTagsEntityList = dataSchemaTagsMapper.getSchemaTagsMap(dataSchemaWithAccessResponse.getSchemaId());
         if (CollectionUtil.isNotEmpty(schemaTagsEntityList)){
             List<Long> tagIds = schemaTagsEntityList.stream()
@@ -136,6 +136,11 @@ public class DataSchemaServiceImpl implements DataSchemaService {
             dataSchemaWithAccessResponse.setTagNameList(tagNames);
         }
         return CommonResponse.success(dataSchemaWithAccessResponse);
+    }
+
+    public CommonResponse getDataSchemaAccessById(Long accessId){
+        DataSchemaWithAccessBO dataSchemaWithAccessBO = dataSchemaAccessInfoMapper.getSchemaAccessByGid(accessId);
+        return CommonResponse.success(dataSchemaWithAccessBO);
     }
 
     @Transactional

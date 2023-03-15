@@ -4,6 +4,7 @@ import com.webank.databrain.service.DataSchemaService;
 import com.webank.databrain.vo.common.CommonResponse;
 import com.webank.databrain.vo.request.dataschema.CreateDataSchemaRequest;
 import com.webank.databrain.vo.request.dataschema.PageQueryDataSchemaRequest;
+import com.webank.databrain.vo.request.dataschema.QuerySchemaAccessByIdRequest;
 import com.webank.databrain.vo.request.dataschema.QuerySchemaByIdRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,11 @@ public class DataSchemaController {
     @PostMapping(value = "/querySchemaById")
     public CommonResponse querySchemaById(@RequestBody @Valid QuerySchemaByIdRequest request) {
         return schemaService.getDataSchemaByGid(request.getSchemaGid());
+    }
+
+    @PostMapping(value = "/querySchemaAccessById")
+    public CommonResponse getDataSchemaAccessById(@RequestBody @Valid QuerySchemaAccessByIdRequest request) {
+        return schemaService.getDataSchemaAccessById(request.getAccessId());
     }
 
 }

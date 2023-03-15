@@ -1,9 +1,8 @@
 package com.webank.databrain.dao.mapper;
 
+import com.webank.databrain.bo.DataSchemaWithAccessBO;
 import com.webank.databrain.dao.entity.DataSchemaAccessInfoEntity;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.*;
 
 @Mapper
 public interface DataSchemaAccessInfoMapper {
@@ -32,5 +31,20 @@ public interface DataSchemaAccessInfoMapper {
             ")")
     @Options(useGeneratedKeys = true, keyProperty = "pkId", keyColumn = "pk_id")
     void insertDataSchemaAccessInfo(DataSchemaAccessInfoEntity dataSchemaAccessInfoEntity);
+
+
+    @Select("SELECT " +
+            " pk_id as accessId," +
+            " data_format," +
+            " data_protocol," +
+            " content_schema," +
+            " access_condition," +
+            " uri," +
+            " effect_time," +
+            " expire_time" +
+            " from t_data_schema_access_info " +
+            " where pk_id = #{accessId}")
+    @ResultType(DataSchemaWithAccessBO.class)
+    DataSchemaWithAccessBO getSchemaAccessByGid(Long accessId);
 
 }
