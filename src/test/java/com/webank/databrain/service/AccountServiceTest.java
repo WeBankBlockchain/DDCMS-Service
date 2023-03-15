@@ -32,6 +32,7 @@ public class AccountServiceTest extends ServerApplicationTests {
         personInfoEntity.setPersonCertType("type");
         personInfoEntity.setPersonCertNo("11111");
         request.setDetailJson(objectMapper.writeValueAsString(personInfoEntity));
+        log.info("dataJson: {}", request.getDetailJson());
         CommonResponse response = accountService.registerAccount(request);
         log.info("response: {}", objectMapper.writeValueAsString(response));
     }
