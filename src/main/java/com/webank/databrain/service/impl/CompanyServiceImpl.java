@@ -60,7 +60,7 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public CommonResponse searchCompanies(SearchAccountRequest request) {
 
-        int totalCount = accountInfoMapper.totalCountWithStatus(AccountType.Company.ordinal(), request.getKeyWord(), request.getAccountStatus());
+        int totalCount = accountInfoMapper.totalCountWithStatus(AccountType.COMPANY.getRoleKey(), request.getKeyWord(), request.getAccountStatus());
         int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
 
         PageListData pageListData = new PageListData<>();

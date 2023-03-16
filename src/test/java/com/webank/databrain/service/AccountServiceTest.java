@@ -19,12 +19,12 @@ public class AccountServiceTest extends ServerApplicationTests {
 
     @Test
     public void testPersonalUserRegister() throws Exception{
-        String username = "personalUser0007";
+        String username = "personalUser0006";
         String password = "12345678";
         RegisterRequest request = new RegisterRequest();
         request.setUserName(username);
         request.setPassword(password);
-        request.setAccountType(AccountType.Personal);
+        request.setAccountType(AccountType.PERSON.getRoleKey());
         PersonInfoEntity personInfoEntity = new PersonInfoEntity();
         personInfoEntity.setPersonName("haha");
         personInfoEntity.setPersonContact("1231131313");
@@ -44,7 +44,7 @@ public class AccountServiceTest extends ServerApplicationTests {
         RegisterRequest request = new RegisterRequest();
         request.setUserName(username);
         request.setPassword(password);
-        request.setAccountType(AccountType.Company);
+        request.setAccountType(AccountType.COMPANY.getRoleKey());
 //        CompanyDetailRequest companyDetail = new CompanyDetailRequest();
 //        companyDetail.setCompanyName("阿里");
 //        companyDetail.setCompanyDesc("某公司");

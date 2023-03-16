@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigInteger;
@@ -76,6 +77,9 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public CommonResponse registerAccount(RegisterRequest request) throws TransactionException, JsonProcessingException {
@@ -87,14 +91,15 @@ public class AccountServiceImpl implements AccountService {
                 sysConfig.getContractConfig().getAccountContract(),
                 client,
                 keyPair);
-        TransactionReceipt txReceipt = accountContract.register(BigInteger.valueOf(request.getAccountType().ordinal()), cryptoSuite.hash(request.getUserName().getBytes()));
+        TransactionReceipt txReceipt = accountContract.register(BigInteger.valueOf(request.getAccountType()), cryptoSuite.hash(request.getUserName().getBytes()));
         byte[] didBytes = accountContract.getRegisterOutput(txReceipt).getValue1();
         BlockchainUtils.ensureTransactionSuccess(txReceipt, txDecoder);
 
         AccountInfoEntity accountInfoEntity = new AccountInfoEntity();
-        accountInfoEntity.setAccountType(request.getAccountType().ordinal());
+        accountInfoEntity.setAccountType(request.getAccountType());
         accountInfoEntity.setDid(AccountUtils.encode(didBytes));
-        accountInfoEntity.setPwdHash(AccountUtils.getPwdHash(cryptoSuite, request.getPassword(), sysConfig.getSalt()));
+//        accountInfoEntity.setPwdHash(AccountUtils.getPwdHash(cryptoSuite, request.getPassword(), sysConfig.getSalt()));
+        accountInfoEntity.setPwdHash(bCryptPasswordEncoder.encode(request.getPassword()));
         accountInfoEntity.setSalt(sysConfig.getSalt());
         accountInfoEntity.setStatus(AccountStatus.Registered.ordinal());
         accountInfoEntity.setPrivateKey(keyPair.getHexPrivateKey());
@@ -102,12 +107,12 @@ public class AccountServiceImpl implements AccountService {
 
         accountInfoMapper.insertAccount(accountInfoEntity);
 
-        if (request.getAccountType().ordinal() == AccountType.Personal.ordinal()) {
+        if (request.getAccountType() == AccountType.PERSON.getRoleKey()) {
             PersonInfoEntity personInfo = objectMapper.readValue(request.getDetailJson(), PersonInfoEntity.class);
             personInfo.setAccountId(accountInfoEntity.getPkId());
             personInfoMapper.insertPerson(personInfo);
 
-        } else if (request.getAccountType().ordinal() == AccountType.Company.ordinal()) {
+        } else if (request.getAccountType() == AccountType.COMPANY.getRoleKey()) {
             CompanyInfoEntity companyInfo = objectMapper.readValue(request.getDetailJson(), CompanyInfoEntity.class);
             companyInfo.setAccountId(accountInfoEntity.getPkId());
             companyInfoMapper.insertCompany(companyInfo);
@@ -163,5 +168,10 @@ public class AccountServiceImpl implements AccountService {
         AccountStatus status = approve ? AccountStatus.Approved : AccountStatus.Denied;
         accountInfoMapper.updateStatus(did, status.ordinal());
         return CommonResponse.success();
+    }
+
+    @Override
+    public CommonResponse logout() {
+        return null;
     }
 }

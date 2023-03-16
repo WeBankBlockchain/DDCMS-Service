@@ -66,7 +66,7 @@ public class ProductServiceTest extends ServerApplicationTests {
         RegisterRequest request = new RegisterRequest();
         request.setUserName(username);
         request.setPassword(password);
-        request.setAccountType(AccountType.Company);
+        request.setAccountType(AccountType.COMPANY.getRoleKey());
         CompanyDetailRequest companyDetail = new CompanyDetailRequest();
         companyDetail.setCompanyName("腾讯" + RandomUtil.randomNumbers(5));
         companyDetail.setCompanyDesc("某公司2");

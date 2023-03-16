@@ -4,6 +4,7 @@ import com.webank.databrain.service.AccountService;
 import com.webank.databrain.service.CompanyService;
 import com.webank.databrain.service.PersonService;
 import com.webank.databrain.vo.common.CommonPageQueryRequest;
+import com.webank.databrain.vo.common.CommonRequest;
 import com.webank.databrain.vo.common.CommonResponse;
 import com.webank.databrain.vo.common.HotDataRequest;
 import com.webank.databrain.vo.request.account.*;

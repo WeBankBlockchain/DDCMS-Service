@@ -51,7 +51,7 @@ public class SchemaServiceTest  extends ServerApplicationTests {
         RegisterRequest request = new RegisterRequest();
         request.setUserName(username);
         request.setPassword(password);
-        request.setAccountType(AccountType.Company);
+        request.setAccountType(AccountType.COMPANY.getRoleKey());
         ProductServiceTest.CompanyDetailRequest companyDetail = new ProductServiceTest.CompanyDetailRequest();
         companyDetail.setCompanyName("头条" + RandomUtil.randomNumbers(5));
         companyDetail.setCompanyDesc("某公司1");

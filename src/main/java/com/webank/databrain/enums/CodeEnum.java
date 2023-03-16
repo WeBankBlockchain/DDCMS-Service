@@ -17,6 +17,9 @@ public enum CodeEnum {
 
     PRODUCT_NOT_EXISTS(400, "产品不存在"),
 
+    UN_AUTHORIZED(401, "用户认证失败"),
+    FORBIDDEN(403, "权限不足"),
+
     FILE_NOT_EXIST(800, "文件不存在"),
 
     TX_TIME_OUT(901, "系统超时"),

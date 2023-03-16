@@ -3,12 +3,14 @@ package com.webank.databrain.filter;
 import com.webank.databrain.bo.LoginInfoBo;
 import com.webank.databrain.dao.entity.AccountInfoEntity;
 import com.webank.databrain.dao.mapper.AccountInfoMapper;
+import com.webank.databrain.enums.AccountType;
 import com.webank.databrain.handler.JwtTokenHandler;
 import io.jsonwebtoken.Claims;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import javax.servlet.FilterChain;
@@ -16,6 +18,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -49,13 +53,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // get account info
         AccountInfoEntity entity = accountInfoMapper.selectByDid(did);
         if(null == entity){
-            throw new RuntimeException("用户未登录.");
+            throw new RuntimeException("用户不存在.");
         }
 
-        LoginInfoBo bo = new LoginInfoBo(entity);
+        List<String> permissionList = new ArrayList<>();
+
+        // 需要从数据库的权限表中查询，然后封装
+        permissionList.add(AccountType.getAccountType(entity.getAccountType()).getRoleName());
+
+        LoginInfoBo bo = new LoginInfoBo(entity, permissionList);
         //save to ContextHolder
-        //TODO: 获取权限信息封装到Authentication
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(bo, null, null);
+        //获取权限信息封装到Authentication
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(bo, null, bo.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
         filterChain.doFilter(request, response);

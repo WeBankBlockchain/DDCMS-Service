@@ -31,10 +31,15 @@ public class WebLogAspect {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         Object[] params = joinPoint.getArgs();
         HttpServletRequest request = attributes.getRequest();
-        CommonRequest req = (CommonRequest)params[0];
-        log.info("request : {}",objectMapper.writeValueAsString(req));
-        log.info("from={} path={} method={} classMethod={}", request.getRemoteAddr(), request.getRequestURI(), request.getMethod(),
-                joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
+        if(params[0] instanceof CommonRequest){
+            CommonRequest req = (CommonRequest)params[0];
+            log.info("request : {}",objectMapper.writeValueAsString(req));
+            log.info("from={} path={} method={} classMethod={}", request.getRemoteAddr(), request.getRequestURI(), request.getMethod(),
+                    joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
+        }else{
+            log.info("request : {}",request.getMethod());
+        }
+
     }
 
     @Around("webLog()")

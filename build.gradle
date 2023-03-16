@@ -42,7 +42,7 @@ dependencies {
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
 
-	implementation 'io.jsonwebtoken:jjwt:0.11.2'
+//	implementation 'io.jsonwebtoken:jjwt:0.11.2'
 
 	// java sdk
 	implementation ("org.fisco-bcos.java-sdk:fisco-bcos-java-sdk:3.1.0")
