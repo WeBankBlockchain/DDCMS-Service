@@ -1,8 +1,9 @@
 package com.webank.databrain.service.impl;
 
+import cn.hutool.core.codec.Base64;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.webank.databrain.bo.LoginInfoBo;
+import com.webank.databrain.bo.LoginUserBO;
 import com.webank.databrain.config.SysConfig;
 import com.webank.databrain.dao.bc.contract.AccountModule;
 import com.webank.databrain.dao.entity.AccountInfoEntity;
@@ -17,7 +18,6 @@ import com.webank.databrain.enums.CodeEnum;
 import com.webank.databrain.handler.JwtTokenHandler;
 import com.webank.databrain.handler.ThreadLocalKeyPairHandler;
 import com.webank.databrain.service.AccountService;
-import com.webank.databrain.utils.AccountUtils;
 import com.webank.databrain.utils.BlockchainUtils;
 import com.webank.databrain.vo.common.CommonResponse;
 import com.webank.databrain.vo.request.account.ApproveAccountRequest;
@@ -97,10 +97,8 @@ public class AccountServiceImpl implements AccountService {
 
         AccountInfoEntity accountInfoEntity = new AccountInfoEntity();
         accountInfoEntity.setAccountType(request.getAccountType());
-        accountInfoEntity.setDid(AccountUtils.encode(didBytes));
-//        accountInfoEntity.setPwdHash(AccountUtils.getPwdHash(cryptoSuite, request.getPassword(), sysConfig.getSalt()));
-        accountInfoEntity.setPwdHash(bCryptPasswordEncoder.encode(request.getPassword()));
-        accountInfoEntity.setSalt(sysConfig.getSalt());
+        accountInfoEntity.setDid(Base64.encode(didBytes));
+        accountInfoEntity.setPassword(bCryptPasswordEncoder.encode(request.getPassword()));
         accountInfoEntity.setStatus(AccountStatus.Registered.ordinal());
         accountInfoEntity.setPrivateKey(keyPair.getHexPrivateKey());
         accountInfoEntity.setUserName(request.getUserName());
@@ -139,9 +137,9 @@ public class AccountServiceImpl implements AccountService {
         }
 
         // 认证通过，则生成token，并返回
-        LoginInfoBo loginInfoBo = (LoginInfoBo)authentication.getPrincipal();
+        LoginUserBO loginInfoBo = (LoginUserBO)authentication.getPrincipal();
 
-        String token = tokenHandler.generateToken(loginInfoBo.getEntity().getDid());
+        String token = JwtTokenHandler.TOKEN_PREFIX + tokenHandler.generateToken(loginInfoBo.getEntity().getDid());
         LoginResponse response = new LoginResponse();
         response.setToken(token);
 
@@ -159,7 +157,7 @@ public class AccountServiceImpl implements AccountService {
         if(entity.getStatus() == AccountStatus.Approved.ordinal() || entity.getStatus() == AccountStatus.Denied.ordinal()){
             return  CommonResponse.error(CodeEnum.ACCOUNT_HAS_APPROVED);
         }
-        byte[] didBytes = AccountUtils.decode(did);
+        byte[] didBytes = Base64.decode(did);
         CryptoKeyPair witnessKeyPair = this.witnessKeyPair;
         AccountModule accountModule = AccountModule.load(sysConfig.getContractConfig().getAccountContract(), client, witnessKeyPair);
         TransactionReceipt txReceipt = accountModule.approve(didBytes, approve);
@@ -168,10 +166,5 @@ public class AccountServiceImpl implements AccountService {
         AccountStatus status = approve ? AccountStatus.Approved : AccountStatus.Denied;
         accountInfoMapper.updateStatus(did, status.ordinal());
         return CommonResponse.success();
-    }
-
-    @Override
-    public CommonResponse logout() {
-        return null;
     }
 }

@@ -11,7 +11,6 @@ import com.webank.databrain.enums.CodeEnum;
 import com.webank.databrain.handler.ThreadLocalKeyPairHandler;
 import com.webank.databrain.service.DataSchemaService;
 import com.webank.databrain.utils.BlockchainUtils;
-import com.webank.databrain.utils.PagingUtils;
 import com.webank.databrain.vo.common.CommonResponse;
 import com.webank.databrain.vo.common.PageListData;
 import com.webank.databrain.vo.request.dataschema.CreateDataSchemaRequest;
@@ -74,9 +73,18 @@ public class DataSchemaServiceImpl implements DataSchemaService {
 
 
     public CommonResponse pageQuerySchema(PageQueryDataSchemaRequest request) {
-        int total = dataSchemaInfoMapper.count();
+        int totalCount = dataSchemaInfoMapper.count();
+
+        int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
+
+        PageListData pageListData = new PageListData<>();
+        pageListData.setPageCount(pageCount);
+        pageListData.setTotalCount(totalCount);
+
+        int offset = (request.getPageNo() - 1) * request.getPageSize();
+
         List<DataSchemaDetailBO> dataSchemaDetailBOList = dataSchemaInfoMapper.pageQuerySchema(
-                PagingUtils.getStartOffset(request.getPageNo(),request.getPageSize()),
+                offset,
                 request.getPageSize(),
                 request.getProductId(),
                 request.getProviderId(),
@@ -111,10 +119,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
             }
         }
 
-        PageListData<DataSchemaDetailBO> pageListData = new PageListData<>();
         pageListData.setItemList(dataSchemaDetailBOList);
-        pageListData.setPageCount(PagingUtils.getPageCount(total,request.getPageSize()));
-        pageListData.setTotalCount(total);
         return CommonResponse.success(pageListData);
     }
 

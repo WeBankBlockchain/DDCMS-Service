@@ -8,7 +8,7 @@ public interface AccountInfoMapper {
     @Update("UPDATE t_account_info SET status=#{status} WHERE did=#{did}")
     void updateStatus(String did, int status);
 
-    @Insert("INSERT INTO t_account_info (user_name, did, account_type, private_key, salt, pwd_hash, status) values(#{userName}, #{did}, #{accountType}, #{privateKey}, #{salt}, #{pwdHash}, #{status})")
+    @Insert("INSERT INTO t_account_info (user_name, did, account_type, private_key, password, status) values(#{userName}, #{did}, #{accountType}, #{privateKey}, #{password}, #{status})")
     @Options(useGeneratedKeys=true, keyProperty="pkId", keyColumn="pk_id")
     int insertAccount(AccountInfoEntity entity);
 

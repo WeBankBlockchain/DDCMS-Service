@@ -47,7 +47,7 @@ public interface DataSchemaInfoMapper {
             " ORDER BY a.create_time DESC LIMIT #{start}, #{pageSize} " +
             "</script>" )
     @ResultType(DataSchemaDetailBO.class)
-    List<DataSchemaDetailBO> pageQuerySchema(@Param("start") long start,
+    List<DataSchemaDetailBO> pageQuerySchema(@Param("start") int start,
                                            @Param("pageSize")int pageSize,
                                            @Param("productId") Long productId,
                                            @Param("providerId") Long providerId,

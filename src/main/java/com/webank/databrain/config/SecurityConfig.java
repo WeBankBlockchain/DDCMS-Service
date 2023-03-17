@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,6 +19,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
+@EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -68,9 +70,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/product/pageQueryProduct").permitAll()
                 .antMatchers("/api/product/queryProductById").permitAll()
                 .antMatchers("/api/tag/getHotTags").permitAll()
-                .antMatchers("/api/account/login").permitAll()  //允许匿名访问
-//                .antMatchers("/account/login").hasAnyAuthority("Admin", "Person")
-//                .anyRequest().authenticated()
+                .antMatchers("/api/account/login").anonymous()  //允许匿名访问
+                .antMatchers("/api/account/approveAccount").hasAnyAuthority("ADMIN")
+                .antMatchers("/api/schema/createSchema").hasAnyAuthority("COMPANY")
+                .antMatchers("/api/product/approveProduct").hasAnyAuthority("ADMIN")
+                .antMatchers("/api/product/createProduct").hasAnyAuthority("COMPANY")
+                .antMatchers("/api/product/updateProduct").hasAnyAuthority("COMPANY")
+                .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtAuthenticationFilter ,UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling()

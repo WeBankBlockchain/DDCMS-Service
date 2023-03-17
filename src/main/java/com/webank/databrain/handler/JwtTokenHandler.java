@@ -13,6 +13,9 @@ import java.util.Date;
 @Component
 public class JwtTokenHandler {
 
+    public static final String TOKEN_HEADER = "Authorization";
+    public static final String TOKEN_PREFIX = "Bearer ";
+
     @Autowired
     private JWTConfig jwtConfig;
 

@@ -13,8 +13,7 @@ public class AccountInfoEntity implements Serializable {
     private String did;
     private Integer accountType;
     private String privateKey;
-    private String salt;
-    private String pwdHash;
+    private String password;
     private Integer status;
     private Date reviewTime;
     private Date createTime;

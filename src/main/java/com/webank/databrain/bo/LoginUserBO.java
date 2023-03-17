@@ -2,7 +2,6 @@ package com.webank.databrain.bo;
 
 
 import com.webank.databrain.dao.entity.AccountInfoEntity;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
-public class LoginInfoBo implements UserDetails {
+public class LoginUserBO implements UserDetails {
 
 
     private AccountInfoEntity entity;
@@ -24,7 +23,7 @@ public class LoginInfoBo implements UserDetails {
 
     private List<SimpleGrantedAuthority> grantedAuthorities;
 
-    public LoginInfoBo(AccountInfoEntity entity, List<String> permissions){
+    public LoginUserBO(AccountInfoEntity entity, List<String> permissions){
         this.entity = entity;
         this.permissions = permissions;
     }
@@ -41,7 +40,7 @@ public class LoginInfoBo implements UserDetails {
 
     @Override
     public String getPassword() {
-        return entity.getPwdHash();
+        return entity.getPassword();
     }
 
     @Override

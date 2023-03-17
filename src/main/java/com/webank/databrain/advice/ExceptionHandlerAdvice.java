@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
+import org.fisco.bcos.sdk.v3.transaction.model.exception.TransactionException;
 
 @ControllerAdvice
 @Slf4j
@@ -35,6 +36,14 @@ public class ExceptionHandlerAdvice {
     @ResponseBody
     public CommonResponse handleSQLDuplicateKeyException(HttpServletRequest req, Exception e) throws JsonProcessingException {
         CommonResponse response = CommonResponse.error(CodeEnum.SQL_DUPLICATE_RECORD);
+        log.info("response : {}", objectMapper.writeValueAsString(response));
+        return response;
+    }
+
+    @ExceptionHandler(value = TransactionException.class)
+    @ResponseBody
+    public CommonResponse handleTxException(HttpServletRequest req, Exception e) throws JsonProcessingException {
+        CommonResponse response = CommonResponse.error(CodeEnum.BLOCKCHAIN_TX_ERROR.getCode(), e.getMessage());
         log.info("response : {}", objectMapper.writeValueAsString(response));
         return response;
     }

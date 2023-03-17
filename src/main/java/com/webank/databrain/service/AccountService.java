@@ -12,5 +12,4 @@ public interface AccountService {
     CommonResponse registerAccount(RegisterRequest request) throws TransactionException, JsonProcessingException;
     CommonResponse login(LoginRequest request);
     CommonResponse approveAccount(ApproveAccountRequest request) throws TransactionException;
-    CommonResponse logout();
 }

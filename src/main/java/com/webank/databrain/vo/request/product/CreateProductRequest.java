@@ -18,9 +18,6 @@ public class CreateProductRequest extends CommonRequest {
     @NotBlank(message = "productName不能为空.")
     private String productName;
 
-    @NotBlank(message = "did不能为空.")
-    private String did;
-
     @NotBlank(message = "productDesc不能为空.")
     private String productDesc;
 }

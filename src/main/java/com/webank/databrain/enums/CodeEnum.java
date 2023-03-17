@@ -21,6 +21,7 @@ public enum CodeEnum {
     FORBIDDEN(403, "权限不足"),
 
     FILE_NOT_EXIST(800, "文件不存在"),
+    BLOCKCHAIN_TX_ERROR(801, "区块链交易执行失败"),
 
     TX_TIME_OUT(901, "系统超时"),
     SQL_DUPLICATE_RECORD(902, "记录已存在"),

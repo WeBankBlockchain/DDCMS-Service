@@ -2,6 +2,7 @@ package com.webank.databrain.service.impl;
 
 import cn.hutool.core.codec.Base64;
 import com.webank.databrain.bo.HotProductBO;
+import com.webank.databrain.bo.LoginUserBO;
 import com.webank.databrain.bo.ProductInfoBO;
 import com.webank.databrain.config.SysConfig;
 import com.webank.databrain.dao.bc.contract.ProductModule;
@@ -14,7 +15,6 @@ import com.webank.databrain.enums.ReviewStatus;
 import com.webank.databrain.handler.ThreadLocalKeyPairHandler;
 import com.webank.databrain.service.ProductService;
 import com.webank.databrain.utils.BlockchainUtils;
-import com.webank.databrain.utils.PagingUtils;
 import com.webank.databrain.vo.common.CommonPageQueryRequest;
 import com.webank.databrain.vo.common.CommonResponse;
 import com.webank.databrain.vo.common.HotDataRequest;
@@ -68,14 +68,21 @@ public class ProductServiceImpl implements ProductService {
 
     public CommonResponse pageQueryProducts(CommonPageQueryRequest request) {
 
-        int total = productInfoMapper.count();
+        int totalCount = productInfoMapper.count();
+        int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
+
+        PageListData pageListData = new PageListData<>();
+        pageListData.setPageCount(pageCount);
+        pageListData.setTotalCount(totalCount);
+
+        int offset = (request.getPageNo() - 1) * request.getPageSize();
+
+
         List<ProductInfoBO> productInfoPOList = productInfoMapper.pageQueryProduct(
-                PagingUtils.getStartOffset(request.getPageNo(),request.getPageSize()),
+                offset,
                 request.getPageSize());
-        PageListData<ProductInfoBO> pageListData = new PageListData<>();
+
         pageListData.setItemList(productInfoPOList);
-        pageListData.setPageCount(PagingUtils.getPageCount(total,request.getPageSize()));
-        pageListData.setTotalCount(total);
         return CommonResponse.success(pageListData);
     }
 
@@ -86,7 +93,8 @@ public class ProductServiceImpl implements ProductService {
 
     public CommonResponse createProduct(CreateProductRequest productRequest) throws TransactionException {
         CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
-        AccountInfoEntity entity = accountInfoMapper.selectByDid(productRequest.getDid());
+        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        AccountInfoEntity entity = accountInfoMapper.selectByDid(bo.getEntity().getDid());
         if (entity == null) {
             return CommonResponse.error(CodeEnum.USER_NOT_EXISTS);
         }
