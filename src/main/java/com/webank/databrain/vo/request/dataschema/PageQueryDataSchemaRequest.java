@@ -9,7 +9,6 @@ import lombok.EqualsAndHashCode;
 public class PageQueryDataSchemaRequest extends CommonPageQueryRequest {
     private Long productId;
     private Long providerId;
-    private Long tagId;
     private String keyWord;
     private Long schemaId;
 }
