@@ -1,5 +1,6 @@
 package com.webank.databrain.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webank.databrain.ServerApplicationTests;
 import com.webank.databrain.dao.entity.PersonInfoEntity;
@@ -85,6 +86,5 @@ public class AccountServiceTest extends ServerApplicationTests {
 //        approveAccountRequest.setDid(did);
 //
 //        accountService.approveAccount(approveAccountRequest);
-
     }
 }

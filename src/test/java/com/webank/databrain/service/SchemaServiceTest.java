@@ -69,7 +69,7 @@ public class SchemaServiceTest  extends ServerApplicationTests {
         CreateProductRequest createProductRequest = new CreateProductRequest();
         createProductRequest.setProductName("华为P60");
         createProductRequest.setProductDesc("华为P6000手机.." + RandomUtil.randomNumbers(5));
-        createProductRequest.setDid(did);
+        //createProductRequest.setDid(did);
         CommonResponse response = productServiceImpl.createProduct(createProductRequest);
         System.out.println("response = " + response);
 

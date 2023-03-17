@@ -23,6 +23,7 @@ public enum CodeEnum {
     FILE_NOT_EXIST(800, "文件不存在"),
     BLOCKCHAIN_TX_ERROR(801, "区块链交易执行失败"),
 
+    LOGIN_FAILED(802, "用户名或密码错误"),
     TX_TIME_OUT(901, "系统超时"),
     SQL_DUPLICATE_RECORD(902, "记录已存在"),
     UNKNOWN_ERROR(9999, "系统错误");

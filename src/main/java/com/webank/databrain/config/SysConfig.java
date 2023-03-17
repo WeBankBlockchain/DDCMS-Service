@@ -16,8 +16,6 @@ public class SysConfig {
 
     private int cryptoConfig;
 
-    private String salt;
-
     private String witnessPrivateKey;
 
     @NestedConfigurationProperty
@@ -37,6 +35,4 @@ public class SysConfig {
     public static class FileConfig {
         private String fileDir;
     }
-
-
 }

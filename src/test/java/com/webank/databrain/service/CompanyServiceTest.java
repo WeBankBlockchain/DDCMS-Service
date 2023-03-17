@@ -2,12 +2,10 @@ package com.webank.databrain.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webank.databrain.ServerApplicationTests;
-import com.webank.databrain.enums.AccountStatus;
 import com.webank.databrain.vo.common.CommonResponse;
 import com.webank.databrain.vo.common.HotDataRequest;
 import com.webank.databrain.vo.request.account.SearchAccountRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.fisco.bcos.sdk.v3.transaction.tools.JsonUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

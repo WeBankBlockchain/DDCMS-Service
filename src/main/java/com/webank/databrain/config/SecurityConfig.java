@@ -1,5 +1,6 @@
 package com.webank.databrain.config;
 
+import com.webank.databrain.enums.AccountType;
 import com.webank.databrain.filter.JwtAuthenticationFilter;
 import com.webank.databrain.handler.AccessDeniedHandlerHandler;
 import com.webank.databrain.handler.AuthenticationEntryPointHandler;
@@ -32,6 +33,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AccessDeniedHandlerHandler accessDeniedHandlerHandler;
 
+    @Autowired
+    private AuthConfig authConfig;
+
     // encoder 加密 会自动带上salt
     // decoder 解密 return true or false
     @Bean
@@ -55,27 +59,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/account/register").permitAll()  // 直接放行
-                .antMatchers("/api/account/pageQueryCompany").permitAll()
-                .antMatchers("/api/account/queryCompanyByUsername").permitAll()
-                .antMatchers("/api/account/queryPersonByUsername").permitAll()
-                .antMatchers("/api/account/getHotCompanies").permitAll()
-                .antMatchers("/api/account/searchCompany").permitAll()
-                .antMatchers("/api/account/searchPerson").permitAll()
-                .antMatchers("/api/schema/pageQuerySchema").permitAll()
-                .antMatchers("/api/schema/querySchemaById").permitAll()
-                .antMatchers("/api/file/download").permitAll()
-                .antMatchers("/api/file/upload").permitAll()
-                .antMatchers("/api/product/getHotProducts").permitAll()
-                .antMatchers("/api/product/pageQueryProduct").permitAll()
-                .antMatchers("/api/product/queryProductById").permitAll()
-                .antMatchers("/api/tag/getHotTags").permitAll()
-                .antMatchers("/api/account/login").anonymous()  //允许匿名访问
-                .antMatchers("/api/account/approveAccount").hasAnyAuthority("ADMIN")
-                .antMatchers("/api/schema/createSchema").hasAnyAuthority("COMPANY")
-                .antMatchers("/api/product/approveProduct").hasAnyAuthority("ADMIN")
-                .antMatchers("/api/product/createProduct").hasAnyAuthority("COMPANY")
-                .antMatchers("/api/product/updateProduct").hasAnyAuthority("COMPANY")
+                .antMatchers(authConfig.getPermitAllApiList().stream().toArray(String[]::new)).permitAll()
+                .antMatchers(authConfig.getAnonymousApi()).anonymous()
+                .antMatchers(authConfig.getRoleAuth().getAdminAuth().stream().toArray(String[]::new)).hasAnyAuthority(AccountType.ADMIN.getRoleName())
+                .antMatchers(authConfig.getRoleAuth().getCompanyAuth().stream().toArray(String[]::new)).hasAnyAuthority(AccountType.COMPANY.getRoleName())
+                // .antMatchers(authConfig.getRoleAuth().getWitnessAuth().stream().toArray(String[]::new)).hasAnyAuthority(AccountType.WITNESS.getRoleName())
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtAuthenticationFilter ,UsernamePasswordAuthenticationFilter.class)

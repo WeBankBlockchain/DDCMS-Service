@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -126,24 +127,24 @@ public class AccountServiceImpl implements AccountService {
             return CommonResponse.error(CodeEnum.USER_NOT_EXISTS);
         }
 
-        // 使用auth进行用户认证
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(request.getUserName(), request.getPassword());
-        // 调用UserDetailService实现类的认证方法
-        Authentication authentication =authenticationManager.authenticate(authenticationToken);
+        try {
+            // 使用auth进行用户认证
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(request.getUserName(), request.getPassword());
+            // 调用UserDetailService实现类的认证方法
+            Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
-        // 认证没通过，则给出提示
-        if(null == authentication){
-            throw new RuntimeException("登录失败.");
+            // 认证通过，则生成token，并返回
+            LoginUserBO loginInfoBo = (LoginUserBO)authentication.getPrincipal();
+
+            String token = JwtTokenHandler.TOKEN_PREFIX + tokenHandler.generateToken(loginInfoBo.getEntity().getDid());
+            LoginResponse response = new LoginResponse();
+            response.setToken(token);
+
+            return CommonResponse.success(response);
+        }catch (AuthenticationException e){
+            return CommonResponse.error(CodeEnum.LOGIN_FAILED);
         }
 
-        // 认证通过，则生成token，并返回
-        LoginUserBO loginInfoBo = (LoginUserBO)authentication.getPrincipal();
-
-        String token = JwtTokenHandler.TOKEN_PREFIX + tokenHandler.generateToken(loginInfoBo.getEntity().getDid());
-        LoginResponse response = new LoginResponse();
-        response.setToken(token);
-
-        return CommonResponse.success(response);
     }
 
     @Override
