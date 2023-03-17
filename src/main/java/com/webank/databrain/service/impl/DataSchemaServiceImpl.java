@@ -80,7 +80,6 @@ public class DataSchemaServiceImpl implements DataSchemaService {
                 request.getPageSize(),
                 request.getProductId(),
                 request.getProviderId(),
-                request.getTagId(),
                 request.getKeyWord());
         if(CollectionUtil.isNotEmpty(dataSchemaDetailBOList)) {
             List<Long> schemaIds = dataSchemaDetailBOList.stream()

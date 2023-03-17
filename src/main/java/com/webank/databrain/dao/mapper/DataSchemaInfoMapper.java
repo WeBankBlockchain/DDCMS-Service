@@ -29,10 +29,6 @@ public interface DataSchemaInfoMapper {
             "f.did as providerGid " +
             "from t_data_schema_info a " +
             "left join " +
-            "t_data_schema_tags b on a.pk_id = b.data_schema_id " +
-            "left join " +
-            "t_tag_info c on b.tag_id = c.pk_id " +
-            "left join " +
             "t_product_info d on a.product_id = d.pk_id " +
             "left join " +
             "t_company_info e on a.provider_id = e.pk_id " +
@@ -41,7 +37,6 @@ public interface DataSchemaInfoMapper {
             "where 1 =1  " +
             "<if test='productId != null and productId &gt; 0'> AND a.product_id = #{productId} </if>" +
             "<if test='providerId != null and providerId &gt; 0'> AND a.provider_id = #{providerId} </if>" +
-            "<if test='tagId != null and tagId &gt; 0'> AND b.tag_id = #{tagId} </if>" +
             "<if test='keyWord != null'> AND a.data_schema_name like concat('%', #{keyWord}, '%') " +
             " or a.data_schema_desc like concat('%', #{keyWord}, '%') </if>" +
             " ORDER BY a.create_time DESC LIMIT #{start}, #{pageSize} " +
@@ -51,7 +46,6 @@ public interface DataSchemaInfoMapper {
                                            @Param("pageSize")int pageSize,
                                            @Param("productId") Long productId,
                                            @Param("providerId") Long providerId,
-                                           @Param("tagId") Long tagId,
                                            @Param("keyWord") String keyWord);
 
     @Select("SELECT COUNT(*) FROM t_data_schema_info")
