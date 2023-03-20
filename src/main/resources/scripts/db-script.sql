@@ -47,8 +47,6 @@ CREATE TABLE `t_company_info` (
   UNIQUE KEY `company_name` (`company_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
-
-
  CREATE TABLE `t_product_info` (
    `pk_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
    `product_gid` varchar(255) NOT NULL COMMENT '产品链上id',
@@ -91,7 +89,6 @@ CREATE TABLE `t_company_info` (
    UNIQUE KEY (`data_schema_gid`)
  ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
  CREATE TABLE `t_data_schema_tags` (
    `pk_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
    `data_schema_id`  bigint(20) unsigned NOT NULL COMMENT '数据目录外键id',
@@ -117,3 +114,16 @@ CREATE TABLE `t_company_info` (
     PRIMARY KEY (`pk_id`),
     UNIQUE KEY (`data_schema_id`)
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+   CREATE TABLE `t_menu_info` (
+     `pk_id` bigint unsigned NOT NULL AUTO_INCREMENT,
+     `menu_id` int DEFAULT NULL,
+     `menu_name` varchar(64) NOT NULL DEFAULT '' COMMENT '菜单名',
+     `parent_id` bigint unsigned NOT NULL COMMENT '父菜单id',
+     `menu_url` varchar(255) NOT NULL DEFAULT '' COMMENT '菜单URL',
+     `menu_role` int NOT NULL COMMENT '菜单角色',
+     `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+     `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+     PRIMARY KEY (`pk_id`)
+   ) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb3;
+

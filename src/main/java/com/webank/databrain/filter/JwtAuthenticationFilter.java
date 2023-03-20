@@ -6,6 +6,7 @@ import com.webank.databrain.dao.mapper.AccountInfoMapper;
 import com.webank.databrain.enums.AccountType;
 import com.webank.databrain.handler.JwtTokenHandler;
 import io.jsonwebtoken.Claims;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
@@ -41,7 +43,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         token = token.substring(7);
-
         AccountInfoEntity entity = this.getAccount(token);
 
         List<String> permissionList = new ArrayList<>();
