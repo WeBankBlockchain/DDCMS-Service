@@ -1,8 +1,10 @@
 package com.webank.databrain.service.impl;
 
-import cn.hutool.core.codec.Base64;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.HexUtil;
 import com.webank.databrain.bo.DataSchemaDetailBO;
+import com.webank.databrain.bo.DataSchemaWithAccessBO;
+import com.webank.databrain.bo.ProductInfoBO;
 import com.webank.databrain.config.SysConfig;
 import com.webank.databrain.dao.bc.contract.DataSchemaModule;
 import com.webank.databrain.dao.entity.*;
@@ -15,8 +17,6 @@ import com.webank.databrain.vo.common.CommonResponse;
 import com.webank.databrain.vo.common.PageListData;
 import com.webank.databrain.vo.request.dataschema.CreateDataSchemaRequest;
 import com.webank.databrain.vo.request.dataschema.PageQueryDataSchemaRequest;
-import com.webank.databrain.bo.DataSchemaWithAccessBO;
-import com.webank.databrain.bo.ProductInfoBO;
 import com.webank.databrain.vo.request.dataschema.UpdateDataSchemaRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.sdk.v3.client.Client;
@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -187,7 +188,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
                 schemaRequest.getDataSchemaName())
                 .getBytes(StandardCharsets.UTF_8));
 
-        byte[] dataSchemaId = Base64.decode(dataSchemaWithAccessBO.getDataSchemaGid());
+        byte[] dataSchemaId = HexUtil.decodeHex(dataSchemaWithAccessBO.getDataSchemaGid());
 
         TransactionReceipt receipt = dataSchemaModule.modifyDataSchema(dataSchemaId,hash);
         BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
@@ -236,7 +237,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         TransactionReceipt receipt = dataSchemaModule.createDataSchema(hash);
         BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
 
-        String dataSchemaId = Base64.encode(dataSchemaModule.getCreateDataSchemaOutput(receipt).getValue1());
+        String dataSchemaId = HexUtil.encodeHexStr(dataSchemaModule.getCreateDataSchemaOutput(receipt).getValue1());
         DataSchemaInfoEntity dataSchemaInfoEntity = new DataSchemaInfoEntity();
         BeanUtils.copyProperties(schemaRequest, dataSchemaInfoEntity);
         dataSchemaInfoEntity.setDataSchemaGid(dataSchemaId);

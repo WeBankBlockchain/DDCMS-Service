@@ -13,6 +13,8 @@ import java.util.List;
 @Data
 public class UpdateDataSchemaRequest extends CommonRequest {
 
+
+    @NotBlank(message = "目录ID不能为空.")
     private Long schemaId;
 
     private String dataSchemaName;
