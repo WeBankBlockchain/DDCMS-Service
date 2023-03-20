@@ -12,38 +12,22 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class CreateDataSchemaRequest extends CommonRequest {
 
-    private String did;
-
-    @NotBlank(message = "dataSchemaName不能为空.")
+    @NotBlank(message = "目录名不能为空.")
     private String dataSchemaName;
 
-    @NotBlank(message = "providerId不能为空.")
-    private Long providerId;
-
-    @NotBlank(message = "providerGId不能为空.")
-    private String providerGId;
-
-    private String providerName;
-
-    @NotBlank(message = "productId不能为空.")
+    @NotBlank(message = "产品ID不能为空.")
     private Long productId;
 
-    @NotBlank(message = "productGId不能为空.")
-    private String productGId;
-
-    private String productName;
-
     private List<String> tagNameList;
-
     /**
      * 版本号
      */
     private Integer version;
 
-    @NotBlank(message = "visible不能为空.")
+    @NotBlank(message = "是否可见不能为空.")
     private Integer visible;
 
-    @NotBlank(message = "dataSchemaDesc不能为空.")
+    @NotBlank(message = "目录描述不能为空.")
     private String dataSchemaDesc;
 
     /**
@@ -55,8 +39,6 @@ public class CreateDataSchemaRequest extends CommonRequest {
      * 价格
      */
     private Integer price;
-
-    private Date createTime;
 
     private Integer dataFormat;
 

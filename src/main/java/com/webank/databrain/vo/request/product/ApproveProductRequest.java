@@ -10,12 +10,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class ApproveProductRequest extends CommonRequest {
 
-    @NotBlank(message = "productGId不能为空.")
-    private String productGId;
-
-    @NotBlank(message = "did不能为空.")
-    private String did;
-
+    @NotBlank(message = "产品ID不能为空.")
     private Long productId;
 
     private boolean agree;

@@ -15,6 +15,8 @@ public interface ProductService {
 
     CommonResponse getProductDetail(String productId);
 
+    CommonResponse getProductDetail(Long productId);
+
     CommonResponse createProduct(CreateProductRequest productRequest) throws TransactionException;
 
     CommonResponse updateProduct(UpdateProductRequest productRequest) throws TransactionException;

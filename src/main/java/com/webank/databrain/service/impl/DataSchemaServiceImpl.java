@@ -27,6 +27,7 @@ import org.fisco.bcos.sdk.v3.transaction.codec.decode.TransactionDecoderInterfac
 import org.fisco.bcos.sdk.v3.transaction.model.exception.TransactionException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.nio.charset.StandardCharsets;
@@ -142,21 +143,38 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         return CommonResponse.success(dataSchemaWithAccessResponse);
     }
 
+    public CommonResponse getDataSchemaByGid(Long schemaId){
+        DataSchemaWithAccessBO dataSchemaWithAccessBO = dataSchemaInfoMapper.getSchemaById(schemaId);
+        List<DataSchemaTagsEntity> schemaTagsEntityList = dataSchemaTagsMapper.getSchemaTagsMap(dataSchemaWithAccessBO.getSchemaId());
+        if (CollectionUtil.isNotEmpty(schemaTagsEntityList)){
+            List<Long> tagIds = schemaTagsEntityList.stream()
+                    .filter(Objects::nonNull)
+                    .map(DataSchemaTagsEntity::getTagId)
+                    .collect(Collectors.toList());
+            List<TagInfoEntity> tagInfoEntityList = tagInfoMapper.queryTagByIds(tagIds);
+            List<String> tagNames = tagInfoEntityList.stream()
+                    .filter(Objects::nonNull)
+                    .map(TagInfoEntity::getTagName)
+                    .collect(Collectors.toList());
+            dataSchemaWithAccessBO.setTagNameList(tagNames);
+        }
+        return CommonResponse.success(dataSchemaWithAccessBO);
+    }
+
     public CommonResponse getDataSchemaAccessById(Long accessId){
         DataSchemaWithAccessBO dataSchemaWithAccessBO = dataSchemaAccessInfoMapper.getSchemaAccessByGid(accessId);
         return CommonResponse.success(dataSchemaWithAccessBO);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public CommonResponse updateDataSchema(UpdateDataSchemaRequest schemaRequest) throws TransactionException {
-        DataSchemaInfoEntity dataSchemaInfoEntity = dataSchemaInfoMapper.getSchemaByGId(schemaRequest.getDataSchemaGid());
-        if (dataSchemaInfoEntity == null){
+        String did = SecurityContextHolder.getContext().getAuthentication().getName();
+        DataSchemaWithAccessBO dataSchemaWithAccessBO = dataSchemaInfoMapper.getSchemaById(schemaRequest.getSchemaId());
+        if (dataSchemaWithAccessBO == null){
             return CommonResponse.error(CodeEnum.SCHEMA_NOT_EXISTS);
         }
         CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
-        AccountInfoEntity entity = accountInfoMapper.selectByDid(schemaRequest.getDid());
-        if (entity == null){
-            return CommonResponse.error(CodeEnum.USER_NOT_EXISTS);
-        }
+        AccountInfoEntity entity = accountInfoMapper.selectByDid(did);
         String privateKey = entity.getPrivateKey();
         CryptoKeyPair keyPair = cryptoSuite.loadKeyPair(privateKey);
         DataSchemaModule dataSchemaModule = DataSchemaModule.load(
@@ -164,46 +182,42 @@ public class DataSchemaServiceImpl implements DataSchemaService {
                 client,
                 keyPair);
 
-        byte[] hash = cryptoSuite.hash((dataSchemaInfoEntity.getProductId() +
+        byte[] hash = cryptoSuite.hash((dataSchemaWithAccessBO.getProductId() +
                 schemaRequest.getContentSchema() +
                 schemaRequest.getDataSchemaName())
                 .getBytes(StandardCharsets.UTF_8));
 
-        byte[] dataSchemaId = Base64.decode(schemaRequest.getDataSchemaGid());
+        byte[] dataSchemaId = Base64.decode(dataSchemaWithAccessBO.getDataSchemaGid());
 
         TransactionReceipt receipt = dataSchemaModule.modifyDataSchema(dataSchemaId,hash);
         BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
 
         DataSchemaInfoEntity dataSchemaInfoEntityUp = new DataSchemaInfoEntity();
         BeanUtils.copyProperties(schemaRequest, dataSchemaInfoEntityUp);
-        dataSchemaInfoEntityUp.setDataSchemaGid(schemaRequest.getDataSchemaGid());
+        dataSchemaInfoEntityUp.setDataSchemaGid(dataSchemaWithAccessBO.getDataSchemaGid());
         dataSchemaInfoEntityUp.setPkId(schemaRequest.getSchemaId());
         dataSchemaInfoMapper.updateDataSchemaInfo(dataSchemaInfoEntityUp);
         log.info("save dataSchemaInfoEntity finish, schemaId = {}", dataSchemaId);
 
         DataSchemaAccessInfoEntity dataSchemaAccessInfoEntity = new DataSchemaAccessInfoEntity();
         BeanUtils.copyProperties(schemaRequest, dataSchemaAccessInfoEntity);
-        dataSchemaAccessInfoEntity.setDataSchemaId(dataSchemaInfoEntity.getPkId());
+        dataSchemaAccessInfoEntity.setDataSchemaId(dataSchemaWithAccessBO.getSchemaId());
         dataSchemaAccessInfoMapper.updateDataSchemaAccessInfo(dataSchemaAccessInfoEntity);
         log.info("save dataSchemaAccessInfoEntity finish, schemaId = {}", dataSchemaId);
 
         //处理标签，从更新的标签中取出不一样的，进行更新，并进行删除
-        handlerTag(dataSchemaInfoEntity,schemaRequest);
-
-        log.info("save dataSchemaTagsEntity finish, schemaId = {}", dataSchemaId);
+        handlerTag(schemaRequest);
+        log.info("handlerTag finish, schemaId = {}", dataSchemaId);
 
         return CommonResponse.success(dataSchemaId);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public CommonResponse createDataSchema(CreateDataSchemaRequest schemaRequest) throws Exception {
-
+        String did = SecurityContextHolder.getContext().getAuthentication().getName();
         CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
-        AccountInfoEntity entity = accountInfoMapper.selectByDid(schemaRequest.getProviderGId());
-        if (entity == null){
-            return CommonResponse.error(CodeEnum.USER_NOT_EXISTS);
-        }
-        ProductInfoBO product = productInfoMapper.getProductByGId(schemaRequest.getProductGId());
+        AccountInfoEntity entity = accountInfoMapper.selectByDid(did);
+        ProductInfoBO product = productInfoMapper.getProductById(schemaRequest.getProductId());
         if(product == null){
             return CommonResponse.error(CodeEnum.PRODUCT_NOT_EXISTS);
         }
@@ -226,6 +240,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         DataSchemaInfoEntity dataSchemaInfoEntity = new DataSchemaInfoEntity();
         BeanUtils.copyProperties(schemaRequest, dataSchemaInfoEntity);
         dataSchemaInfoEntity.setDataSchemaGid(dataSchemaId);
+        dataSchemaInfoEntity.setProviderId(entity.getPkId());
         dataSchemaInfoMapper.insertDataSchemaInfo(dataSchemaInfoEntity);
         log.info("save dataSchemaInfoEntity finish, schemaId = {}", dataSchemaId);
 
@@ -253,7 +268,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         return CommonResponse.success(dataSchemaId);
     }
 
-    private void handlerTag(DataSchemaInfoEntity dataSchemaInfoEntity,UpdateDataSchemaRequest schemaRequest){
+    private void handlerTag(UpdateDataSchemaRequest schemaRequest){
         List<String> tagNames = schemaRequest.getTagNameList();
         List<DataSchemaTagsEntity> dataSchemaTagsEntityList = dataSchemaTagsMapper.getSchemaTagsMap(schemaRequest.getSchemaId());
         List<Long> tagIds = dataSchemaTagsEntityList.stream()
@@ -278,7 +293,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
                 tagInfoMapper.insertItem(tagInfo);
             }
             DataSchemaTagsEntity dataSchemaTagsEntity = new DataSchemaTagsEntity();
-            dataSchemaTagsEntity.setDataSchemaId(dataSchemaInfoEntity.getPkId());
+            dataSchemaTagsEntity.setDataSchemaId(schemaRequest.getSchemaId());
             dataSchemaTagsEntity.setTagId(tagInfo.getPkId());
             dataSchemaTagsMapper.insertDataSchemaTag(dataSchemaTagsEntity);
         });
@@ -288,6 +303,6 @@ public class DataSchemaServiceImpl implements DataSchemaService {
                 .collect(Collectors.toList());
 
         List<Long> delTagIds = tagInfoMapper.getTagIdsByNames(delTags);
-        dataSchemaTagsMapper.delDataSchemaTag(delTagIds,dataSchemaInfoEntity.getPkId());
+        dataSchemaTagsMapper.delDataSchemaTag(delTagIds,schemaRequest.getSchemaId());
     }
 }

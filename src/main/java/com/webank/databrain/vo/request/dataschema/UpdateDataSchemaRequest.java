@@ -15,26 +15,16 @@ public class UpdateDataSchemaRequest extends CommonRequest {
 
     private Long schemaId;
 
-    private String dataSchemaGid;
-
-    private String did;
-
-    @NotBlank(message = "dataSchemaName不能为空.")
     private String dataSchemaName;
 
-    private String productName;
-
     private List<String> tagNameList;
-
     /**
      * 版本号
      */
     private Integer version;
 
-    @NotBlank(message = "visible不能为空.")
     private Integer visible;
 
-    @NotBlank(message = "dataSchemaDesc不能为空.")
     private String dataSchemaDesc;
 
     /**
@@ -46,8 +36,6 @@ public class UpdateDataSchemaRequest extends CommonRequest {
      * 价格
      */
     private Integer price;
-
-    private Date createTime;
 
 
     private Long accessId;

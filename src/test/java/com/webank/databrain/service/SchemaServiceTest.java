@@ -76,9 +76,7 @@ public class SchemaServiceTest  extends ServerApplicationTests {
 
         String productGid = (String) response.getData();
         ApproveProductRequest approveProductRequest = new ApproveProductRequest();
-        approveProductRequest.setProductGId(productGid);
         approveProductRequest.setAgree(true);
-        approveProductRequest.setDid(did);
         response = productServiceImpl.approveProduct(approveProductRequest);
         System.out.println("response = " + response);
 
@@ -97,9 +95,6 @@ public class SchemaServiceTest  extends ServerApplicationTests {
         schemaRequest.setProductId(1L);
         schemaRequest.setDataFormat(1);
         schemaRequest.setDataProtocol(1);
-        schemaRequest.setProductGId(productGid);
-        schemaRequest.setProviderId(15L);
-        schemaRequest.setProviderGId(did);
         schemaRequest.setVisible(1);
         schemaRequest.setUri("127.0.0.1");
         result =  schemaService.createDataSchema(schemaRequest);

@@ -28,9 +28,9 @@ public interface ProductInfoMapper {
             " FROM t_product_info a" +
             " left JOIN t_account_info b ON a.provider_id = b.pk_id" +
             " left JOIN t_company_info c ON a.provider_id = c.account_id" +
-            " where a.product_gid = #{productId}")
+            " where a.product_gid = #{productGid}")
     @ResultType(ProductInfoBO.class)
-    ProductInfoBO getProductByGId(@Param("productId") String productId);
+    ProductInfoBO getProductByGId(@Param("productGid") String productGid);
 
 
     @Select("SELECT * FROM t_product_info where pk_id IN (#{ids})")
@@ -77,4 +77,11 @@ public interface ProductInfoMapper {
     @Select("SELECT COUNT(*) FROM t_product_info")
     int count();
 
+    @Select("SELECT a.pk_id as productId, a.product_gid, a.product_name,a.product_desc,a.status,a.review_time,a.create_time,b.did,c.company_name" +
+            " FROM t_product_info a" +
+            " left JOIN t_account_info b ON a.provider_id = b.pk_id" +
+            " left JOIN t_company_info c ON a.provider_id = c.account_id" +
+            " where a.pk_id = #{productId}")
+    @ResultType(ProductInfoBO.class)
+    ProductInfoBO getProductById(@Param("productId") Long productId);
 }
