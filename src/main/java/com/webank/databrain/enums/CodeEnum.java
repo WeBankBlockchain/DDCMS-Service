@@ -20,6 +20,8 @@ public enum CodeEnum {
     UN_AUTHORIZED(401, "用户认证失败"),
     FORBIDDEN(403, "权限不足"),
 
+    SCHEMA_NOT_EXISTS(500, "产品不存在"),
+
     FILE_NOT_EXIST(800, "文件不存在"),
     BLOCKCHAIN_TX_ERROR(801, "区块链交易执行失败"),
 

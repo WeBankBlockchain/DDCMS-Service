@@ -11,6 +11,7 @@ import com.webank.databrain.vo.request.account.ApproveAccountRequest;
 import com.webank.databrain.vo.request.account.RegisterRequest;
 import com.webank.databrain.vo.request.dataschema.CreateDataSchemaRequest;
 import com.webank.databrain.vo.request.dataschema.PageQueryDataSchemaRequest;
+import com.webank.databrain.vo.request.dataschema.UpdateDataSchemaRequest;
 import com.webank.databrain.vo.request.product.ApproveProductRequest;
 import com.webank.databrain.vo.request.product.CreateProductRequest;
 import org.assertj.core.util.Lists;

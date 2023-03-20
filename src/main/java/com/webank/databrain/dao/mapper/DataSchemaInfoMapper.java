@@ -156,7 +156,10 @@ public interface DataSchemaInfoMapper {
     @Update("UPDATE t_data_schema_info SET " +
             "data_schema_name=#{dataSchemaName}, " +
             "visible=#{visible}, " +
+            "data_schema_usage=#{dataSchemaUsage}," +
             "data_schema_desc=#{dataSchemaDesc}, " +
+            "price=#{price}," +
+            "version=#{version}," +
             "update_time=#{updateTime} " +
             "WHERE pk_id=#{pkId}")
     void updateDataSchemaInfo(DataSchemaInfoEntity dataSchemaInfoEntity);
