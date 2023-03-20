@@ -90,9 +90,7 @@ public class ProductServiceTest extends ServerApplicationTests {
         System.out.println("response = " + response);
 
         ApproveProductRequest approveProductRequest = new ApproveProductRequest();
-        approveProductRequest.setProductGId((String) response.getData());
         approveProductRequest.setAgree(true);
-        approveProductRequest.setDid(did);
         response = productServiceImpl.approveProduct(approveProductRequest);
         System.out.println("response = " + response);
     }

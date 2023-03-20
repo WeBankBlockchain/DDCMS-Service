@@ -43,6 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         token = token.substring(7);
+
         AccountInfoEntity entity = this.getAccount(token);
 
         List<String> permissionList = new ArrayList<>();

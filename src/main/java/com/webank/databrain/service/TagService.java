@@ -8,8 +8,4 @@ import com.webank.databrain.vo.request.tags.CreateTagRequest;
 public interface TagService {
 
     CommonResponse listHotTags(HotDataRequest request);
-
-
-    CommonResponse createTag(CreateTagRequest createTagRequest);
-
 }

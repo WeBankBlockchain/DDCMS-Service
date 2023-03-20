@@ -14,15 +14,12 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 public class UpdateProductRequest extends CommonRequest {
 
-    @NotBlank(message = "productId不能为空.")
+    @NotBlank(message = "产品ID不能为空.")
     private Long productId;
 
-    @NotBlank(message = "productGId不能为空.")
-    private String productGId;
-
-    @NotBlank(message = "productName不能为空.")
+    @NotBlank(message = "产品名称不能为空.")
     private String productName;
 
-    @NotBlank(message = "productDesc不能为空.")
+    @NotBlank(message = "产品描述不能为空.")
     private String productDesc;
 }

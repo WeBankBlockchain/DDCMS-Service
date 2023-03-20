@@ -1,42 +1,75 @@
 package com.webank.databrain.vo.request.dataschema;
 
+import com.webank.databrain.vo.common.CommonRequest;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.List;
 
+
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class UpdateDataSchemaRequest {
+public class UpdateDataSchemaRequest extends CommonRequest {
 
-    private String schemaId;
+    private Long schemaId;
 
-    private String providerId;
+    private String dataSchemaName;
 
-    private String tag;
-
-    private String productId;
-
+    private List<String> tagNameList;
+    /**
+     * 版本号
+     */
     private Integer version;
 
     private Integer visible;
 
-    private String description;
+    private String dataSchemaDesc;
 
-    private String usage;
+    /**
+     * 用途
+     */
+    private String dataSchemaUsage;
 
+    /**
+     * 价格
+     */
     private Integer price;
 
-    private Integer type;
 
-    private Integer protocol;
+    private Long accessId;
 
-    private String schema;
+    private Integer dataFormat;
 
-    private String condition;
+    /**
+     * 类型，HTTP-0，HTTPS-1，SFTP-2...
+     */
+    private Integer dataProtocol;
 
+    /**
+     * 内容格式
+     */
+    private String contentSchema;
+
+    /**
+     * 数据的查询条件定义
+     */
+    private String accessCondition;
+
+    /**
+     * 数据访问连接
+     */
     private String uri;
 
-    private LocalDateTime effectTime;
+    /**
+     * 生效时间
+     */
+    private Timestamp effectTime;
 
-    private LocalDateTime expireTime;
+    /**
+     * 失效时间
+     */
+    private Timestamp expireTime;
 
 }

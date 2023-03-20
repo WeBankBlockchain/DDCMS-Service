@@ -30,4 +30,13 @@ public interface TagInfoMapper {
             "</script>")
     @ResultType(TagInfoEntity.class)
     List<TagInfoEntity> queryTagByIds(List<Long> ids);
+
+
+    @Select("<script>" +
+            "SELECT tag_id FROM t_tag_info where tag_name in" +
+            "   <foreach item='name' index='index' collection='names' open='(' separator=',' close=')'>" +
+            "       #{name}" +
+            "   </foreach>" +
+            "</script>")
+    List<Long> getTagIdsByNames(List<String> names);
 }

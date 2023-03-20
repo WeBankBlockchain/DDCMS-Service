@@ -17,6 +17,7 @@ import com.webank.databrain.vo.request.dataschema.CreateDataSchemaRequest;
 import com.webank.databrain.vo.request.dataschema.PageQueryDataSchemaRequest;
 import com.webank.databrain.bo.DataSchemaWithAccessBO;
 import com.webank.databrain.bo.ProductInfoBO;
+import com.webank.databrain.vo.request.dataschema.UpdateDataSchemaRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
@@ -25,6 +26,8 @@ import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
 import org.fisco.bcos.sdk.v3.transaction.codec.decode.TransactionDecoderInterface;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.fisco.bcos.sdk.v3.transaction.model.exception.TransactionException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.nio.charset.StandardCharsets;
@@ -140,20 +143,81 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         return CommonResponse.success(dataSchemaWithAccessResponse);
     }
 
+    public CommonResponse getDataSchemaByGid(Long schemaId){
+        DataSchemaWithAccessBO dataSchemaWithAccessBO = dataSchemaInfoMapper.getSchemaById(schemaId);
+        List<DataSchemaTagsEntity> schemaTagsEntityList = dataSchemaTagsMapper.getSchemaTagsMap(dataSchemaWithAccessBO.getSchemaId());
+        if (CollectionUtil.isNotEmpty(schemaTagsEntityList)){
+            List<Long> tagIds = schemaTagsEntityList.stream()
+                    .filter(Objects::nonNull)
+                    .map(DataSchemaTagsEntity::getTagId)
+                    .collect(Collectors.toList());
+            List<TagInfoEntity> tagInfoEntityList = tagInfoMapper.queryTagByIds(tagIds);
+            List<String> tagNames = tagInfoEntityList.stream()
+                    .filter(Objects::nonNull)
+                    .map(TagInfoEntity::getTagName)
+                    .collect(Collectors.toList());
+            dataSchemaWithAccessBO.setTagNameList(tagNames);
+        }
+        return CommonResponse.success(dataSchemaWithAccessBO);
+    }
+
     public CommonResponse getDataSchemaAccessById(Long accessId){
         DataSchemaWithAccessBO dataSchemaWithAccessBO = dataSchemaAccessInfoMapper.getSchemaAccessByGid(accessId);
         return CommonResponse.success(dataSchemaWithAccessBO);
     }
 
-    @Transactional
-    public CommonResponse createDataSchema(CreateDataSchemaRequest schemaRequest) throws Exception {
-
-        CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
-        AccountInfoEntity entity = accountInfoMapper.selectByDid(schemaRequest.getProviderGId());
-        if (entity == null){
-            return CommonResponse.error(CodeEnum.USER_NOT_EXISTS);
+    @Transactional(rollbackFor = Exception.class)
+    public CommonResponse updateDataSchema(UpdateDataSchemaRequest schemaRequest) throws TransactionException {
+        String did = SecurityContextHolder.getContext().getAuthentication().getName();
+        DataSchemaWithAccessBO dataSchemaWithAccessBO = dataSchemaInfoMapper.getSchemaById(schemaRequest.getSchemaId());
+        if (dataSchemaWithAccessBO == null){
+            return CommonResponse.error(CodeEnum.SCHEMA_NOT_EXISTS);
         }
-        ProductInfoBO product = productInfoMapper.getProductByGId(schemaRequest.getProductGId());
+        CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
+        AccountInfoEntity entity = accountInfoMapper.selectByDid(did);
+        String privateKey = entity.getPrivateKey();
+        CryptoKeyPair keyPair = cryptoSuite.loadKeyPair(privateKey);
+        DataSchemaModule dataSchemaModule = DataSchemaModule.load(
+                sysConfig.getContractConfig().getDataSchemaContract(),
+                client,
+                keyPair);
+
+        byte[] hash = cryptoSuite.hash((dataSchemaWithAccessBO.getProductId() +
+                schemaRequest.getContentSchema() +
+                schemaRequest.getDataSchemaName())
+                .getBytes(StandardCharsets.UTF_8));
+
+        byte[] dataSchemaId = Base64.decode(dataSchemaWithAccessBO.getDataSchemaGid());
+
+        TransactionReceipt receipt = dataSchemaModule.modifyDataSchema(dataSchemaId,hash);
+        BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
+
+        DataSchemaInfoEntity dataSchemaInfoEntityUp = new DataSchemaInfoEntity();
+        BeanUtils.copyProperties(schemaRequest, dataSchemaInfoEntityUp);
+        dataSchemaInfoEntityUp.setDataSchemaGid(dataSchemaWithAccessBO.getDataSchemaGid());
+        dataSchemaInfoEntityUp.setPkId(schemaRequest.getSchemaId());
+        dataSchemaInfoMapper.updateDataSchemaInfo(dataSchemaInfoEntityUp);
+        log.info("save dataSchemaInfoEntity finish, schemaId = {}", dataSchemaId);
+
+        DataSchemaAccessInfoEntity dataSchemaAccessInfoEntity = new DataSchemaAccessInfoEntity();
+        BeanUtils.copyProperties(schemaRequest, dataSchemaAccessInfoEntity);
+        dataSchemaAccessInfoEntity.setDataSchemaId(dataSchemaWithAccessBO.getSchemaId());
+        dataSchemaAccessInfoMapper.updateDataSchemaAccessInfo(dataSchemaAccessInfoEntity);
+        log.info("save dataSchemaAccessInfoEntity finish, schemaId = {}", dataSchemaId);
+
+        //处理标签，从更新的标签中取出不一样的，进行更新，并进行删除
+        handlerTag(schemaRequest);
+        log.info("handlerTag finish, schemaId = {}", dataSchemaId);
+
+        return CommonResponse.success(dataSchemaId);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public CommonResponse createDataSchema(CreateDataSchemaRequest schemaRequest) throws Exception {
+        String did = SecurityContextHolder.getContext().getAuthentication().getName();
+        CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
+        AccountInfoEntity entity = accountInfoMapper.selectByDid(did);
+        ProductInfoBO product = productInfoMapper.getProductById(schemaRequest.getProductId());
         if(product == null){
             return CommonResponse.error(CodeEnum.PRODUCT_NOT_EXISTS);
         }
@@ -166,8 +230,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
 
         byte[] hash = cryptoSuite.hash((schemaRequest.getProductId() +
                 schemaRequest.getContentSchema() +
-                schemaRequest.getDataSchemaName() +
-                schemaRequest.getProductGId())
+                schemaRequest.getDataSchemaName())
                 .getBytes(StandardCharsets.UTF_8));
 
         TransactionReceipt receipt = dataSchemaModule.createDataSchema(hash);
@@ -177,6 +240,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         DataSchemaInfoEntity dataSchemaInfoEntity = new DataSchemaInfoEntity();
         BeanUtils.copyProperties(schemaRequest, dataSchemaInfoEntity);
         dataSchemaInfoEntity.setDataSchemaGid(dataSchemaId);
+        dataSchemaInfoEntity.setProviderId(entity.getPkId());
         dataSchemaInfoMapper.insertDataSchemaInfo(dataSchemaInfoEntity);
         log.info("save dataSchemaInfoEntity finish, schemaId = {}", dataSchemaId);
 
@@ -202,5 +266,43 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         log.info("save dataSchemaTagsEntity finish, schemaId = {}", dataSchemaId);
 
         return CommonResponse.success(dataSchemaId);
+    }
+
+    private void handlerTag(UpdateDataSchemaRequest schemaRequest){
+        List<String> tagNames = schemaRequest.getTagNameList();
+        List<DataSchemaTagsEntity> dataSchemaTagsEntityList = dataSchemaTagsMapper.getSchemaTagsMap(schemaRequest.getSchemaId());
+        List<Long> tagIds = dataSchemaTagsEntityList.stream()
+                .map(DataSchemaTagsEntity::getTagId)
+                .distinct()
+                .collect(Collectors.toList());
+        List<TagInfoEntity> tagInfoEntityList = tagInfoMapper.queryTagByIds(tagIds);
+        List<String> tagNameList = tagInfoEntityList.stream()
+                .map(TagInfoEntity::getTagName)
+                .distinct()
+                .collect(Collectors.toList());
+
+        List<String> addTags = tagNames.stream()
+                .filter(tagName -> !tagNameList.contains(tagName))
+                .collect(Collectors.toList());
+
+        addTags.forEach(tagName -> {
+            TagInfoEntity tagInfo = tagInfoMapper.queryTagByName(tagName);
+            if (tagInfo == null){
+                tagInfo = new TagInfoEntity();
+                tagInfo.setTagName(tagName);
+                tagInfoMapper.insertItem(tagInfo);
+            }
+            DataSchemaTagsEntity dataSchemaTagsEntity = new DataSchemaTagsEntity();
+            dataSchemaTagsEntity.setDataSchemaId(schemaRequest.getSchemaId());
+            dataSchemaTagsEntity.setTagId(tagInfo.getPkId());
+            dataSchemaTagsMapper.insertDataSchemaTag(dataSchemaTagsEntity);
+        });
+
+        List<String> delTags = tagNameList.stream()
+                .filter(str -> !tagNames.contains(str))
+                .collect(Collectors.toList());
+
+        List<Long> delTagIds = tagInfoMapper.getTagIdsByNames(delTags);
+        dataSchemaTagsMapper.delDataSchemaTag(delTagIds,schemaRequest.getSchemaId());
     }
 }

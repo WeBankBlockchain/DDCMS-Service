@@ -86,18 +86,22 @@ public class ProductServiceImpl implements ProductService {
         return CommonResponse.success(pageListData);
     }
 
-    public CommonResponse getProductDetail(String productId) {
-        ProductInfoBO product = productInfoMapper.getProductByGId(productId);
+    public CommonResponse getProductDetail(String productGid) {
+        ProductInfoBO product = productInfoMapper.getProductByGId(productGid);
         return CommonResponse.success(product);
     }
 
+    public CommonResponse getProductDetail(Long productId) {
+        ProductInfoBO product = productInfoMapper.getProductById(productId);
+        return CommonResponse.success(product);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     public CommonResponse createProduct(CreateProductRequest productRequest) throws TransactionException {
         CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
         LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         AccountInfoEntity entity = accountInfoMapper.selectByDid(bo.getEntity().getDid());
-        if (entity == null) {
-            return CommonResponse.error(CodeEnum.USER_NOT_EXISTS);
-        }
+
         String privateKey = entity.getPrivateKey();
         CryptoKeyPair keyPair = cryptoSuite.loadKeyPair(privateKey);
         ProductModule productModule = ProductModule.load(
@@ -120,13 +124,14 @@ public class ProductServiceImpl implements ProductService {
         productInfoMapper.insertProductInfo(product);
         return CommonResponse.success(productId);
     }
-
+    @Transactional(rollbackFor = Exception.class)
     public CommonResponse updateProduct(UpdateProductRequest productRequest) throws TransactionException {
-
         String did = SecurityContextHolder.getContext().getAuthentication().getName();
         AccountInfoEntity entity = accountInfoMapper.selectByDid(did);
-        if (entity == null) {
-            return CommonResponse.error(CodeEnum.USER_NOT_EXISTS);
+
+        ProductInfoBO productInfoBO = productInfoMapper.getProductById(productRequest.getProductId());
+        if (productInfoBO == null) {
+            return CommonResponse.error(CodeEnum.PRODUCT_NOT_EXISTS);
         }
         String privateKey = entity.getPrivateKey();
         CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
@@ -137,7 +142,7 @@ public class ProductServiceImpl implements ProductService {
                 keyPair);
 
         TransactionReceipt receipt = productModule.modifyProduct(
-                Base64.decode(productRequest.getProductGId()),
+                Base64.decode(productInfoBO.getProductGid()),
                 cryptoSuite.hash((
                         productRequest.getProductName() + productRequest.getProductDesc())
                         .getBytes(StandardCharsets.UTF_8)));
@@ -149,35 +154,39 @@ public class ProductServiceImpl implements ProductService {
         product.setProductDesc(productRequest.getProductDesc());
         productInfoMapper.updateProductInfo(product);
 
-        return CommonResponse.success(productRequest.getProductGId());
+        return CommonResponse.success(productInfoBO.getProductGid());
     }
 
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public CommonResponse approveProduct(ApproveProductRequest productRequest) throws TransactionException {
-//        String did = SessionUtils.currentAccountDid();
-        AccountInfoEntity entity = accountInfoMapper.selectByDid(productRequest.getDid());
+        String did = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        AccountInfoEntity entity = accountInfoMapper.selectByDid(did);
         if (entity == null) {
             return CommonResponse.error(CodeEnum.USER_NOT_EXISTS);
         }
-
+        ProductInfoBO productInfoBO = productInfoMapper.getProductById(productRequest.getProductId());
+        if (productInfoBO == null) {
+            return CommonResponse.error(CodeEnum.PRODUCT_NOT_EXISTS);
+        }
         CryptoKeyPair witnessKeyPair = this.witnessKeyPair;
         ProductModule productModule = ProductModule.load(
                 sysConfig.getContractConfig().getProductContract(),
                 client,
                 witnessKeyPair);
         TransactionReceipt receipt = productModule.approveProduct(
-                Base64.decode(productRequest.getProductGId()), productRequest.isAgree()
+                Base64.decode(productInfoBO.getProductGid()), productRequest.isAgree()
         );
         BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
 
         ProductInfoEntity productInfoEntity = new ProductInfoEntity();
-        productInfoEntity.setProductGid(productRequest.getProductGId());
+        productInfoEntity.setProductGid(productInfoBO.getProductGid());
         productInfoEntity.setPkId(productRequest.getProductId());
         productInfoEntity.setStatus(productRequest.isAgree() ? ReviewStatus.Approved.ordinal() : ReviewStatus.Denied.ordinal());
         // 不需要set
         // productInfoEntity.setReviewTime(new Date());
         productInfoMapper.updateProductInfoState(productInfoEntity);
-        return CommonResponse.success(productRequest.getProductGId());
+        return CommonResponse.success(productInfoBO.getProductGid());
     }
 }

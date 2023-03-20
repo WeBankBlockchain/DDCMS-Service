@@ -34,4 +34,14 @@ public interface DataSchemaTagsMapper {
     @ResultType(DataSchemaTagsEntity.class)
     List<DataSchemaTagsEntity> getSchemaTagsMapByIds(List<Long> ids);
 
+
+    @Delete("<script>" +
+            "delete from t_data_schema_tags where data_schema_id = #{schemaId}" +
+            " tag_id in " +
+            "   <foreach item='id' index='index' collection='tagIds' open='(' separator=',' close=')'>" +
+            "       #{id}" +
+            "   </foreach>" +
+            "</script>")
+    void delDataSchemaTag(@Param("tagIds") List<Long> tagIds,@Param("schemaId")  Long schemaId);
+
 }
