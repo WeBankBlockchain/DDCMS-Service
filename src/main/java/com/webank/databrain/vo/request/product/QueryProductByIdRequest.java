@@ -9,7 +9,6 @@ import javax.validation.constraints.NotBlank;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class QueryProductByIdRequest extends CommonRequest {
-    @NotBlank(message = "产品ID不能为空.")
     private Long productId;
 
 }

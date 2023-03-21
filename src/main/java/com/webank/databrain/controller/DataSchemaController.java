@@ -30,6 +30,11 @@ public class DataSchemaController {
         return schemaService.pageQuerySchema(querySchemaRequest);
     }
 
+    @PostMapping(value = "/pageQueryMySchema")
+    public CommonResponse pageQueryMySchema(@RequestBody @Valid PageQueryDataSchemaRequest querySchemaRequest) {
+        return schemaService.pageQueryMySchema(querySchemaRequest);
+    }
+
     @PostMapping(value = "/createSchema")
     public CommonResponse createSchema(@RequestBody @Valid CreateDataSchemaRequest createDataSchemaRequest) throws Exception {
         return schemaService.createDataSchema(createDataSchemaRequest);
