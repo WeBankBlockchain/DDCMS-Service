@@ -23,7 +23,7 @@ public interface DataSchemaInfoMapper {
             "a.price," +
             "a.create_time," +
             "d.product_name," +
-            "e.company_name as providerName," +
+            "e.company_name as providerName " +
             "from t_data_schema_info a " +
             "left join " +
             "t_product_info d on a.product_id = d.pk_id " +
