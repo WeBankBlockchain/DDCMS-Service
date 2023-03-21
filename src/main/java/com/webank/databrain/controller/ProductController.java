@@ -29,6 +29,11 @@ public class ProductController {
     public CommonResponse pageQueryProduct(@RequestBody @Valid CommonPageQueryRequest request){
         return productService.pageQueryProducts(request);
     }
+    @PostMapping(value = "/pageQueryMyProduct")
+    public CommonResponse pageQueryMyProduct(@RequestBody @Valid CommonPageQueryRequest request){
+        return productService.pageQueryMyProduct(request);
+    }
+
     @PostMapping(value = "/queryProductById")
     public CommonResponse queryProductById(@RequestBody @Valid QueryProductByIdRequest queryProductRequest) {
         return productService.getProductDetail(queryProductRequest.getProductId());

@@ -183,4 +183,26 @@ public class ProductServiceImpl implements ProductService {
         productInfoMapper.updateProductInfoState(productInfoEntity);
         return CommonResponse.success(productInfoEntity.getPkId());
     }
+
+    @Override
+    public CommonResponse pageQueryMyProduct(CommonPageQueryRequest request) {
+        String did = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        int totalCount = productInfoMapper.count();
+        int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
+
+        PageListData pageListData = new PageListData<>();
+        pageListData.setPageCount(pageCount);
+        pageListData.setTotalCount(totalCount);
+
+        int offset = (request.getPageNo() - 1) * request.getPageSize();
+
+        List<ProductInfoBO> productInfoPOList = productInfoMapper.pageQueryMyProduct(
+                offset,
+                request.getPageSize(),
+                did);
+
+        pageListData.setItemList(productInfoPOList);
+        return CommonResponse.success(pageListData);
+    }
 }

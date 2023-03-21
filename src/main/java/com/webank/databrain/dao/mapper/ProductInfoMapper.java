@@ -85,4 +85,12 @@ public interface ProductInfoMapper {
             " where pk_id = #{productId}")
     @ResultType(ProductInfoEntity.class)
     ProductInfoEntity getProductByProductId(Long productId);
+
+    @Select("SELECT a.pk_id as productId, a.product_name,a.product_desc,a.status,a.review_time,a.create_time,c.company_name" +
+            " FROM t_product_info a JOIN t_account_info b ON a.provider_id = b.pk_id" +
+            " JOIN t_company_info c ON a.provider_id = c.account_id " +
+            " where c.account_id = #{did}" +
+            " ORDER BY a.create_time DESC LIMIT #{start}, #{pageSize}")
+    @ResultType(ProductInfoBO.class)
+    List<ProductInfoBO> pageQueryMyProduct(int offset, int pageSize, String did);
 }
