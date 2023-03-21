@@ -188,11 +188,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
                 schemaRequest.getDataSchemaName())
                 .getBytes(StandardCharsets.UTF_8));
 
-<<<<<<< HEAD
-        byte[] dataSchemaId = Base64.decode(dataSchemaWithAccessBO.getDataSchemaGid());
-=======
         byte[] dataSchemaId = HexUtil.decodeHex(dataSchemaWithAccessBO.getDataSchemaGid());
->>>>>>> 72ef17d63c511280540fca48aeba387490d622ed
 
         TransactionReceipt receipt = dataSchemaModule.modifyDataSchema(dataSchemaId,hash);
         BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
