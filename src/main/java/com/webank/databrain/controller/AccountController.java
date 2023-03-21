@@ -2,7 +2,6 @@ package com.webank.databrain.controller;
 
 import com.webank.databrain.service.AccountService;
 import com.webank.databrain.service.CompanyService;
-import com.webank.databrain.service.PersonService;
 import com.webank.databrain.vo.common.CommonPageQueryRequest;
 import com.webank.databrain.vo.common.CommonRequest;
 import com.webank.databrain.vo.common.CommonResponse;
@@ -28,8 +27,6 @@ public class AccountController {
     @Autowired
     private CompanyService companyService;
 
-    @Autowired
-    private PersonService personService;
 
     @ApiOperation(value = "注册")
     @PostMapping("register")
@@ -61,12 +58,6 @@ public class AccountController {
         return companyService.listCompanyByPage(request);
     }
 
-    @ApiOperation(value = "查询个人用户详情")
-    @PostMapping("queryPersonByUsername")
-    public CommonResponse queryPersonByUsername(@RequestBody @Valid QueryByUsernameRequest request) {
-        return personService.getPersonByUsername(request);
-    }
-
     @ApiOperation(value = "查询机构用户详情")
     @PostMapping("queryCompanyByUsername")
     public CommonResponse queryCompanyByUsername(@RequestBody @Valid QueryByUsernameRequest request) {
@@ -79,9 +70,4 @@ public class AccountController {
         return companyService.searchCompanies(request);
     }
 
-    @ApiOperation(value = "根据条件搜索个人用户")
-    @PostMapping("searchPerson")
-    public CommonResponse searchPersons(@RequestBody @Valid SearchAccountRequest request) {
-        return personService.searchPersons(request);
-    }
 }
