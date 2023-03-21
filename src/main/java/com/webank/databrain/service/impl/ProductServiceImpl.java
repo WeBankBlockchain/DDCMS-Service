@@ -111,7 +111,7 @@ public class ProductServiceImpl implements ProductService {
 
         String productId = HexUtil.encodeHexStr(productModule.getCreateProductOutput(receipt).getValue1());
         ProductInfoEntity product = new ProductInfoEntity();
-        product.setProductDid(productId);
+        product.setProductBid(productId);
         product.setProviderId(entity.getPkId());
         product.setStatus(ReviewStatus.NotReviewed.ordinal());
         product.setProductName(productRequest.getProductName());
@@ -121,8 +121,8 @@ public class ProductServiceImpl implements ProductService {
     }
     @Transactional(rollbackFor = Exception.class)
     public CommonResponse updateProduct(UpdateProductRequest productRequest) throws TransactionException {
-        String did = SecurityContextHolder.getContext().getAuthentication().getName();
-        AccountInfoEntity entity = accountInfoMapper.selectByDid(did);
+        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        AccountInfoEntity entity = accountInfoMapper.selectByDid(bo.getEntity().getDid());
 
         ProductInfoEntity productInfoEntity = productInfoMapper.getProductByProductId(productRequest.getProductId());
         if (productInfoEntity == null) {
@@ -137,7 +137,7 @@ public class ProductServiceImpl implements ProductService {
                 keyPair);
 
         TransactionReceipt receipt = productModule.modifyProduct(
-                HexUtil.decodeHex(productInfoEntity.getProductDid()),
+                HexUtil.decodeHex(productInfoEntity.getProductBid()),
                 cryptoSuite.hash((
                         productRequest.getProductName() + productRequest.getProductDesc())
                         .getBytes(StandardCharsets.UTF_8)));
@@ -171,7 +171,7 @@ public class ProductServiceImpl implements ProductService {
                 client,
                 witnessKeyPair);
         TransactionReceipt receipt = productModule.approveProduct(
-                HexUtil.decodeHex(productInfoEntity.getProductDid()), productRequest.isAgree()
+                HexUtil.decodeHex(productInfoEntity.getProductBid()), productRequest.isAgree()
         );
         BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
 

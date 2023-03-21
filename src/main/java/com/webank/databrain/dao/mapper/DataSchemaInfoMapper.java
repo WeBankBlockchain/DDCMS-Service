@@ -96,7 +96,7 @@ public interface DataSchemaInfoMapper {
 
 
     @Insert("INSERT INTO t_data_schema_info(" +
-            "data_schema_did," +
+            "data_schema_bid," +
             "data_schema_name," +
             "provider_id, " +
             "product_id," +
@@ -108,7 +108,7 @@ public interface DataSchemaInfoMapper {
             "create_time" +
             ") " +
             "VALUES(" +
-            "#{dataSchemaDid}, " +
+            "#{dataSchemaBid}, " +
             "#{dataSchemaName}, " +
             "#{providerId}," +
             "#{productId}," +

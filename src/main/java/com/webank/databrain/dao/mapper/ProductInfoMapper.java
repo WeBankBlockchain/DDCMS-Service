@@ -34,7 +34,7 @@ public interface ProductInfoMapper {
 
 
     @Insert("INSERT INTO t_product_info(" +
-            "product_did," +
+            "product_bid," +
             "product_name," +
             "provider_id, " +
             "product_desc," +
@@ -43,7 +43,7 @@ public interface ProductInfoMapper {
             "create_time" +
             ") " +
             "VALUES(" +
-            "#{productDid}, " +
+            "#{productBid}, " +
             "#{productName}, " +
             "#{providerId}," +
             "#{productDesc}," +
