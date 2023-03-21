@@ -142,11 +142,7 @@ public class ProductServiceImpl implements ProductService {
                 keyPair);
 
         TransactionReceipt receipt = productModule.modifyProduct(
-<<<<<<< HEAD
-                Base64.decode(productInfoBO.getProductGid()),
-=======
                 HexUtil.decodeHex(productInfoBO.getProductGid()),
->>>>>>> 72ef17d63c511280540fca48aeba387490d622ed
                 cryptoSuite.hash((
                         productRequest.getProductName() + productRequest.getProductDesc())
                         .getBytes(StandardCharsets.UTF_8)));
@@ -180,11 +176,7 @@ public class ProductServiceImpl implements ProductService {
                 client,
                 witnessKeyPair);
         TransactionReceipt receipt = productModule.approveProduct(
-<<<<<<< HEAD
-                Base64.decode(productInfoBO.getProductGid()), productRequest.isAgree()
-=======
                 HexUtil.decodeHex(productInfoBO.getProductGid()), productRequest.isAgree()
->>>>>>> 72ef17d63c511280540fca48aeba387490d622ed
         );
         BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
 
