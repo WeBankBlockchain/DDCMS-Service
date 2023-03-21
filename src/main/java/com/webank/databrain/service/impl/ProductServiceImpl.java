@@ -1,6 +1,6 @@
 package com.webank.databrain.service.impl;
 
-import cn.hutool.core.codec.Base64;
+import cn.hutool.core.util.HexUtil;
 import com.webank.databrain.bo.HotProductBO;
 import com.webank.databrain.bo.LoginUserBO;
 import com.webank.databrain.bo.ProductInfoBO;
@@ -114,7 +114,7 @@ public class ProductServiceImpl implements ProductService {
                 .getBytes(StandardCharsets.UTF_8)));
         BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
 
-        String productId = Base64.encode(productModule.getCreateProductOutput(receipt).getValue1());
+        String productId = HexUtil.encodeHexStr(productModule.getCreateProductOutput(receipt).getValue1());
         ProductInfoEntity product = new ProductInfoEntity();
         product.setProductGid(productId);
         product.setProviderId(entity.getPkId());
@@ -142,7 +142,11 @@ public class ProductServiceImpl implements ProductService {
                 keyPair);
 
         TransactionReceipt receipt = productModule.modifyProduct(
+<<<<<<< HEAD
                 Base64.decode(productInfoBO.getProductGid()),
+=======
+                HexUtil.decodeHex(productInfoBO.getProductGid()),
+>>>>>>> 72ef17d63c511280540fca48aeba387490d622ed
                 cryptoSuite.hash((
                         productRequest.getProductName() + productRequest.getProductDesc())
                         .getBytes(StandardCharsets.UTF_8)));
@@ -176,7 +180,11 @@ public class ProductServiceImpl implements ProductService {
                 client,
                 witnessKeyPair);
         TransactionReceipt receipt = productModule.approveProduct(
+<<<<<<< HEAD
                 Base64.decode(productInfoBO.getProductGid()), productRequest.isAgree()
+=======
+                HexUtil.decodeHex(productInfoBO.getProductGid()), productRequest.isAgree()
+>>>>>>> 72ef17d63c511280540fca48aeba387490d622ed
         );
         BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
 

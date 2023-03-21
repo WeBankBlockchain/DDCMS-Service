@@ -4,8 +4,13 @@ import com.webank.databrain.vo.common.CommonRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+<<<<<<< HEAD
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+=======
+import javax.validation.constraints.NotBlank;
+import java.sql.Timestamp;
+>>>>>>> 72ef17d63c511280540fca48aeba387490d622ed
 import java.util.List;
 
 
@@ -13,6 +18,11 @@ import java.util.List;
 @Data
 public class UpdateDataSchemaRequest extends CommonRequest {
 
+<<<<<<< HEAD
+=======
+
+    @NotBlank(message = "目录ID不能为空.")
+>>>>>>> 72ef17d63c511280540fca48aeba387490d622ed
     private Long schemaId;
 
     private String dataSchemaName;
