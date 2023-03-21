@@ -42,7 +42,7 @@ public class DataSchemaController {
 
     @PostMapping(value = "/querySchemaById")
     public CommonResponse querySchemaById(@RequestBody @Valid QuerySchemaByIdRequest request) {
-        return schemaService.getDataSchemaByGid(request.getSchemaGid());
+        return schemaService.getDataSchemaById(request.getSchemaId());
     }
 
     @PostMapping(value = "/querySchemaAccessById")

@@ -11,7 +11,7 @@ public interface DataSchemaService {
 
     CommonResponse pageQuerySchema(PageQueryDataSchemaRequest request);
 
-    CommonResponse getDataSchemaByGid(String schemaGid);
+    CommonResponse getDataSchemaById(Long schemaId);
 
     CommonResponse getDataSchemaAccessById(Long accessId);
 

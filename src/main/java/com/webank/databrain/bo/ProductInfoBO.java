@@ -10,7 +10,6 @@ public class ProductInfoBO {
 
     private Long productId;
 
-    private String productGid;
 
     /**
      * 产品名称
@@ -38,8 +37,6 @@ public class ProductInfoBO {
     private Timestamp reviewTime;
 
     private Timestamp createTime;
-
-    private String did;
 
     private String companyName;
 }

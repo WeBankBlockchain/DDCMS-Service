@@ -10,6 +10,6 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class QuerySchemaByIdRequest extends CommonRequest {
 
-    @NotBlank(message = "目录DID不能为空.")
-    private String schemaGid;
+    @NotBlank(message = "目录ID不能为空.")
+    private Long schemaId;
 }

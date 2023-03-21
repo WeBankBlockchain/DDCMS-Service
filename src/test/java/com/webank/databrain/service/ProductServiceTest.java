@@ -98,7 +98,7 @@ public class ProductServiceTest extends ServerApplicationTests {
 
     @Test
     void getProductDetailTest() throws TransactionException {
-        CommonResponse response = productServiceImpl.getProductDetail("AAAQGayMdnmwj5IbY/O5ZaN/wdCoB8BcEbeT2CwCpHwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAg==");
+        CommonResponse response = productServiceImpl.getProductDetail(1L);
         System.out.println("response = " + response);
     }
 

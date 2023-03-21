@@ -14,7 +14,7 @@ public class DataSchemaInfoEntity implements Serializable {
     /**
      * 数据目录链上id
      */
-    private String dataSchemaGid;
+    private String dataSchemaDid;
 
     /**
      * 数据目录名称

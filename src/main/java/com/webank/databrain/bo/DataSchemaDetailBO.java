@@ -11,11 +11,6 @@ public class DataSchemaDetailBO {
     private Long schemaId;
 
     /**
-     * 数据目录链上id
-     */
-    private String dataSchemaGid;
-
-    /**
      * 数据目录名称
      */
     private String dataSchemaName;
@@ -24,9 +19,6 @@ public class DataSchemaDetailBO {
      * 提供方外键id
      */
     private Long providerId;
-
-    private String providerGId;
-
 
     private String providerName;
 
@@ -37,9 +29,6 @@ public class DataSchemaDetailBO {
      * 产品外键ID
      */
     private Long productId;
-
-
-    private String productGId;
 
     private String productName;
 
