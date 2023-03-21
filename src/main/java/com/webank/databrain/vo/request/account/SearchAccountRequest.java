@@ -7,11 +7,12 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Pattern;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class SearchAccountRequest extends CommonPageQueryRequest {
-    @Min(value = 0, message = "账户状态不正确.")
-    private int accountStatus = 0;
+    @Pattern(regexp = "0|1|2|3", message = "账户状态不正确")
+    private String accountStatus = "0";
     private String keyWord;
 }

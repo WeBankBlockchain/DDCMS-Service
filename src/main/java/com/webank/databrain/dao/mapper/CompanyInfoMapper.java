@@ -21,7 +21,7 @@ public interface CompanyInfoMapper {
     AccAndComInfoBO queryCompanyByUsername(String userName);
 
     @Select("<script>" +
-            "SELECT a.*, c.* FROM t_company_info c INNER JOIN t_account_info a ON c.account_id = a.pk_id WHERE 1 = 1 " +
+            "SELECT a.*, c.* FROM t_company_info c INNER JOIN t_account_info a ON c.account_id = a.pk_id WHERE a.account_type &lt; 3 " +
             "<if test='status &gt; 0'> AND a.status = #{status} </if>" +
             "<if test='keyWord != null'> AND c.company_name LIKE CONCAT('%', #{keyWord}, '%') </if>" +
             "ORDER BY c.pk_id DESC LIMIT #{offset}, #{pageSize}" +

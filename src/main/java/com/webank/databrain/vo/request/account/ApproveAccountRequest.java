@@ -9,8 +9,6 @@ import javax.validation.constraints.NotBlank;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class ApproveAccountRequest extends CommonRequest {
-    @NotBlank(message = "用户名不能为空.")
-    private String did;
     private boolean approved = false;
 }
 

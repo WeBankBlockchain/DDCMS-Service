@@ -15,7 +15,7 @@ public class PersonInfoMapperTest extends ServerApplicationTests {
 
     @Test
     public void testTotalCountWithStatus(){
-        int totalCount = mapper.totalCountWithStatus(0, "ha",-1);
+        int totalCount = mapper.totalCountWithStatus("ha",-1);
         log.info("totalCount: {}", totalCount);
     }
 }
