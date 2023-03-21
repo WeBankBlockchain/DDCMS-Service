@@ -36,7 +36,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -149,8 +148,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public CommonResponse approveAccount(ApproveAccountRequest request) throws TransactionException {
-        LoginUserBO bo = (LoginUserBO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String did = bo.getEntity().getDid();
+        String did = request.getDid();
         boolean approve = request.isApproved();
         AccountInfoEntity entity = accountInfoMapper.selectByDid(did);
         if (entity == null) {
