@@ -25,6 +25,9 @@ public interface ProductInfoMapper {
     @ResultType(HotProductBO.class)
     List<HotProductBO> getHotProduct(@Param("topN") int topN);
 
+    @Select("SELECT * FROM t_product_info WHERE provider_id = #{providerId}")
+    List<ProductInfoEntity> getProductsByProviderId(int providerId);
+
 
     @Select("SELECT * FROM t_product_info where pk_id IN (#{ids})")
     List<ProductInfoEntity> getProductNameByIds(@Param("ids") List<Long> ids);
