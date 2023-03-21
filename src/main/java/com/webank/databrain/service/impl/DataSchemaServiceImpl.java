@@ -77,7 +77,11 @@ public class DataSchemaServiceImpl implements DataSchemaService {
 
 
     public CommonResponse pageQuerySchema(PageQueryDataSchemaRequest request) {
-        int totalCount = dataSchemaInfoMapper.count();
+        int totalCount = dataSchemaInfoMapper.count(
+                request.getProductId(),
+                request.getProviderId(),
+                request.getKeyWord(),
+                null);
         int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
         PageListData pageListData = new PageListData<>();
         pageListData.setPageCount(pageCount);
@@ -99,7 +103,11 @@ public class DataSchemaServiceImpl implements DataSchemaService {
     @Override
     public CommonResponse pageQueryMySchema(PageQueryDataSchemaRequest request) {
         String did = SecurityContextHolder.getContext().getAuthentication().getName();
-        int totalCount = dataSchemaInfoMapper.count();
+        int totalCount = dataSchemaInfoMapper.count(
+                null,
+                null,
+                request.getKeyWord(),
+                did);
         int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
         PageListData pageListData = new PageListData<>();
         pageListData.setPageCount(pageCount);

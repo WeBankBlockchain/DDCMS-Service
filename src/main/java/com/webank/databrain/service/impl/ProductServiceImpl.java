@@ -68,7 +68,7 @@ public class ProductServiceImpl implements ProductService {
 
     public CommonResponse pageQueryProducts(CommonPageQueryRequest request) {
 
-        int totalCount = productInfoMapper.count();
+        int totalCount = productInfoMapper.count(null);
         int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
 
         PageListData pageListData = new PageListData<>();
@@ -188,7 +188,7 @@ public class ProductServiceImpl implements ProductService {
     public CommonResponse pageQueryMyProduct(CommonPageQueryRequest request) {
         String did = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        int totalCount = productInfoMapper.count();
+        int totalCount = productInfoMapper.count(did);
         int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
 
         PageListData pageListData = new PageListData<>();
