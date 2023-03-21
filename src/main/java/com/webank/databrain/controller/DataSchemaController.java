@@ -55,4 +55,19 @@ public class DataSchemaController {
         return schemaService.getDataSchemaAccessById(request.getAccessId());
     }
 
+    @PostMapping(value = "/pageQueryMyFavSchema")
+    public CommonResponse pageQueryMyFavSchema(@RequestBody @Valid PageQueryMyFavSchemaRequest querySchemaRequest) {
+        return schemaService.pageQueryMyFavSchema(querySchemaRequest);
+    }
+
+    @PostMapping(value = "/addSchemaFavorite")
+    public CommonResponse addSchemaFavorite(@RequestBody @Valid CreateFavSchemaRequest createDataSchemaRequest) throws Exception {
+        return schemaService.addSchemaFavorite(createDataSchemaRequest);
+    }
+
+    @PostMapping(value = "/delSchemaFavorite")
+    public CommonResponse delSchemaFavorite(@RequestBody @Valid DelFavSchemaRequest delFavSchemaRequest) throws Exception {
+        return schemaService.delSchemaFavorite(delFavSchemaRequest);
+    }
+
 }

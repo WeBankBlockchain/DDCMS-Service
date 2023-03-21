@@ -15,9 +15,7 @@ import com.webank.databrain.service.DataSchemaService;
 import com.webank.databrain.utils.BlockchainUtils;
 import com.webank.databrain.vo.common.CommonResponse;
 import com.webank.databrain.vo.common.PageListData;
-import com.webank.databrain.vo.request.dataschema.CreateDataSchemaRequest;
-import com.webank.databrain.vo.request.dataschema.PageQueryDataSchemaRequest;
-import com.webank.databrain.vo.request.dataschema.UpdateDataSchemaRequest;
+import com.webank.databrain.vo.request.dataschema.*;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
@@ -75,6 +73,9 @@ public class DataSchemaServiceImpl implements DataSchemaService {
     @Autowired
     private DataSchemaTagsMapper dataSchemaTagsMapper;
 
+    @Autowired
+    private SchemaFavoriteInfoMapper schemaFavoriteInfoMapper;
+
 
     public CommonResponse pageQuerySchema(PageQueryDataSchemaRequest request) {
         int totalCount = dataSchemaInfoMapper.count(
@@ -123,6 +124,45 @@ public class DataSchemaServiceImpl implements DataSchemaService {
 
         pageListData.setItemList(dataSchemaDetailBOList);
         return CommonResponse.success(pageListData);
+    }
+
+    @Override
+    public CommonResponse pageQueryMyFavSchema(PageQueryMyFavSchemaRequest request) {
+        String did = SecurityContextHolder.getContext().getAuthentication().getName();
+        AccountInfoEntity entity = accountInfoMapper.selectByDid(did);
+        int totalCount = schemaFavoriteInfoMapper.count(entity.getPkId());
+        int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
+        PageListData pageListData = new PageListData<>();
+        pageListData.setPageCount(pageCount);
+        pageListData.setTotalCount(totalCount);
+        int offset = (request.getPageNo() - 1) * request.getPageSize();
+
+        List<DataSchemaDetailBO> dataSchemaDetailBOList = schemaFavoriteInfoMapper.pageQuerySchemaFavorite(
+                offset,
+                request.getPageSize(),
+                entity.getPkId());
+        addTag(dataSchemaDetailBOList);
+
+        pageListData.setItemList(dataSchemaDetailBOList);
+        return CommonResponse.success(pageListData);
+    }
+
+    @Override
+    public CommonResponse addSchemaFavorite(CreateFavSchemaRequest request) {
+        String did = SecurityContextHolder.getContext().getAuthentication().getName();
+        AccountInfoEntity entity = accountInfoMapper.selectByDid(did);
+        SchemaFavoriteInfoEntity schemaFavoriteInfoEntity = new SchemaFavoriteInfoEntity();
+        schemaFavoriteInfoEntity.setSchemaId(request.getSchemaId());
+        schemaFavoriteInfoEntity.setAccountId(entity.getPkId());
+        schemaFavoriteInfoMapper.insertSchemaFavoriteInfo(schemaFavoriteInfoEntity);
+        return CommonResponse.success(schemaFavoriteInfoEntity.getPkId());
+    }
+
+    @Override
+    public CommonResponse delSchemaFavorite(DelFavSchemaRequest request) {
+        String did = SecurityContextHolder.getContext().getAuthentication().getName();
+        schemaFavoriteInfoMapper.delSchemaFavoriteInfo(request.getFavId());
+        return CommonResponse.success();
     }
 
 
