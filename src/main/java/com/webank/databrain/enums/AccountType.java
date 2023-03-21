@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Slf4j
 public enum AccountType {
-    PERSON(0, "PERSON"),
     COMPANY(1,"COMPANY" ),
     WITNESS(2, "WITNESS"),
     ADMIN(3, "ADMIN");

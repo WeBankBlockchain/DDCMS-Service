@@ -1,11 +1,11 @@
 package com.webank.databrain.vo.request.account;
 
-import com.webank.databrain.enums.AccountType;
 import com.webank.databrain.vo.common.CommonRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -14,7 +14,8 @@ public class RegisterRequest extends CommonRequest {
     private String userName;
     @NotBlank(message = "密码不能为空.")
     private String password;
-    private int accountType;
+    @Pattern(regexp = "[12]", message = "accountType must be 1 or 2")
+    private String accountType;
     @NotBlank(message = "注册详细信息不能为空.")
     private String detailJson;
 }

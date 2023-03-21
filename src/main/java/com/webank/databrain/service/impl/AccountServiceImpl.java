@@ -39,6 +39,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.math.BigInteger;
 
 @Service
@@ -92,12 +93,12 @@ public class AccountServiceImpl implements AccountService {
                 sysConfig.getContractConfig().getAccountContract(),
                 client,
                 keyPair);
-        TransactionReceipt txReceipt = accountContract.register(BigInteger.valueOf(request.getAccountType()), cryptoSuite.hash(request.getUserName().getBytes()));
+        TransactionReceipt txReceipt = accountContract.register(BigInteger.valueOf(Long.parseLong(request.getAccountType())), cryptoSuite.hash(request.getUserName().getBytes()));
         byte[] didBytes = accountContract.getRegisterOutput(txReceipt).getValue1();
         BlockchainUtils.ensureTransactionSuccess(txReceipt, txDecoder);
 
         AccountInfoEntity accountInfoEntity = new AccountInfoEntity();
-        accountInfoEntity.setAccountType(request.getAccountType());
+        accountInfoEntity.setAccountType(Integer.parseInt(request.getAccountType()));
         accountInfoEntity.setDid(Base64.encode(didBytes));
         accountInfoEntity.setPassword(bCryptPasswordEncoder.encode(request.getPassword()));
         accountInfoEntity.setStatus(AccountStatus.Registered.ordinal());
@@ -106,25 +107,23 @@ public class AccountServiceImpl implements AccountService {
 
         accountInfoMapper.insertAccount(accountInfoEntity);
 
-        if (request.getAccountType() == AccountType.PERSON.getRoleKey()) {
-            PersonInfoEntity personInfo = objectMapper.readValue(request.getDetailJson(), PersonInfoEntity.class);
-            personInfo.setAccountId(accountInfoEntity.getPkId());
-            personInfoMapper.insertPerson(personInfo);
+        CompanyInfoEntity companyInfo = objectMapper.readValue(request.getDetailJson(), CompanyInfoEntity.class);
+        companyInfo.setAccountId(accountInfoEntity.getPkId());
+        companyInfoMapper.insertCompany(companyInfo);
 
-        } else if (request.getAccountType() == AccountType.COMPANY.getRoleKey()) {
-            CompanyInfoEntity companyInfo = objectMapper.readValue(request.getDetailJson(), CompanyInfoEntity.class);
-            companyInfo.setAccountId(accountInfoEntity.getPkId());
-            companyInfoMapper.insertCompany(companyInfo);
-        }
-        return CommonResponse.success(accountInfoEntity.getDid());
+        return CommonResponse.success();
     }
 
     @Override
     public CommonResponse login(LoginRequest request) {
 
         AccountInfoEntity accountInfo = accountInfoMapper.selectByUserName(request.getUserName());
-        if (accountInfo == null){
+        if (accountInfo == null) {
             return CommonResponse.error(CodeEnum.USER_NOT_EXISTS);
+        }
+        if (accountInfo.getAccountType() != AccountType.ADMIN.getRoleKey() &&
+                accountInfo.getStatus() != AccountStatus.Approved.ordinal()) {
+            return CommonResponse.error(CodeEnum.ACCOUNT_NOT_APPROVED);
         }
 
         try {
@@ -134,14 +133,14 @@ public class AccountServiceImpl implements AccountService {
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
             // 认证通过，则生成token，并返回
-            LoginUserBO loginInfoBo = (LoginUserBO)authentication.getPrincipal();
+            LoginUserBO loginInfoBo = (LoginUserBO) authentication.getPrincipal();
 
             String token = JwtTokenHandler.TOKEN_PREFIX + tokenHandler.generateToken(loginInfoBo.getEntity().getDid());
             LoginResponse response = new LoginResponse();
             response.setToken(token);
 
             return CommonResponse.success(response);
-        }catch (AuthenticationException e){
+        } catch (AuthenticationException e) {
             return CommonResponse.error(CodeEnum.LOGIN_FAILED);
         }
 
@@ -152,11 +151,11 @@ public class AccountServiceImpl implements AccountService {
         String did = request.getDid();
         boolean approve = request.isApproved();
         AccountInfoEntity entity = accountInfoMapper.selectByDid(did);
-        if (entity == null){
+        if (entity == null) {
             return CommonResponse.error(CodeEnum.USER_NOT_EXISTS);
         }
-        if(entity.getStatus() == AccountStatus.Approved.ordinal() || entity.getStatus() == AccountStatus.Denied.ordinal()){
-            return  CommonResponse.error(CodeEnum.ACCOUNT_HAS_APPROVED);
+        if (entity.getStatus() == AccountStatus.Approved.ordinal() || entity.getStatus() == AccountStatus.Denied.ordinal()) {
+            return CommonResponse.error(CodeEnum.ACCOUNT_HAS_APPROVED);
         }
         byte[] didBytes = Base64.decode(did);
         CryptoKeyPair witnessKeyPair = this.witnessKeyPair;
