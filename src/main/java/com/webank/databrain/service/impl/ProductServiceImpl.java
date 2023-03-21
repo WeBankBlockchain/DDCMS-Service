@@ -205,4 +205,14 @@ public class ProductServiceImpl implements ProductService {
         pageListData.setItemList(productInfoPOList);
         return CommonResponse.success(pageListData);
     }
+
+    @Override
+    public CommonResponse getProductsByProviderId() {
+
+        LoginUserBO bo = (LoginUserBO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        long providerId = bo.getEntity().getPkId();
+
+        List<ProductInfoEntity> entityList = productInfoMapper.getProductsByProviderId(providerId);
+        return CommonResponse.success(entityList);
+    }
 }

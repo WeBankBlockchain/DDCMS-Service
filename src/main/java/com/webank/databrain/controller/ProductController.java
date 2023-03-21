@@ -38,6 +38,12 @@ public class ProductController {
     public CommonResponse queryProductById(@RequestBody @Valid QueryProductByIdRequest queryProductRequest) {
         return productService.getProductDetail(queryProductRequest.getProductId());
     }
+
+    @PostMapping(value = "/getProductsByProviderId")
+    public CommonResponse getProductsByProviderId() {
+        return productService.getProductsByProviderId();
+    }
+
     @PostMapping(value = "/getHotProducts")
     public CommonResponse getHotProducts(@RequestBody @Valid HotDataRequest request){
         return productService.getHotProducts(request);
@@ -56,6 +62,4 @@ public class ProductController {
     public CommonResponse updateProduct(@RequestBody @Valid UpdateProductRequest updateProductRequest) throws Exception{
         return productService.updateProduct(updateProductRequest);
     }
-
-
 }

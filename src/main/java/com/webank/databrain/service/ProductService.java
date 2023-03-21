@@ -22,4 +22,6 @@ public interface ProductService {
     CommonResponse approveProduct(ApproveProductRequest productRequest) throws TransactionException;
 
     CommonResponse pageQueryMyProduct(CommonPageQueryRequest request);
+
+    CommonResponse getProductsByProviderId();
 }
