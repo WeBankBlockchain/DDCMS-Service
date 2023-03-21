@@ -78,13 +78,10 @@ public class DataSchemaServiceImpl implements DataSchemaService {
 
     public CommonResponse pageQuerySchema(PageQueryDataSchemaRequest request) {
         int totalCount = dataSchemaInfoMapper.count();
-
         int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
-
         PageListData pageListData = new PageListData<>();
         pageListData.setPageCount(pageCount);
         pageListData.setTotalCount(totalCount);
-
         int offset = (request.getPageNo() - 1) * request.getPageSize();
 
         List<DataSchemaDetailBO> dataSchemaDetailBOList = dataSchemaInfoMapper.pageQuerySchema(
@@ -93,34 +90,28 @@ public class DataSchemaServiceImpl implements DataSchemaService {
                 request.getProductId(),
                 request.getProviderId(),
                 request.getKeyWord());
-        if(CollectionUtil.isNotEmpty(dataSchemaDetailBOList)) {
-            List<Long> schemaIds = dataSchemaDetailBOList.stream()
-                    .filter(Objects::nonNull)
-                    .map(DataSchemaDetailBO::getSchemaId)
-                    .collect(Collectors.toList());
-            List<DataSchemaTagsEntity> schemaTagsEntityList = dataSchemaTagsMapper.getSchemaTagsMapByIds(schemaIds);
-            if(CollectionUtil.isNotEmpty(schemaTagsEntityList)) {
-                List<Long> tagIds = schemaTagsEntityList.stream()
-                        .map(DataSchemaTagsEntity::getTagId)
-                        .distinct()
-                        .collect(Collectors.toList());
-                List<TagInfoEntity> tagInfoEntityList = tagInfoMapper.queryTagByIds(tagIds);
-                Map<Long, String> tagIdNameMap = tagInfoEntityList.stream()
-                        .collect(Collectors.toMap(TagInfoEntity::getPkId, TagInfoEntity::getTagName));
+        addTag(dataSchemaDetailBOList);
 
-                Map<Long, List<DataSchemaTagsEntity>> schemaIdMap = schemaTagsEntityList.stream()
-                        .collect(Collectors.groupingBy(DataSchemaTagsEntity::getDataSchemaId));
+        pageListData.setItemList(dataSchemaDetailBOList);
+        return CommonResponse.success(pageListData);
+    }
 
-                dataSchemaDetailBOList.forEach(dataSchemaDetailBO -> {
-                    List<DataSchemaTagsEntity> dataSchemaTagsEntities = schemaIdMap.get(dataSchemaDetailBO.getSchemaId());
-                    List<String> tagNames = new ArrayList<>();
-                    dataSchemaTagsEntities.forEach(dataSchemaTagsEntity -> {
-                        tagNames.add(tagIdNameMap.get(dataSchemaTagsEntity.getTagId()));
-                    });
-                    dataSchemaDetailBO.setTagNameList(tagNames);
-                });
-            }
-        }
+    @Override
+    public CommonResponse pageQueryMySchema(PageQueryDataSchemaRequest request) {
+        String did = SecurityContextHolder.getContext().getAuthentication().getName();
+        int totalCount = dataSchemaInfoMapper.count();
+        int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
+        PageListData pageListData = new PageListData<>();
+        pageListData.setPageCount(pageCount);
+        pageListData.setTotalCount(totalCount);
+        int offset = (request.getPageNo() - 1) * request.getPageSize();
+
+        List<DataSchemaDetailBO> dataSchemaDetailBOList = dataSchemaInfoMapper.pageQueryMySchema(
+                offset,
+                request.getPageSize(),
+                did,
+                request.getKeyWord());
+        addTag(dataSchemaDetailBOList);
 
         pageListData.setItemList(dataSchemaDetailBOList);
         return CommonResponse.success(pageListData);
@@ -189,7 +180,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         log.info("save dataSchemaAccessInfoEntity finish, schemaId = {}", dataSchemaId);
 
         //处理标签，从更新的标签中取出不一样的，进行更新，并进行删除
-        handlerTag(schemaRequest);
+        handleTag(schemaRequest);
         log.info("handlerTag finish, schemaId = {}", dataSchemaId);
 
         return CommonResponse.success(dataSchemaId);
@@ -251,7 +242,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         return CommonResponse.success(dataSchemaId);
     }
 
-    private void handlerTag(UpdateDataSchemaRequest schemaRequest){
+    private void handleTag(UpdateDataSchemaRequest schemaRequest){
         List<String> tagNames = schemaRequest.getTagNameList();
         List<DataSchemaTagsEntity> dataSchemaTagsEntityList = dataSchemaTagsMapper.getSchemaTagsMap(schemaRequest.getSchemaId());
         List<Long> tagIds = dataSchemaTagsEntityList.stream()
@@ -287,5 +278,36 @@ public class DataSchemaServiceImpl implements DataSchemaService {
 
         List<Long> delTagIds = tagInfoMapper.getTagIdsByNames(delTags);
         dataSchemaTagsMapper.delDataSchemaTag(delTagIds,schemaRequest.getSchemaId());
+    }
+
+    private void addTag(List<DataSchemaDetailBO> dataSchemaDetailBOList){
+        if(CollectionUtil.isNotEmpty(dataSchemaDetailBOList)) {
+            List<Long> schemaIds = dataSchemaDetailBOList.stream()
+                    .filter(Objects::nonNull)
+                    .map(DataSchemaDetailBO::getSchemaId)
+                    .collect(Collectors.toList());
+            List<DataSchemaTagsEntity> schemaTagsEntityList = dataSchemaTagsMapper.getSchemaTagsMapByIds(schemaIds);
+            if(CollectionUtil.isNotEmpty(schemaTagsEntityList)) {
+                List<Long> tagIds = schemaTagsEntityList.stream()
+                        .map(DataSchemaTagsEntity::getTagId)
+                        .distinct()
+                        .collect(Collectors.toList());
+                List<TagInfoEntity> tagInfoEntityList = tagInfoMapper.queryTagByIds(tagIds);
+                Map<Long, String> tagIdNameMap = tagInfoEntityList.stream()
+                        .collect(Collectors.toMap(TagInfoEntity::getPkId, TagInfoEntity::getTagName));
+
+                Map<Long, List<DataSchemaTagsEntity>> schemaIdMap = schemaTagsEntityList.stream()
+                        .collect(Collectors.groupingBy(DataSchemaTagsEntity::getDataSchemaId));
+
+                dataSchemaDetailBOList.forEach(dataSchemaDetailBO -> {
+                    List<DataSchemaTagsEntity> dataSchemaTagsEntities = schemaIdMap.get(dataSchemaDetailBO.getSchemaId());
+                    List<String> tagNames = new ArrayList<>();
+                    dataSchemaTagsEntities.forEach(dataSchemaTagsEntity -> {
+                        tagNames.add(tagIdNameMap.get(dataSchemaTagsEntity.getTagId()));
+                    });
+                    dataSchemaDetailBO.setTagNameList(tagNames);
+                });
+            }
+        }
     }
 }
