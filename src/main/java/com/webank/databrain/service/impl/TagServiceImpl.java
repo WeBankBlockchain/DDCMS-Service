@@ -15,8 +15,8 @@ public class TagServiceImpl implements TagService {
     @Autowired
     private TagInfoMapper tagInfoMapper;
 
+    @Override
     public CommonResponse listHotTags(HotDataRequest request) {
-
         List<TagInfoEntity> tags = tagInfoMapper.queryHotTags(request.getTopCount());
         return CommonResponse.success(tags);
     }

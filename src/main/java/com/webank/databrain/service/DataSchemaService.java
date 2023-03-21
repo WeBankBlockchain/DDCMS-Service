@@ -6,6 +6,7 @@ import com.webank.databrain.vo.request.dataschema.PageQueryDataSchemaRequest;
 import com.webank.databrain.vo.request.dataschema.UpdateDataSchemaRequest;
 import org.fisco.bcos.sdk.v3.transaction.model.exception.TransactionException;
 
+
 public interface DataSchemaService {
 
     CommonResponse pageQuerySchema(PageQueryDataSchemaRequest request);

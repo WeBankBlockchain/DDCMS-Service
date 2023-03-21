@@ -32,7 +32,6 @@ public interface DataSchemaAccessInfoMapper {
     @Options(useGeneratedKeys = true, keyProperty = "pkId", keyColumn = "pk_id")
     void insertDataSchemaAccessInfo(DataSchemaAccessInfoEntity dataSchemaAccessInfoEntity);
 
-
     @Update("UPDATE t_data_schema_access_info SET " +
             "data_format=#{dataFormat}, " +
             "data_protocol=#{dataProtocol}, " +
