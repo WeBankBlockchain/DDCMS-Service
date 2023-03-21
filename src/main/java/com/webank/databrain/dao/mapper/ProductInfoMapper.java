@@ -1,6 +1,7 @@
 package com.webank.databrain.dao.mapper;
 
 import com.webank.databrain.bo.HotProductBO;
+import com.webank.databrain.dao.entity.DataSchemaInfoEntity;
 import com.webank.databrain.dao.entity.ProductInfoEntity;
 import com.webank.databrain.bo.ProductInfoBO;
 import org.apache.ibatis.annotations.*;
@@ -10,27 +11,19 @@ import java.util.List;
 @Mapper
 public interface ProductInfoMapper {
 
-    @Select("SELECT a.pk_id as productId,a.product_gid, a.product_name,a.product_desc,a.status,a.review_time,a.create_time,b.did,c.company_name" +
+    @Select("SELECT a.pk_id as productId, a.product_name,a.product_desc,a.status,a.review_time,a.create_time,c.company_name" +
             " FROM t_product_info a JOIN t_account_info b ON a.provider_id = b.pk_id" +
             " JOIN t_company_info c ON a.provider_id = c.account_id" +
             " ORDER BY a.create_time DESC LIMIT #{start}, #{pageSize}")
     @ResultType(ProductInfoBO.class)
     List<ProductInfoBO> pageQueryProduct(@Param("start") long start, @Param("pageSize")int pageSize);
 
-    @Select("SELECT a.product_gid as productGid, c.company_name as productName, a.pk_id as productId FROM t_product_info a " +
+    @Select("SELECT c.company_name as productName, a.pk_id as productId FROM t_product_info a " +
             "JOIN t_account_info b ON a.provider_id = b.pk_id " +
             "JOIN t_company_info c ON a.provider_id = c.account_id " +
             "ORDER BY a.create_time DESC LIMIT 1, #{topN}")
     @ResultType(HotProductBO.class)
     List<HotProductBO> getHotProduct(@Param("topN") int topN);
-
-    @Select("SELECT a.pk_id as productId, a.product_gid, a.product_name,a.product_desc,a.status,a.review_time,a.create_time,b.did,c.company_name" +
-            " FROM t_product_info a" +
-            " left JOIN t_account_info b ON a.provider_id = b.pk_id" +
-            " left JOIN t_company_info c ON a.provider_id = c.account_id" +
-            " where a.product_gid = #{productGid}")
-    @ResultType(ProductInfoBO.class)
-    ProductInfoBO getProductByGId(@Param("productGid") String productGid);
 
 
     @Select("SELECT * FROM t_product_info where pk_id IN (#{ids})")
@@ -38,7 +31,7 @@ public interface ProductInfoMapper {
 
 
     @Insert("INSERT INTO t_product_info(" +
-            "product_gid," +
+            "product_did," +
             "product_name," +
             "provider_id, " +
             "product_desc," +
@@ -47,7 +40,7 @@ public interface ProductInfoMapper {
             "create_time" +
             ") " +
             "VALUES(" +
-            "#{productGid}, " +
+            "#{productDid}, " +
             "#{productName}, " +
             "#{providerId}," +
             "#{productDesc}," +
@@ -71,17 +64,25 @@ public interface ProductInfoMapper {
             "review_time=#{reviewTime}, " +
             "status=#{status}, " +
             "update_time=#{updateTime} " +
-            "WHERE pk_id=#{pkId} or product_gid = #{productGid}")
+            "WHERE pk_id=#{pkId}")
     void updateProductInfoState(ProductInfoEntity productInfoEntity);
 
     @Select("SELECT COUNT(*) FROM t_product_info")
     int count();
 
-    @Select("SELECT a.pk_id as productId, a.product_gid, a.product_name,a.product_desc,a.status,a.review_time,a.create_time,b.did,c.company_name" +
+    @Select("SELECT a.pk_id as productId,  a.product_name,a.product_desc,a.status,a.review_time,a.create_time,c.company_name" +
             " FROM t_product_info a" +
             " left JOIN t_account_info b ON a.provider_id = b.pk_id" +
             " left JOIN t_company_info c ON a.provider_id = c.account_id" +
             " where a.pk_id = #{productId}")
     @ResultType(ProductInfoBO.class)
     ProductInfoBO getProductById(@Param("productId") Long productId);
+
+
+    @Select("SELECT " +
+            " * " +
+            " from t_product_info " +
+            " where pk_id = #{productId}")
+    @ResultType(ProductInfoEntity.class)
+    ProductInfoEntity getProductByProductId(Long productId);
 }

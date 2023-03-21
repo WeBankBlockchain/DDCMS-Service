@@ -13,7 +13,6 @@ public interface DataSchemaInfoMapper {
     @Select("<script>" +
             "SELECT " +
             "a.pk_id as schemaId," +
-            "a.data_schema_gid," +
             "a.data_schema_name," +
             "a.provider_id, " +
             "a.product_id," +
@@ -24,9 +23,7 @@ public interface DataSchemaInfoMapper {
             "a.price," +
             "a.create_time," +
             "d.product_name," +
-            "d.product_gid as productGid," +
-            "e.company_name as providerName," +
-            "f.did as providerGid " +
+            "e.company_name as providerName " +
             "from t_data_schema_info a " +
             "left join " +
             "t_product_info d on a.product_id = d.pk_id " +
@@ -51,82 +48,9 @@ public interface DataSchemaInfoMapper {
     @Select("SELECT COUNT(*) FROM t_data_schema_info")
     int count();
 
-    @Select("select * from t_data_schema_info where data_schema_gid = #{schemaId}")
-    @ResultType(DataSchemaInfoEntity.class)
-    DataSchemaInfoEntity getSchemaByGId(String schemaId);
-
-
-    @Select("SELECT " +
-            "a.pk_id as schemaId," +
-            "a.data_schema_gid," +
-            "a.data_schema_name," +
-            "a.provider_id, " +
-            "a.product_id," +
-            "a.version," +
-            "a.visible," +
-            "a.data_schema_desc," +
-            "a.data_schema_usage," +
-            "a.price," +
-            "a.create_time," +
-            "d.product_name," +
-            "d.product_gid as productGid," +
-            "e.company_name as providerName," +
-            "f.did as providerGid, " +
-            "g.pk_id as accessId, " +
-            "g.data_format, " +
-            "g.data_protocol, " +
-            "g.content_schema, " +
-            "g.access_condition, " +
-            "g.uri, " +
-            "g.effect_time, " +
-            "g.expire_time " +
-            "from t_data_schema_info a " +
-            "left join " +
-            "t_product_info d on a.product_id = d.pk_id " +
-            "left join " +
-            "t_company_info e on a.provider_id = e.pk_id " +
-            "left join " +
-            "t_account_info f on e.account_id = f.pk_id " +
-            " left join " +
-            "t_data_schema_access_info g on a.pk_id = g.data_schema_id" +
-            " where a.data_schema_gid = #{schemaId}")
-    @ResultType(DataSchemaWithAccessBO.class)
-    DataSchemaWithAccessBO getSchemaWithAccessByGid(String schemaId);
-
-
-    @Select("SELECT " +
-            "a.pk_id as schemaId," +
-            "a.data_schema_gid," +
-            "a.data_schema_name," +
-            "a.provider_id, " +
-            "a.product_id," +
-            "a.version," +
-            "a.visible," +
-            "a.data_schema_desc," +
-            "a.data_schema_usage," +
-            "a.price," +
-            "a.create_time," +
-            "d.product_name," +
-            "d.product_gid as productGid," +
-            "e.company_name as providerName," +
-            "f.did as providerGid, " +
-            "g.pk_id as accessId " +
-            "from t_data_schema_info a " +
-            "left join " +
-            "t_product_info d on a.product_id = d.pk_id " +
-            "left join " +
-            "t_company_info e on a.provider_id = e.pk_id " +
-            "left join " +
-            "t_account_info f on e.account_id = f.pk_id " +
-            " left join " +
-            "t_data_schema_access_info g on a.pk_id = g.data_schema_id" +
-            " where a.data_schema_gid = #{schemaId}")
-    @ResultType(DataSchemaWithAccessBO.class)
-    DataSchemaWithAccessBO getSchemaByGid(String schemaId);
-
 
     @Insert("INSERT INTO t_data_schema_info(" +
-            "data_schema_gid," +
+            "data_schema_did," +
             "data_schema_name," +
             "provider_id, " +
             "product_id," +
@@ -138,7 +62,7 @@ public interface DataSchemaInfoMapper {
             "create_time" +
             ") " +
             "VALUES(" +
-            "#{dataSchemaGid}, " +
+            "#{dataSchemaDid}, " +
             "#{dataSchemaName}, " +
             "#{providerId}," +
             "#{productId}," +
@@ -167,7 +91,6 @@ public interface DataSchemaInfoMapper {
 
     @Select("SELECT " +
             "a.pk_id as schemaId," +
-            "a.data_schema_gid," +
             "a.data_schema_name," +
             "a.provider_id, " +
             "a.product_id," +
@@ -178,9 +101,7 @@ public interface DataSchemaInfoMapper {
             "a.price," +
             "a.create_time," +
             "d.product_name," +
-            "d.product_gid as productGid," +
             "e.company_name as providerName," +
-            "f.did as providerGid, " +
             "g.pk_id as accessId " +
             "from t_data_schema_info a " +
             "left join " +
@@ -194,4 +115,11 @@ public interface DataSchemaInfoMapper {
             " where a.pk_id = #{schemaId}")
     @ResultType(DataSchemaWithAccessBO.class)
     DataSchemaWithAccessBO getSchemaById(Long schemaId);
+
+    @Select("SELECT " +
+            " * " +
+            " from t_data_schema_info " +
+            " where pk_id = #{schemaId}")
+    @ResultType(DataSchemaInfoEntity.class)
+    DataSchemaInfoEntity getSchemaBySchemaId(Long schemaId);
 }

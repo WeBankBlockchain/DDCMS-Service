@@ -31,7 +31,7 @@ public class ProductController {
     }
     @PostMapping(value = "/queryProductById")
     public CommonResponse queryProductById(@RequestBody @Valid QueryProductByIdRequest queryProductRequest) {
-        return productService.getProductDetail(queryProductRequest.getProductGid());
+        return productService.getProductDetail(queryProductRequest.getProductId());
     }
     @PostMapping(value = "/getHotProducts")
     public CommonResponse getHotProducts(@RequestBody @Valid HotDataRequest request){

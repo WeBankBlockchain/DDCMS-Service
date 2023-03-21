@@ -49,7 +49,7 @@ CREATE TABLE `t_company_info` (
 
  CREATE TABLE `t_product_info` (
    `pk_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-   `product_gid` varchar(255) NOT NULL COMMENT '产品链上id',
+   `product_did` varchar(255) NOT NULL COMMENT '产品链上id',
    `product_name` varchar(255) NOT NULL DEFAULT '' COMMENT '产品名称',
    `provider_id` bigint(20) unsigned NOT NULL COMMENT '提供方外键ID',
    `product_desc` text COMMENT '产品详情',
@@ -58,7 +58,7 @@ CREATE TABLE `t_company_info` (
    `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
    `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
    PRIMARY KEY (`pk_id`),
-   UNIQUE KEY (`product_gid`)
+   UNIQUE KEY (`product_did`)
  ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
  CREATE TABLE `t_tag_info` (
@@ -72,7 +72,7 @@ CREATE TABLE `t_company_info` (
 
  CREATE TABLE `t_data_schema_info` (
    `pk_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-   `data_schema_gid` varchar(255) NOT NULL DEFAULT '' COMMENT '数据目录链上id',
+   `data_schema_did` varchar(255) NOT NULL DEFAULT '' COMMENT '数据目录链上id',
    `data_schema_name` varchar(255) NOT NULL DEFAULT '' COMMENT '数据目录名称',
    `provider_id` bigint(20) unsigned NOT NULL COMMENT '提供方外键ID',
    `product_id` bigint(20) unsigned NOT NULL COMMENT '产品外键ID',
@@ -84,7 +84,7 @@ CREATE TABLE `t_company_info` (
    `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
    `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
    PRIMARY KEY (`pk_id`),
-   UNIQUE KEY (`data_schema_gid`)
+   UNIQUE KEY (`data_schema_did`)
  ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
  CREATE TABLE `t_data_schema_tags` (

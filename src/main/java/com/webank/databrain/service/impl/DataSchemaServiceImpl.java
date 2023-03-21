@@ -126,25 +126,8 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         return CommonResponse.success(pageListData);
     }
 
-    public CommonResponse getDataSchemaByGid(String schemaGid){
-        DataSchemaWithAccessBO dataSchemaWithAccessResponse = dataSchemaInfoMapper.getSchemaByGid(schemaGid);
-        List<DataSchemaTagsEntity> schemaTagsEntityList = dataSchemaTagsMapper.getSchemaTagsMap(dataSchemaWithAccessResponse.getSchemaId());
-        if (CollectionUtil.isNotEmpty(schemaTagsEntityList)){
-            List<Long> tagIds = schemaTagsEntityList.stream()
-                    .filter(Objects::nonNull)
-                    .map(DataSchemaTagsEntity::getTagId)
-                    .collect(Collectors.toList());
-            List<TagInfoEntity> tagInfoEntityList = tagInfoMapper.queryTagByIds(tagIds);
-            List<String> tagNames = tagInfoEntityList.stream()
-                    .filter(Objects::nonNull)
-                    .map(TagInfoEntity::getTagName)
-                    .collect(Collectors.toList());
-            dataSchemaWithAccessResponse.setTagNameList(tagNames);
-        }
-        return CommonResponse.success(dataSchemaWithAccessResponse);
-    }
 
-    public CommonResponse getDataSchemaByGid(Long schemaId){
+    public CommonResponse getDataSchemaById(Long schemaId){
         DataSchemaWithAccessBO dataSchemaWithAccessBO = dataSchemaInfoMapper.getSchemaById(schemaId);
         List<DataSchemaTagsEntity> schemaTagsEntityList = dataSchemaTagsMapper.getSchemaTagsMap(dataSchemaWithAccessBO.getSchemaId());
         if (CollectionUtil.isNotEmpty(schemaTagsEntityList)){
@@ -170,8 +153,8 @@ public class DataSchemaServiceImpl implements DataSchemaService {
     @Transactional(rollbackFor = Exception.class)
     public CommonResponse updateDataSchema(UpdateDataSchemaRequest schemaRequest) throws TransactionException {
         String did = SecurityContextHolder.getContext().getAuthentication().getName();
-        DataSchemaWithAccessBO dataSchemaWithAccessBO = dataSchemaInfoMapper.getSchemaById(schemaRequest.getSchemaId());
-        if (dataSchemaWithAccessBO == null){
+        DataSchemaInfoEntity dataSchemaInfoEntity = dataSchemaInfoMapper.getSchemaBySchemaId(schemaRequest.getSchemaId());
+        if (dataSchemaInfoEntity == null){
             return CommonResponse.error(CodeEnum.SCHEMA_NOT_EXISTS);
         }
         CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
@@ -183,26 +166,25 @@ public class DataSchemaServiceImpl implements DataSchemaService {
                 client,
                 keyPair);
 
-        byte[] hash = cryptoSuite.hash((dataSchemaWithAccessBO.getProductId() +
+        byte[] hash = cryptoSuite.hash((dataSchemaInfoEntity.getProductId() +
                 schemaRequest.getContentSchema() +
                 schemaRequest.getDataSchemaName())
                 .getBytes(StandardCharsets.UTF_8));
 
-        byte[] dataSchemaId = HexUtil.decodeHex(dataSchemaWithAccessBO.getDataSchemaGid());
+        byte[] dataSchemaId = HexUtil.decodeHex(dataSchemaInfoEntity.getDataSchemaDid());
 
         TransactionReceipt receipt = dataSchemaModule.modifyDataSchema(dataSchemaId,hash);
         BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
 
         DataSchemaInfoEntity dataSchemaInfoEntityUp = new DataSchemaInfoEntity();
         BeanUtils.copyProperties(schemaRequest, dataSchemaInfoEntityUp);
-        dataSchemaInfoEntityUp.setDataSchemaGid(dataSchemaWithAccessBO.getDataSchemaGid());
         dataSchemaInfoEntityUp.setPkId(schemaRequest.getSchemaId());
         dataSchemaInfoMapper.updateDataSchemaInfo(dataSchemaInfoEntityUp);
         log.info("save dataSchemaInfoEntity finish, schemaId = {}", dataSchemaId);
 
         DataSchemaAccessInfoEntity dataSchemaAccessInfoEntity = new DataSchemaAccessInfoEntity();
         BeanUtils.copyProperties(schemaRequest, dataSchemaAccessInfoEntity);
-        dataSchemaAccessInfoEntity.setDataSchemaId(dataSchemaWithAccessBO.getSchemaId());
+        dataSchemaAccessInfoEntity.setDataSchemaId(dataSchemaInfoEntity.getPkId());
         dataSchemaAccessInfoMapper.updateDataSchemaAccessInfo(dataSchemaAccessInfoEntity);
         log.info("save dataSchemaAccessInfoEntity finish, schemaId = {}", dataSchemaId);
 
@@ -240,7 +222,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         String dataSchemaId = HexUtil.encodeHexStr(dataSchemaModule.getCreateDataSchemaOutput(receipt).getValue1());
         DataSchemaInfoEntity dataSchemaInfoEntity = new DataSchemaInfoEntity();
         BeanUtils.copyProperties(schemaRequest, dataSchemaInfoEntity);
-        dataSchemaInfoEntity.setDataSchemaGid(dataSchemaId);
+        dataSchemaInfoEntity.setDataSchemaDid(dataSchemaId);
         dataSchemaInfoEntity.setProviderId(entity.getPkId());
         dataSchemaInfoMapper.insertDataSchemaInfo(dataSchemaInfoEntity);
         log.info("save dataSchemaInfoEntity finish, schemaId = {}", dataSchemaId);

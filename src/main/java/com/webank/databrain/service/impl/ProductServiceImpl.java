@@ -86,11 +86,6 @@ public class ProductServiceImpl implements ProductService {
         return CommonResponse.success(pageListData);
     }
 
-    public CommonResponse getProductDetail(String productGid) {
-        ProductInfoBO product = productInfoMapper.getProductByGId(productGid);
-        return CommonResponse.success(product);
-    }
-
     public CommonResponse getProductDetail(Long productId) {
         ProductInfoBO product = productInfoMapper.getProductById(productId);
         return CommonResponse.success(product);
@@ -116,7 +111,7 @@ public class ProductServiceImpl implements ProductService {
 
         String productId = HexUtil.encodeHexStr(productModule.getCreateProductOutput(receipt).getValue1());
         ProductInfoEntity product = new ProductInfoEntity();
-        product.setProductGid(productId);
+        product.setProductDid(productId);
         product.setProviderId(entity.getPkId());
         product.setStatus(ReviewStatus.NotReviewed.ordinal());
         product.setProductName(productRequest.getProductName());
@@ -129,8 +124,8 @@ public class ProductServiceImpl implements ProductService {
         String did = SecurityContextHolder.getContext().getAuthentication().getName();
         AccountInfoEntity entity = accountInfoMapper.selectByDid(did);
 
-        ProductInfoBO productInfoBO = productInfoMapper.getProductById(productRequest.getProductId());
-        if (productInfoBO == null) {
+        ProductInfoEntity productInfoEntity = productInfoMapper.getProductByProductId(productRequest.getProductId());
+        if (productInfoEntity == null) {
             return CommonResponse.error(CodeEnum.PRODUCT_NOT_EXISTS);
         }
         String privateKey = entity.getPrivateKey();
@@ -142,7 +137,7 @@ public class ProductServiceImpl implements ProductService {
                 keyPair);
 
         TransactionReceipt receipt = productModule.modifyProduct(
-                HexUtil.decodeHex(productInfoBO.getProductGid()),
+                HexUtil.decodeHex(productInfoEntity.getProductDid()),
                 cryptoSuite.hash((
                         productRequest.getProductName() + productRequest.getProductDesc())
                         .getBytes(StandardCharsets.UTF_8)));
@@ -154,7 +149,7 @@ public class ProductServiceImpl implements ProductService {
         product.setProductDesc(productRequest.getProductDesc());
         productInfoMapper.updateProductInfo(product);
 
-        return CommonResponse.success(productInfoBO.getProductGid());
+        return CommonResponse.success(productInfoEntity.getPkId());
     }
 
 
@@ -166,8 +161,8 @@ public class ProductServiceImpl implements ProductService {
         if (entity == null) {
             return CommonResponse.error(CodeEnum.USER_NOT_EXISTS);
         }
-        ProductInfoBO productInfoBO = productInfoMapper.getProductById(productRequest.getProductId());
-        if (productInfoBO == null) {
+        ProductInfoEntity productInfoEntity = productInfoMapper.getProductByProductId(productRequest.getProductId());
+        if (productInfoEntity == null) {
             return CommonResponse.error(CodeEnum.PRODUCT_NOT_EXISTS);
         }
         CryptoKeyPair witnessKeyPair = this.witnessKeyPair;
@@ -176,17 +171,16 @@ public class ProductServiceImpl implements ProductService {
                 client,
                 witnessKeyPair);
         TransactionReceipt receipt = productModule.approveProduct(
-                HexUtil.decodeHex(productInfoBO.getProductGid()), productRequest.isAgree()
+                HexUtil.decodeHex(productInfoEntity.getProductDid()), productRequest.isAgree()
         );
         BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
 
-        ProductInfoEntity productInfoEntity = new ProductInfoEntity();
-        productInfoEntity.setProductGid(productInfoBO.getProductGid());
-        productInfoEntity.setPkId(productRequest.getProductId());
-        productInfoEntity.setStatus(productRequest.isAgree() ? ReviewStatus.Approved.ordinal() : ReviewStatus.Denied.ordinal());
+        ProductInfoEntity productInfoEntityUp = new ProductInfoEntity();
+        productInfoEntityUp.setPkId(productRequest.getProductId());
+        productInfoEntityUp.setStatus(productRequest.isAgree() ? ReviewStatus.Approved.ordinal() : ReviewStatus.Denied.ordinal());
         // 不需要set
         // productInfoEntity.setReviewTime(new Date());
         productInfoMapper.updateProductInfoState(productInfoEntity);
-        return CommonResponse.success(productInfoBO.getProductGid());
+        return CommonResponse.success(productInfoEntity.getPkId());
     }
 }

@@ -102,7 +102,7 @@ public class SchemaServiceTest  extends ServerApplicationTests {
 
     @Test
     void getSchemaDetailTest() throws TransactionException {
-        CommonResponse response = schemaService.getDataSchemaByGid("AAAAA1231231sadasd");
+        CommonResponse response = schemaService.getDataSchemaById(1L);
         System.out.println("response = " + JSONUtil.toJsonStr(response));
     }
 

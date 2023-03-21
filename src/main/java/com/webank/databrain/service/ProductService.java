@@ -13,14 +13,11 @@ public interface ProductService {
 
     CommonResponse pageQueryProducts(CommonPageQueryRequest request);
 
-    CommonResponse getProductDetail(String productId);
-
     CommonResponse getProductDetail(Long productId);
 
     CommonResponse createProduct(CreateProductRequest productRequest) throws TransactionException;
 
     CommonResponse updateProduct(UpdateProductRequest productRequest) throws TransactionException;
-
 
     CommonResponse approveProduct(ApproveProductRequest productRequest) throws TransactionException;
 }

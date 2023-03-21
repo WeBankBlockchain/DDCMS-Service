@@ -15,7 +15,7 @@ public class ProductInfoEntity implements Serializable {
     /**
      * 产品链上id
      */
-    private String productGid;
+    private String productDid;
 
     /**
      * 产品名称
