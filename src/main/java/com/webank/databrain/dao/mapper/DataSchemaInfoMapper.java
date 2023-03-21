@@ -28,9 +28,7 @@ public interface DataSchemaInfoMapper {
             "left join " +
             "t_product_info d on a.product_id = d.pk_id " +
             "left join " +
-            "t_company_info e on a.provider_id = e.pk_id " +
-            "left join " +
-            "t_account_info f on e.account_id = f.pk_id " +
+            "t_company_info e on a.provider_id = e.account_id " +
             "where 1 =1  " +
             "<if test='productId != null and productId &gt; 0'> AND a.product_id = #{productId} </if>" +
             "<if test='providerId != null and providerId &gt; 0'> AND a.provider_id = #{providerId} </if>" +
@@ -63,7 +61,7 @@ public interface DataSchemaInfoMapper {
             "left join " +
             "t_product_info d on a.product_id = d.pk_id " +
             "left join " +
-            "t_company_info e on a.provider_id = e.pk_id " +
+            "t_company_info e on a.provider_id = e.account_id " +
             "left join " +
             "t_account_info f on e.account_id = f.pk_id " +
             "where f.did = #{did} " +
@@ -77,8 +75,24 @@ public interface DataSchemaInfoMapper {
                                              @Param("did") String did,
                                              @Param("keyWord") String keyWord);
 
-    @Select("SELECT COUNT(*) FROM t_data_schema_info")
-    int count();
+    @Select("<script>" +
+            "SELECT COUNT(*) FROM t_data_schema_info a" +
+            " left join " +
+            " t_company_info e on a.provider_id = e.account_id "  +
+            " left join " +
+            " t_account_info f on e.account_id = f.pk_id " +
+            " where 1=1 " +
+            "<if test='productId != null and productId &gt; 0'> AND a.product_id = #{productId} </if>" +
+            "<if test='providerId != null and providerId &gt; 0'> AND a.provider_id = #{providerId} </if>" +
+            "<if test='keyWord != null'> AND a.data_schema_name like concat('%', #{keyWord}, '%') " +
+            " or a.data_schema_desc like concat('%', #{keyWord}, '%') </if>" +
+            "<if test='did != null'> AND f.did = #{did} </if>" +
+            "</script>")
+    int count(
+              @Param("productId") Long productId,
+              @Param("providerId") Long providerId,
+              @Param("keyWord") String keyWord,
+              @Param("did") String did);
 
 
     @Insert("INSERT INTO t_data_schema_info(" +

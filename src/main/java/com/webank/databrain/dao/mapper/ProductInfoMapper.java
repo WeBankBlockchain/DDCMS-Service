@@ -12,8 +12,8 @@ import java.util.List;
 public interface ProductInfoMapper {
 
     @Select("SELECT a.pk_id as productId, a.product_name,a.product_desc,a.status,a.review_time,a.create_time,c.company_name" +
-            " FROM t_product_info a JOIN t_account_info b ON a.provider_id = b.pk_id" +
-            " JOIN t_company_info c ON a.provider_id = c.account_id" +
+            " FROM t_product_info a " +
+            " LEFT JOIN t_company_info c ON a.provider_id = c.account_id " +
             " ORDER BY a.create_time DESC LIMIT #{start}, #{pageSize}")
     @ResultType(ProductInfoBO.class)
     List<ProductInfoBO> pageQueryProduct(@Param("start") long start, @Param("pageSize")int pageSize);
@@ -70,8 +70,15 @@ public interface ProductInfoMapper {
             "WHERE pk_id=#{pkId}")
     void updateProductInfoState(ProductInfoEntity productInfoEntity);
 
-    @Select("SELECT COUNT(*) FROM t_product_info")
-    int count();
+    @Select("<script>" +
+            "SELECT COUNT(*) " +
+            " FROM t_product_info a " +
+            " LEFT JOIN t_company_info b ON a.provider_id = b.account_id " +
+            " LEFT JOIN t_account_info c ON b.account_id = c.pk_id " +
+            " where 1=1" +
+            "<if test='did != null'> AND c.did = #{did} </if> " +
+            "</script>")
+    int count(String did);
 
     @Select("SELECT a.pk_id as productId,  a.product_name,a.product_desc,a.status,a.review_time,a.create_time,c.company_name" +
             " FROM t_product_info a" +
@@ -88,4 +95,12 @@ public interface ProductInfoMapper {
             " where pk_id = #{productId}")
     @ResultType(ProductInfoEntity.class)
     ProductInfoEntity getProductByProductId(Long productId);
+
+    @Select("SELECT a.pk_id as productId, a.product_name,a.product_desc,a.status,a.review_time,a.create_time,c.company_name" +
+            " FROM t_product_info a JOIN t_account_info b ON a.provider_id = b.pk_id" +
+            " JOIN t_company_info c ON a.provider_id = c.account_id " +
+            " where c.account_id = #{did}" +
+            " ORDER BY a.create_time DESC LIMIT #{start}, #{pageSize}")
+    @ResultType(ProductInfoBO.class)
+    List<ProductInfoBO> pageQueryMyProduct(int offset, int pageSize, String did);
 }

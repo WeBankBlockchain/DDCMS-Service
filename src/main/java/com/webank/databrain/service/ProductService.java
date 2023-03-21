@@ -20,4 +20,6 @@ public interface ProductService {
     CommonResponse updateProduct(UpdateProductRequest productRequest) throws TransactionException;
 
     CommonResponse approveProduct(ApproveProductRequest productRequest) throws TransactionException;
+
+    CommonResponse pageQueryMyProduct(CommonPageQueryRequest request);
 }
