@@ -68,7 +68,7 @@ public class ProductServiceImpl implements ProductService {
 
     public CommonResponse pageQueryProducts(CommonPageQueryRequest request) {
 
-        int totalCount = productInfoMapper.count();
+        int totalCount = productInfoMapper.count(null);
         int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
 
         PageListData pageListData = new PageListData<>();
@@ -111,7 +111,7 @@ public class ProductServiceImpl implements ProductService {
 
         String productId = HexUtil.encodeHexStr(productModule.getCreateProductOutput(receipt).getValue1());
         ProductInfoEntity product = new ProductInfoEntity();
-        product.setProductDid(productId);
+        product.setProductBid(productId);
         product.setProviderId(entity.getPkId());
         product.setStatus(ReviewStatus.NotReviewed.ordinal());
         product.setProductName(productRequest.getProductName());
@@ -121,8 +121,8 @@ public class ProductServiceImpl implements ProductService {
     }
     @Transactional(rollbackFor = Exception.class)
     public CommonResponse updateProduct(UpdateProductRequest productRequest) throws TransactionException {
-        String did = SecurityContextHolder.getContext().getAuthentication().getName();
-        AccountInfoEntity entity = accountInfoMapper.selectByDid(did);
+        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        AccountInfoEntity entity = accountInfoMapper.selectByDid(bo.getEntity().getDid());
 
         ProductInfoEntity productInfoEntity = productInfoMapper.getProductByProductId(productRequest.getProductId());
         if (productInfoEntity == null) {
@@ -137,7 +137,7 @@ public class ProductServiceImpl implements ProductService {
                 keyPair);
 
         TransactionReceipt receipt = productModule.modifyProduct(
-                HexUtil.decodeHex(productInfoEntity.getProductDid()),
+                HexUtil.decodeHex(productInfoEntity.getProductBid()),
                 cryptoSuite.hash((
                         productRequest.getProductName() + productRequest.getProductDesc())
                         .getBytes(StandardCharsets.UTF_8)));
@@ -171,7 +171,7 @@ public class ProductServiceImpl implements ProductService {
                 client,
                 witnessKeyPair);
         TransactionReceipt receipt = productModule.approveProduct(
-                HexUtil.decodeHex(productInfoEntity.getProductDid()), productRequest.isAgree()
+                HexUtil.decodeHex(productInfoEntity.getProductBid()), productRequest.isAgree()
         );
         BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
 
@@ -182,5 +182,37 @@ public class ProductServiceImpl implements ProductService {
         // productInfoEntity.setReviewTime(new Date());
         productInfoMapper.updateProductInfoState(productInfoEntity);
         return CommonResponse.success(productInfoEntity.getPkId());
+    }
+
+    @Override
+    public CommonResponse pageQueryMyProduct(CommonPageQueryRequest request) {
+        String did = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        int totalCount = productInfoMapper.count(did);
+        int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
+
+        PageListData pageListData = new PageListData<>();
+        pageListData.setPageCount(pageCount);
+        pageListData.setTotalCount(totalCount);
+
+        int offset = (request.getPageNo() - 1) * request.getPageSize();
+
+        List<ProductInfoBO> productInfoPOList = productInfoMapper.pageQueryMyProduct(
+                offset,
+                request.getPageSize(),
+                did);
+
+        pageListData.setItemList(productInfoPOList);
+        return CommonResponse.success(pageListData);
+    }
+
+    @Override
+    public CommonResponse getProductsByProviderId() {
+
+        LoginUserBO bo = (LoginUserBO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        long providerId = bo.getEntity().getPkId();
+
+        List<ProductInfoEntity> entityList = productInfoMapper.getProductsByProviderId(providerId);
+        return CommonResponse.success(entityList);
     }
 }

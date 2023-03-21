@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.HexUtil;
 import com.webank.databrain.bo.DataSchemaDetailBO;
 import com.webank.databrain.bo.DataSchemaWithAccessBO;
+import com.webank.databrain.bo.LoginUserBO;
 import com.webank.databrain.bo.ProductInfoBO;
 import com.webank.databrain.config.SysConfig;
 import com.webank.databrain.dao.bc.contract.DataSchemaModule;
@@ -15,9 +16,7 @@ import com.webank.databrain.service.DataSchemaService;
 import com.webank.databrain.utils.BlockchainUtils;
 import com.webank.databrain.vo.common.CommonResponse;
 import com.webank.databrain.vo.common.PageListData;
-import com.webank.databrain.vo.request.dataschema.CreateDataSchemaRequest;
-import com.webank.databrain.vo.request.dataschema.PageQueryDataSchemaRequest;
-import com.webank.databrain.vo.request.dataschema.UpdateDataSchemaRequest;
+import com.webank.databrain.vo.request.dataschema.*;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
@@ -75,9 +74,16 @@ public class DataSchemaServiceImpl implements DataSchemaService {
     @Autowired
     private DataSchemaTagsMapper dataSchemaTagsMapper;
 
+    @Autowired
+    private SchemaFavoriteInfoMapper schemaFavoriteInfoMapper;
+
 
     public CommonResponse pageQuerySchema(PageQueryDataSchemaRequest request) {
-        int totalCount = dataSchemaInfoMapper.count();
+        int totalCount = dataSchemaInfoMapper.count(
+                request.getProductId(),
+                request.getProviderId(),
+                request.getKeyWord(),
+                null);
         int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
         PageListData pageListData = new PageListData<>();
         pageListData.setPageCount(pageCount);
@@ -98,8 +104,13 @@ public class DataSchemaServiceImpl implements DataSchemaService {
 
     @Override
     public CommonResponse pageQueryMySchema(PageQueryDataSchemaRequest request) {
-        String did = SecurityContextHolder.getContext().getAuthentication().getName();
-        int totalCount = dataSchemaInfoMapper.count();
+        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String did = bo.getEntity().getDid();
+        int totalCount = dataSchemaInfoMapper.count(
+                null,
+                null,
+                request.getKeyWord(),
+                did);
         int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
         PageListData pageListData = new PageListData<>();
         pageListData.setPageCount(pageCount);
@@ -115,6 +126,45 @@ public class DataSchemaServiceImpl implements DataSchemaService {
 
         pageListData.setItemList(dataSchemaDetailBOList);
         return CommonResponse.success(pageListData);
+    }
+
+    @Override
+    public CommonResponse pageQueryMyFavSchema(PageQueryMyFavSchemaRequest request) {
+        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        AccountInfoEntity entity = accountInfoMapper.selectByDid(bo.getEntity().getDid());
+        int totalCount = schemaFavoriteInfoMapper.count(entity.getPkId());
+        int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
+        PageListData pageListData = new PageListData<>();
+        pageListData.setPageCount(pageCount);
+        pageListData.setTotalCount(totalCount);
+        int offset = (request.getPageNo() - 1) * request.getPageSize();
+
+        List<DataSchemaDetailBO> dataSchemaDetailBOList = schemaFavoriteInfoMapper.pageQuerySchemaFavorite(
+                offset,
+                request.getPageSize(),
+                entity.getPkId());
+        addTag(dataSchemaDetailBOList);
+
+        pageListData.setItemList(dataSchemaDetailBOList);
+        return CommonResponse.success(pageListData);
+    }
+
+    @Override
+    public CommonResponse addSchemaFavorite(CreateFavSchemaRequest request) {
+        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        AccountInfoEntity entity = accountInfoMapper.selectByDid(bo.getEntity().getDid());
+        SchemaFavoriteInfoEntity schemaFavoriteInfoEntity = new SchemaFavoriteInfoEntity();
+        schemaFavoriteInfoEntity.setSchemaId(request.getSchemaId());
+        schemaFavoriteInfoEntity.setAccountId(entity.getPkId());
+        schemaFavoriteInfoMapper.insertSchemaFavoriteInfo(schemaFavoriteInfoEntity);
+        return CommonResponse.success(schemaFavoriteInfoEntity.getPkId());
+    }
+
+    @Override
+    public CommonResponse delSchemaFavorite(DelFavSchemaRequest request) {
+        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        schemaFavoriteInfoMapper.delSchemaFavoriteInfo(request.getFavId());
+        return CommonResponse.success();
     }
 
 
@@ -143,13 +193,13 @@ public class DataSchemaServiceImpl implements DataSchemaService {
 
     @Transactional(rollbackFor = Exception.class)
     public CommonResponse updateDataSchema(UpdateDataSchemaRequest schemaRequest) throws TransactionException {
-        String did = SecurityContextHolder.getContext().getAuthentication().getName();
+        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         DataSchemaInfoEntity dataSchemaInfoEntity = dataSchemaInfoMapper.getSchemaBySchemaId(schemaRequest.getSchemaId());
         if (dataSchemaInfoEntity == null){
             return CommonResponse.error(CodeEnum.SCHEMA_NOT_EXISTS);
         }
         CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
-        AccountInfoEntity entity = accountInfoMapper.selectByDid(did);
+        AccountInfoEntity entity = accountInfoMapper.selectByDid(bo.getEntity().getDid());
         String privateKey = entity.getPrivateKey();
         CryptoKeyPair keyPair = cryptoSuite.loadKeyPair(privateKey);
         DataSchemaModule dataSchemaModule = DataSchemaModule.load(
@@ -162,7 +212,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
                 schemaRequest.getDataSchemaName())
                 .getBytes(StandardCharsets.UTF_8));
 
-        byte[] dataSchemaId = HexUtil.decodeHex(dataSchemaInfoEntity.getDataSchemaDid());
+        byte[] dataSchemaId = HexUtil.decodeHex(dataSchemaInfoEntity.getDataSchemaBid());
 
         TransactionReceipt receipt = dataSchemaModule.modifyDataSchema(dataSchemaId,hash);
         BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
@@ -188,9 +238,9 @@ public class DataSchemaServiceImpl implements DataSchemaService {
 
     @Transactional(rollbackFor = Exception.class)
     public CommonResponse createDataSchema(CreateDataSchemaRequest schemaRequest) throws Exception {
-        String did = SecurityContextHolder.getContext().getAuthentication().getName();
+        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
-        AccountInfoEntity entity = accountInfoMapper.selectByDid(did);
+        AccountInfoEntity entity = accountInfoMapper.selectByDid(bo.getEntity().getDid());
         ProductInfoBO product = productInfoMapper.getProductById(schemaRequest.getProductId());
         if(product == null){
             return CommonResponse.error(CodeEnum.PRODUCT_NOT_EXISTS);
@@ -213,7 +263,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         String dataSchemaId = HexUtil.encodeHexStr(dataSchemaModule.getCreateDataSchemaOutput(receipt).getValue1());
         DataSchemaInfoEntity dataSchemaInfoEntity = new DataSchemaInfoEntity();
         BeanUtils.copyProperties(schemaRequest, dataSchemaInfoEntity);
-        dataSchemaInfoEntity.setDataSchemaDid(dataSchemaId);
+        dataSchemaInfoEntity.setDataSchemaBid(dataSchemaId);
         dataSchemaInfoEntity.setProviderId(entity.getPkId());
         dataSchemaInfoMapper.insertDataSchemaInfo(dataSchemaInfoEntity);
         log.info("save dataSchemaInfoEntity finish, schemaId = {}", dataSchemaId);

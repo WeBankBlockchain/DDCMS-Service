@@ -149,7 +149,6 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public CommonResponse approveAccount(ApproveAccountRequest request) throws TransactionException {
-        // 1. 获取登录态下用户的角色
         LoginUserBO bo = (LoginUserBO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String did = bo.getEntity().getDid();
         boolean approve = request.isApproved();

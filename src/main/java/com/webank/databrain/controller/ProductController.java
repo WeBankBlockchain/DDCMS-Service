@@ -29,10 +29,21 @@ public class ProductController {
     public CommonResponse pageQueryProduct(@RequestBody @Valid CommonPageQueryRequest request){
         return productService.pageQueryProducts(request);
     }
+    @PostMapping(value = "/pageQueryMyProduct")
+    public CommonResponse pageQueryMyProduct(@RequestBody @Valid CommonPageQueryRequest request){
+        return productService.pageQueryMyProduct(request);
+    }
+
     @PostMapping(value = "/queryProductById")
     public CommonResponse queryProductById(@RequestBody @Valid QueryProductByIdRequest queryProductRequest) {
         return productService.getProductDetail(queryProductRequest.getProductId());
     }
+
+    @PostMapping(value = "/getProductsByProviderId")
+    public CommonResponse getProductsByProviderId() {
+        return productService.getProductsByProviderId();
+    }
+
     @PostMapping(value = "/getHotProducts")
     public CommonResponse getHotProducts(@RequestBody @Valid HotDataRequest request){
         return productService.getHotProducts(request);
@@ -51,6 +62,4 @@ public class ProductController {
     public CommonResponse updateProduct(@RequestBody @Valid UpdateProductRequest updateProductRequest) throws Exception{
         return productService.updateProduct(updateProductRequest);
     }
-
-
 }
