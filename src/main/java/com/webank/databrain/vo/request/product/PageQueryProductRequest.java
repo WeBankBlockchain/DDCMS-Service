@@ -10,4 +10,6 @@ public class PageQueryProductRequest extends CommonPageQueryRequest {
 
     private String keyWord;
 
+    private int status = -1;
+
 }
