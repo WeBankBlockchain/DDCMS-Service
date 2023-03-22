@@ -30,4 +30,3 @@ hs_err_pid*
 /dist
 /.idea                                                                                                                                                                                                                                                                                                                                                                                                                                              dea
 tmp/
-*.yml
