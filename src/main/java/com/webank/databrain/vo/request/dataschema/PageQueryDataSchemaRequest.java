@@ -10,4 +10,5 @@ public class PageQueryDataSchemaRequest extends CommonPageQueryRequest {
     private Long productId;
     private Long providerId;
     private String keyWord;
+    private int state = -1;
 }

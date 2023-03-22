@@ -21,6 +21,8 @@ public interface DataSchemaInfoMapper {
             "a.data_schema_desc," +
             "a.data_schema_usage," +
             "a.price," +
+            "a.status," +
+            "a.review_time," +
             "a.create_time," +
             "d.product_name," +
             "e.company_name as providerName " +
@@ -30,6 +32,7 @@ public interface DataSchemaInfoMapper {
             "left join " +
             "t_company_info e on a.provider_id = e.account_id " +
             "where 1 =1  " +
+            "<if test='reviewState != null and reviewState >= 0'> AND a.status = #{reviewState} </if>" +
             "<if test='productId != null and productId &gt; 0'> AND a.product_id = #{productId} </if>" +
             "<if test='providerId != null and providerId &gt; 0'> AND a.provider_id = #{providerId} </if>" +
             "<if test='keyWord != null'> AND a.data_schema_name like concat('%', #{keyWord}, '%') " +
@@ -41,7 +44,8 @@ public interface DataSchemaInfoMapper {
                                            @Param("pageSize")int pageSize,
                                            @Param("productId") Long productId,
                                            @Param("providerId") Long providerId,
-                                           @Param("keyWord") String keyWord);
+                                           @Param("keyWord") String keyWord,
+                                           @Param("reviewState") Integer reviewState);
 
     @Select("<script>" +
             "SELECT " +
@@ -54,6 +58,8 @@ public interface DataSchemaInfoMapper {
             "a.data_schema_desc," +
             "a.data_schema_usage," +
             "a.price," +
+            "a.status," +
+            "a.review_time," +
             "a.create_time," +
             "d.product_name," +
             "e.company_name as providerName " +
@@ -65,15 +71,17 @@ public interface DataSchemaInfoMapper {
             "left join " +
             "t_account_info f on e.account_id = f.pk_id " +
             "where f.did = #{did} " +
+            "<if test='reviewState != null and reviewState >= 0'> AND a.status = #{reviewState} </if>" +
             "<if test='keyWord != null'> AND a.data_schema_name like concat('%', #{keyWord}, '%') " +
             " or a.data_schema_desc like concat('%', #{keyWord}, '%') </if>" +
             " ORDER BY a.create_time DESC LIMIT #{start}, #{pageSize} " +
             "</script>" )
     @ResultType(DataSchemaDetailBO.class)
     List<DataSchemaDetailBO> pageQueryMySchema(@Param("start") int start,
-                                             @Param("pageSize")int pageSize,
-                                             @Param("did") String did,
-                                             @Param("keyWord") String keyWord);
+                                               @Param("pageSize")int pageSize,
+                                               @Param("did") String did,
+                                               @Param("keyWord") String keyWord,
+                                               @Param("reviewState") Integer reviewState);
 
     @Select("<script>" +
             "SELECT COUNT(*) FROM t_data_schema_info a" +
@@ -82,6 +90,7 @@ public interface DataSchemaInfoMapper {
             " left join " +
             " t_account_info f on e.account_id = f.pk_id " +
             " where 1=1 " +
+            "<if test='reviewState != null and reviewState >= 0'> AND a.status = #{reviewState} </if>" +
             "<if test='productId != null and productId &gt; 0'> AND a.product_id = #{productId} </if>" +
             "<if test='providerId != null and providerId &gt; 0'> AND a.provider_id = #{providerId} </if>" +
             "<if test='keyWord != null'> AND a.data_schema_name like concat('%', #{keyWord}, '%') " +
@@ -92,7 +101,8 @@ public interface DataSchemaInfoMapper {
               @Param("productId") Long productId,
               @Param("providerId") Long providerId,
               @Param("keyWord") String keyWord,
-              @Param("did") String did);
+              @Param("did") String did,
+              @Param("reviewState") Integer reviewState);
 
 
     @Insert("INSERT INTO t_data_schema_info(" +
@@ -105,7 +115,8 @@ public interface DataSchemaInfoMapper {
             "data_schema_desc," +
             "data_schema_usage," +
             "price," +
-            "create_time" +
+            "status," +
+            "review_time" +
             ") " +
             "VALUES(" +
             "#{dataSchemaBid}, " +
@@ -117,7 +128,8 @@ public interface DataSchemaInfoMapper {
             "#{dataSchemaDesc}," +
             "#{dataSchemaUsage}," +
             "#{price}," +
-            "#{updateTime}" +
+            "#{status}," +
+            "#{review_time}" +
             ")")
     @Options(useGeneratedKeys = true, keyProperty = "pkId", keyColumn = "pk_id")
     void insertDataSchemaInfo(DataSchemaInfoEntity dataSchemaInfoEntity);
@@ -135,6 +147,12 @@ public interface DataSchemaInfoMapper {
             "WHERE pk_id=#{pkId}")
     void updateDataSchemaInfo(DataSchemaInfoEntity dataSchemaInfoEntity);
 
+
+    @Update("UPDATE t_data_schema_info SET " +
+            "state=#{state}, " +
+            "WHERE pk_id=#{schemaId}")
+    void updateDataSchemaState(Long schemaId, int state);
+
     @Select("SELECT " +
             "a.pk_id as schemaId," +
             "a.data_schema_name," +
@@ -145,6 +163,8 @@ public interface DataSchemaInfoMapper {
             "a.data_schema_desc," +
             "a.data_schema_usage," +
             "a.price," +
+            "a.status," +
+            "a.review_time," +
             "a.create_time," +
             "d.product_name," +
             "e.company_name as providerName," +

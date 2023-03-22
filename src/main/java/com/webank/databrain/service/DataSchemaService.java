@@ -24,5 +24,7 @@ public interface DataSchemaService {
 
     CommonResponse updateDataSchema(UpdateDataSchemaRequest schemaRequest) throws TransactionException;
 
+    CommonResponse approveDataSchema(ApproveDataSchemaRequest request);
+
     CommonResponse createDataSchema(CreateDataSchemaRequest schemaRequest) throws Exception;
 }

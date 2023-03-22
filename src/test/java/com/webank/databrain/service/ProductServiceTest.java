@@ -31,7 +31,7 @@ public class ProductServiceTest extends ServerApplicationTests {
     @Test
     void productQueryTest() throws Exception {
         PageQueryProductRequest request = new PageQueryProductRequest();
-        request.setKeyWord("腾讯");
+        request.setStatus(0);
         CommonResponse result =  productServiceImpl.pageQueryProducts(request);
         System.out.println(JSONUtil.toJsonStr(result));
     }

@@ -58,5 +58,16 @@ public class DataSchemaDetailBO {
      */
     private Integer price;
 
+
+    /**
+     * 审核状态
+     */
+    private Integer status;
+
+    /**
+     * 审核时间
+     */
+    private Timestamp reviewTime;
+
     private Timestamp createTime;
 }

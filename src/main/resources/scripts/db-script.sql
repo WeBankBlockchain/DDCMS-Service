@@ -81,6 +81,8 @@ CREATE TABLE `t_company_info` (
    `data_schema_desc` text COMMENT '描述',
    `data_schema_usage` varchar(64) NOT NULL DEFAULT '' COMMENT '用途',
    `price` int(32) NOT NULL DEFAULT 0 COMMENT '价格',
+   `status` int(4) NOT NULL DEFAULT 0 COMMENT '审核状态',
+   `review_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '审核时间',
    `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
    `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
    PRIMARY KEY (`pk_id`),

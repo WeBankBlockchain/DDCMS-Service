@@ -11,6 +11,7 @@ import com.webank.databrain.dao.bc.contract.DataSchemaModule;
 import com.webank.databrain.dao.entity.*;
 import com.webank.databrain.dao.mapper.*;
 import com.webank.databrain.enums.CodeEnum;
+import com.webank.databrain.enums.ReviewStatus;
 import com.webank.databrain.handler.ThreadLocalKeyPairHandler;
 import com.webank.databrain.service.DataSchemaService;
 import com.webank.databrain.utils.BlockchainUtils;
@@ -83,7 +84,8 @@ public class DataSchemaServiceImpl implements DataSchemaService {
                 request.getProductId(),
                 request.getProviderId(),
                 request.getKeyWord(),
-                null);
+                null,
+                request.getState());
         int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
         PageListData pageListData = new PageListData<>();
         pageListData.setPageCount(pageCount);
@@ -95,7 +97,8 @@ public class DataSchemaServiceImpl implements DataSchemaService {
                 request.getPageSize(),
                 request.getProductId(),
                 request.getProviderId(),
-                request.getKeyWord());
+                request.getKeyWord(),
+                request.getState());
         addTag(dataSchemaDetailBOList);
 
         pageListData.setItemList(dataSchemaDetailBOList);
@@ -110,7 +113,8 @@ public class DataSchemaServiceImpl implements DataSchemaService {
                 null,
                 null,
                 request.getKeyWord(),
-                did);
+                did,
+                request.getState());
         int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
         PageListData pageListData = new PageListData<>();
         pageListData.setPageCount(pageCount);
@@ -121,7 +125,8 @@ public class DataSchemaServiceImpl implements DataSchemaService {
                 offset,
                 request.getPageSize(),
                 did,
-                request.getKeyWord());
+                request.getKeyWord(),
+                request.getState());
         addTag(dataSchemaDetailBOList);
 
         pageListData.setItemList(dataSchemaDetailBOList);
@@ -132,7 +137,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
     public CommonResponse pageQueryMyFavSchema(PageQueryMyFavSchemaRequest request) {
         LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         AccountInfoEntity entity = accountInfoMapper.selectByDid(bo.getEntity().getDid());
-        int totalCount = schemaFavoriteInfoMapper.count(entity.getPkId(),request.getKeyWord());
+        int totalCount = schemaFavoriteInfoMapper.count(entity.getPkId(),request.getKeyWord(),request.getState());
         int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
         PageListData pageListData = new PageListData<>();
         pageListData.setPageCount(pageCount);
@@ -143,7 +148,8 @@ public class DataSchemaServiceImpl implements DataSchemaService {
                 offset,
                 request.getPageSize(),
                 entity.getPkId(),
-                request.getKeyWord());
+                request.getKeyWord(),
+                request.getState());
         addTag(dataSchemaDetailBOList);
 
         pageListData.setItemList(dataSchemaDetailBOList);
@@ -235,6 +241,18 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         log.info("handlerTag finish, schemaId = {}", dataSchemaId);
 
         return CommonResponse.success(dataSchemaId);
+    }
+
+
+    @Override
+    public CommonResponse approveDataSchema(ApproveDataSchemaRequest request) {
+        DataSchemaInfoEntity dataSchemaInfoEntity = dataSchemaInfoMapper.getSchemaBySchemaId(request.getSchemaId());
+        if (dataSchemaInfoEntity == null){
+            return CommonResponse.error(CodeEnum.SCHEMA_NOT_EXISTS);
+        }
+        dataSchemaInfoMapper.updateDataSchemaState(request.getSchemaId(),
+                request.isAgree() ? ReviewStatus.Approved.ordinal() : ReviewStatus.Denied.ordinal());
+        return CommonResponse.success(dataSchemaInfoEntity.getPkId());
     }
 
     @Transactional(rollbackFor = Exception.class)

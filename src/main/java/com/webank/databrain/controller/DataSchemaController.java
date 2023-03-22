@@ -55,6 +55,11 @@ public class DataSchemaController {
         return schemaService.getDataSchemaAccessById(request.getAccessId());
     }
 
+    @PostMapping(value = "/approveDataSchema")
+    public CommonResponse approveDataSchema(@RequestBody @Valid ApproveDataSchemaRequest approveDataSchemaRequest) throws Exception {
+        return schemaService.approveDataSchema(approveDataSchemaRequest);
+    }
+
     @PostMapping(value = "/pageQueryMyFavSchema")
     public CommonResponse pageQueryMyFavSchema(@RequestBody @Valid PageQueryMyFavSchemaRequest querySchemaRequest) {
         return schemaService.pageQueryMyFavSchema(querySchemaRequest);

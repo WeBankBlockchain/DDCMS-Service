@@ -1,16 +1,14 @@
-package com.webank.databrain.vo.request.product;
+package com.webank.databrain.vo.request.dataschema;
 
 import com.webank.databrain.vo.common.CommonRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.validation.constraints.NotBlank;
-
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class ApproveProductRequest extends CommonRequest {
+public class ApproveDataSchemaRequest extends CommonRequest {
 
-    private Long productId;
+    private Long schemaId;
 
     private boolean agree;
 

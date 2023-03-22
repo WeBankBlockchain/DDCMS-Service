@@ -36,6 +36,8 @@ public interface SchemaFavoriteInfoMapper {
             "a.data_schema_desc," +
             "a.data_schema_usage," +
             "a.price," +
+            "a.status," +
+            "a.review_time," +
             "a.create_time," +
             "d.product_name," +
             "e.company_name as providerName " +
@@ -47,6 +49,7 @@ public interface SchemaFavoriteInfoMapper {
             "left join " +
             "t_company_info e on a.provider_id = e.account_id " +
             "where f.account_id=#{accountId} " +
+            "<if test='reviewState != null and reviewState >= 0'> AND a.status = #{reviewState} </if>" +
             "<if test='keyWord != null'> AND a.data_schema_name like concat('%', #{keyWord}, '%') " +
             " or a.data_schema_desc like concat('%', #{keyWord}, '%') </if>" +
             " ORDER BY a.create_time DESC LIMIT #{start}, #{pageSize} " +
@@ -55,7 +58,8 @@ public interface SchemaFavoriteInfoMapper {
     List<DataSchemaDetailBO> pageQuerySchemaFavorite(@Param("start") int start,
                                                      @Param("pageSize")int pageSize,
                                                      @Param("accountId") Long accountId,
-                                                     @Param("keyWord") String keyWord);
+                                                     @Param("keyWord") String keyWord,
+                                                     @Param("reviewState") Integer reviewState);
 
     @Select("<script>" +
             "SELECT COUNT(*) " +
@@ -63,10 +67,12 @@ public interface SchemaFavoriteInfoMapper {
             "left join " +
             "t_data_schema_info a on f.schema_id = a.pk_id " +
             " where f.account_id=#{accountId} " +
+            "<if test='reviewState != null and reviewState >= 0'> AND a.status = #{reviewState} </if>" +
             "<if test='keyWord != null'> AND a.data_schema_name like concat('%', #{keyWord}, '%') " +
             " or a.data_schema_desc like concat('%', #{keyWord}, '%') </if>" +
             "</script>" )
     int count(@Param("accountId") Long accountId,
-              @Param("keyWord") String keyWord);
+              @Param("keyWord") String keyWord,
+              @Param("reviewState") Integer reviewState);
 
 }
