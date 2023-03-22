@@ -1,5 +1,6 @@
 package com.webank.databrain.aspect;
 
+import cn.hutool.json.JSONUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webank.databrain.vo.common.CommonRequest;
@@ -71,7 +72,7 @@ public class WebLogAspect extends ResponseEntityExceptionHandler {
 
     @AfterReturning(value = "webLog()", returning = "o")
     public void doAfter(Object o) throws IOException {
-        log.info("response : {}", objectMapper.writeValueAsString(o));
+        log.info("response : {}", JSONUtil.toJsonPrettyStr(o));
     }
 
 }

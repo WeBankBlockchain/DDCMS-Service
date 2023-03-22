@@ -132,7 +132,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
     public CommonResponse pageQueryMyFavSchema(PageQueryMyFavSchemaRequest request) {
         LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         AccountInfoEntity entity = accountInfoMapper.selectByDid(bo.getEntity().getDid());
-        int totalCount = schemaFavoriteInfoMapper.count(entity.getPkId());
+        int totalCount = schemaFavoriteInfoMapper.count(entity.getPkId(),request.getKeyWord());
         int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
         PageListData pageListData = new PageListData<>();
         pageListData.setPageCount(pageCount);
@@ -142,7 +142,8 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         List<DataSchemaDetailBO> dataSchemaDetailBOList = schemaFavoriteInfoMapper.pageQuerySchemaFavorite(
                 offset,
                 request.getPageSize(),
-                entity.getPkId());
+                entity.getPkId(),
+                request.getKeyWord());
         addTag(dataSchemaDetailBOList);
 
         pageListData.setItemList(dataSchemaDetailBOList);
