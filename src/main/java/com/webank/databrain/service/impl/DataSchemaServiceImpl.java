@@ -2,6 +2,7 @@ package com.webank.databrain.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.HexUtil;
+import com.google.common.collect.Maps;
 import com.webank.databrain.bo.DataSchemaDetailBO;
 import com.webank.databrain.bo.DataSchemaWithAccessBO;
 import com.webank.databrain.bo.LoginUserBO;
@@ -24,9 +25,10 @@ import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
 import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
 import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
 import org.fisco.bcos.sdk.v3.transaction.codec.decode.TransactionDecoderInterface;
+import org.fisco.bcos.sdk.v3.transaction.model.exception.TransactionException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.fisco.bcos.sdk.v3.transaction.model.exception.TransactionException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,6 +82,12 @@ public class DataSchemaServiceImpl implements DataSchemaService {
 
 
     public CommonResponse pageQuerySchema(PageQueryDataSchemaRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String did = null;
+        if (authentication != null){
+            LoginUserBO bo = (LoginUserBO)authentication.getPrincipal();
+            did = bo.getEntity().getDid();
+        }
         int totalCount = dataSchemaInfoMapper.count(
                 request.getProductId(),
                 request.getProviderId(),
@@ -100,9 +108,28 @@ public class DataSchemaServiceImpl implements DataSchemaService {
                 request.getKeyWord(),
                 request.getState());
         addTag(dataSchemaDetailBOList);
+        addFav(did,dataSchemaDetailBOList);
 
         pageListData.setItemList(dataSchemaDetailBOList);
         return CommonResponse.success(pageListData);
+    }
+
+    private void addFav(String did, List<DataSchemaDetailBO> dataSchemaDetailBOList) {
+        if (did == null){
+            return;
+        }
+        AccountInfoEntity accountInfoEntity = accountInfoMapper.selectByDid(did);
+        List<Long> schemaIds = dataSchemaDetailBOList.stream()
+                .filter(Objects::nonNull)
+                .map(DataSchemaDetailBO::getSchemaId)
+                .collect(Collectors.toList());
+        List<SchemaFavoriteInfoEntity> schemaFavoriteInfoEntities =
+                schemaFavoriteInfoMapper.getSchemaFavBySchemaIds(accountInfoEntity.getPkId(), schemaIds);
+        Map<Long,SchemaFavoriteInfoEntity> favoriteInfoEntityMap = Maps.uniqueIndex(schemaFavoriteInfoEntities,
+                SchemaFavoriteInfoEntity::getSchemaId);
+        dataSchemaDetailBOList.forEach(dataSchemaDetailBO -> {
+            dataSchemaDetailBO.setFavTag(favoriteInfoEntityMap.get(dataSchemaDetailBO.getSchemaId()) == null ? 0 : 1);
+        });
     }
 
     @Override

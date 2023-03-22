@@ -75,4 +75,16 @@ public interface SchemaFavoriteInfoMapper {
               @Param("keyWord") String keyWord,
               @Param("reviewState") Integer reviewState);
 
+
+    @Select("<script>" +
+            "SELECT " +
+            " * " +
+            " from t_schema_favorite_info " +
+            " where account_id = #{accountId} and schema_id in " +
+            "   <foreach item='id' index='index' collection='schemaIds' open='(' separator=',' close=')'>" +
+            "       #{id}" +
+            "   </foreach>" +
+            "</script>" )
+    @ResultType(SchemaFavoriteInfoEntity.class)
+    List<SchemaFavoriteInfoEntity> getSchemaFavBySchemaIds(Long accountId,List<Long> schemaIds);
 }

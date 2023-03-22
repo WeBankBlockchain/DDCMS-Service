@@ -64,6 +64,8 @@ public class DataSchemaDetailBO {
      */
     private Integer status;
 
+    private Integer favTag;
+
     /**
      * 审核时间
      */

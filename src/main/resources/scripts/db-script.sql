@@ -126,3 +126,13 @@ CREATE TABLE `t_company_info` (
      `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
      PRIMARY KEY (`pk_id`)
    ) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb3;
+
+
+CREATE TABLE `t_schema_favorite_info` (
+  `pk_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '收藏ID',
+  `account_id` bigint(20) unsigned NOT NULL COMMENT '账户外键ID',
+  `schema_id` bigint(20) unsigned NOT NULL COMMENT '产品ID',
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`pk_id`),
+  UNIQUE KEY `account_schema` (`account_id`,`schema_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
