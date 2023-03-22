@@ -41,7 +41,7 @@ public interface SchemaFavoriteInfoMapper {
             "e.company_name as providerName " +
             "from t_schema_favorite_info f " +
             "left join " +
-            "t_data_schema_info a on f.schemaId = a.pk_id " +
+            "t_data_schema_info a on f.schema_id = a.pk_id " +
             "left join " +
             "t_product_info d on a.product_id = d.pk_id " +
             "left join " +
@@ -61,7 +61,7 @@ public interface SchemaFavoriteInfoMapper {
             "SELECT COUNT(*) " +
             "from t_schema_favorite_info f " +
             "left join " +
-            "t_data_schema_info a on f.schemaId = a.pk_id " +
+            "t_data_schema_info a on f.schema_id = a.pk_id " +
             " where f.account_id=#{accountId} " +
             "<if test='keyWord != null'> AND a.data_schema_name like concat('%', #{keyWord}, '%') " +
             " or a.data_schema_desc like concat('%', #{keyWord}, '%') </if>" +
