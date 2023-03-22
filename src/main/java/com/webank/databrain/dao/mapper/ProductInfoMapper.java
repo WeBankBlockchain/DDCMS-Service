@@ -109,7 +109,7 @@ public interface ProductInfoMapper {
     ProductInfoEntity getProductByProductId(Long productId);
 
     @Select("<script>" +
-            "SELECT a.pk_id as productId, a.product_name,a.product_desc,a.status,a.review_time,a.create_time,c.company_name" +
+            "SELECT a.pk_id as productId, a.product_name,a.product_desc,a.status,a.review_time,a.create_time,b.company_name" +
             " FROM t_product_info a " +
             " LEFT JOIN t_company_info b ON a.provider_id = b.account_id " +
             " LEFT JOIN t_account_info c ON b.account_id = c.pk_id " +
