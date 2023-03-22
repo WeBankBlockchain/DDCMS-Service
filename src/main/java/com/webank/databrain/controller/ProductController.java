@@ -4,10 +4,7 @@ import com.webank.databrain.service.ProductService;
 import com.webank.databrain.vo.common.CommonPageQueryRequest;
 import com.webank.databrain.vo.common.CommonResponse;
 import com.webank.databrain.vo.common.HotDataRequest;
-import com.webank.databrain.vo.request.product.ApproveProductRequest;
-import com.webank.databrain.vo.request.product.CreateProductRequest;
-import com.webank.databrain.vo.request.product.QueryProductByIdRequest;
-import com.webank.databrain.vo.request.product.UpdateProductRequest;
+import com.webank.databrain.vo.request.product.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,11 +23,11 @@ public class ProductController {
     private ProductService productService;
 
     @PostMapping(value = "/pageQueryProduct")
-    public CommonResponse pageQueryProduct(@RequestBody @Valid CommonPageQueryRequest request){
+    public CommonResponse pageQueryProduct(@RequestBody @Valid PageQueryProductRequest request){
         return productService.pageQueryProducts(request);
     }
     @PostMapping(value = "/pageQueryMyProduct")
-    public CommonResponse pageQueryMyProduct(@RequestBody @Valid CommonPageQueryRequest request){
+    public CommonResponse pageQueryMyProduct(@RequestBody @Valid PageQueryProductRequest request){
         return productService.pageQueryMyProduct(request);
     }
 

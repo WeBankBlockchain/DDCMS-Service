@@ -21,6 +21,7 @@ import com.webank.databrain.vo.common.HotDataRequest;
 import com.webank.databrain.vo.common.PageListData;
 import com.webank.databrain.vo.request.product.ApproveProductRequest;
 import com.webank.databrain.vo.request.product.CreateProductRequest;
+import com.webank.databrain.vo.request.product.PageQueryProductRequest;
 import com.webank.databrain.vo.request.product.UpdateProductRequest;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
@@ -66,9 +67,9 @@ public class ProductServiceImpl implements ProductService {
         return CommonResponse.success(productInfoEntities);
     }
 
-    public CommonResponse pageQueryProducts(CommonPageQueryRequest request) {
+    public CommonResponse pageQueryProducts(PageQueryProductRequest request) {
 
-        int totalCount = productInfoMapper.count(null);
+        int totalCount = productInfoMapper.count(null,request.getKeyWord());
         int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
 
         PageListData pageListData = new PageListData<>();
@@ -80,7 +81,8 @@ public class ProductServiceImpl implements ProductService {
 
         List<ProductInfoBO> productInfoPOList = productInfoMapper.pageQueryProduct(
                 offset,
-                request.getPageSize());
+                request.getPageSize(),
+                request.getKeyWord());
 
         pageListData.setItemList(productInfoPOList);
         return CommonResponse.success(pageListData);
@@ -155,8 +157,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional(rollbackFor = Exception.class)
     public CommonResponse approveProduct(ApproveProductRequest productRequest) throws TransactionException {
-        String did = SecurityContextHolder.getContext().getAuthentication().getName();
-
+        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String did = bo.getEntity().getDid();
         AccountInfoEntity entity = accountInfoMapper.selectByDid(did);
         if (entity == null) {
             return CommonResponse.error(CodeEnum.USER_NOT_EXISTS);
@@ -185,10 +187,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public CommonResponse pageQueryMyProduct(CommonPageQueryRequest request) {
-        String did = SecurityContextHolder.getContext().getAuthentication().getName();
+    public CommonResponse pageQueryMyProduct(PageQueryProductRequest request) {
+        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String did = bo.getEntity().getDid();
 
-        int totalCount = productInfoMapper.count(did);
+        int totalCount = productInfoMapper.count(did, request.getKeyWord());
         int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
 
         PageListData pageListData = new PageListData<>();
@@ -200,6 +203,7 @@ public class ProductServiceImpl implements ProductService {
         List<ProductInfoBO> productInfoPOList = productInfoMapper.pageQueryMyProduct(
                 offset,
                 request.getPageSize(),
+                request.getKeyWord(),
                 did);
 
         pageListData.setItemList(productInfoPOList);

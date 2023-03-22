@@ -12,6 +12,7 @@ import com.webank.databrain.vo.request.account.ApproveAccountRequest;
 import com.webank.databrain.vo.request.account.RegisterRequest;
 import com.webank.databrain.vo.request.product.ApproveProductRequest;
 import com.webank.databrain.vo.request.product.CreateProductRequest;
+import com.webank.databrain.vo.request.product.PageQueryProductRequest;
 import lombok.Data;
 import org.fisco.bcos.sdk.v3.transaction.model.exception.TransactionException;
 import org.fisco.bcos.sdk.v3.transaction.tools.JsonUtils;
@@ -29,7 +30,8 @@ public class ProductServiceTest extends ServerApplicationTests {
 
     @Test
     void productQueryTest() throws Exception {
-        CommonPageQueryRequest request = new CommonPageQueryRequest();
+        PageQueryProductRequest request = new PageQueryProductRequest();
+        request.setKeyWord("腾讯");
         CommonResponse result =  productServiceImpl.pageQueryProducts(request);
         System.out.println(JSONUtil.toJsonStr(result));
     }

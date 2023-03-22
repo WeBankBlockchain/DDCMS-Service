@@ -11,12 +11,19 @@ import java.util.List;
 @Mapper
 public interface ProductInfoMapper {
 
-    @Select("SELECT a.pk_id as productId, a.product_name,a.product_desc,a.status,a.review_time,a.create_time,c.company_name" +
+    @Select("<script> " +
+            "SELECT a.pk_id as productId, a.product_name,a.product_desc,a.status,a.review_time,a.create_time,c.company_name" +
             " FROM t_product_info a " +
             " LEFT JOIN t_company_info c ON a.provider_id = c.account_id " +
-            " ORDER BY a.create_time DESC LIMIT #{start}, #{pageSize}")
+            " where 1=1 " +
+            " <if test='keyWord != null'> AND a.product_name like concat('%', #{keyWord}, '%') " +
+            " or a.product_desc like concat('%', #{keyWord}, '%') </if>" +
+            " ORDER BY a.create_time DESC LIMIT #{start}, #{pageSize}" +
+            " </script>")
     @ResultType(ProductInfoBO.class)
-    List<ProductInfoBO> pageQueryProduct(@Param("start") long start, @Param("pageSize")int pageSize);
+    List<ProductInfoBO> pageQueryProduct(@Param("start") long start,
+                                         @Param("pageSize") int pageSize,
+                                         @Param("keyWord") String keyWord);
 
     @Select("SELECT c.company_name as productName, a.pk_id as productId FROM t_product_info a " +
             "JOIN t_account_info b ON a.provider_id = b.pk_id " +
@@ -75,10 +82,12 @@ public interface ProductInfoMapper {
             " FROM t_product_info a " +
             " LEFT JOIN t_company_info b ON a.provider_id = b.account_id " +
             " LEFT JOIN t_account_info c ON b.account_id = c.pk_id " +
-            " where 1=1" +
+            " where 1=1 " +
             "<if test='did != null'> AND c.did = #{did} </if> " +
+            " <if test='keyWord != null'> AND a.product_name like concat('%', #{keyWord}, '%') " +
+            " or a.product_desc like concat('%', #{keyWord}, '%') </if>" +
             "</script>")
-    int count(String did);
+    int count(@Param("did") String did, @Param("keyWord") String keyWord);
 
     @Select("SELECT a.pk_id as productId,  a.product_name,a.product_desc,a.status,a.review_time,a.create_time,c.company_name" +
             " FROM t_product_info a" +
@@ -97,10 +106,16 @@ public interface ProductInfoMapper {
     ProductInfoEntity getProductByProductId(Long productId);
 
     @Select("SELECT a.pk_id as productId, a.product_name,a.product_desc,a.status,a.review_time,a.create_time,c.company_name" +
-            " FROM t_product_info a JOIN t_account_info b ON a.provider_id = b.pk_id" +
-            " JOIN t_company_info c ON a.provider_id = c.account_id " +
-            " where c.account_id = #{did}" +
+            " FROM t_product_info a " +
+            " LEFT JOIN t_company_info b ON a.provider_id = b.account_id " +
+            " LEFT JOIN t_account_info c ON b.account_id = c.pk_id " +
+            " where c.did = #{did}" +
+            " <if test='keyWord != null'> AND a.product_name like concat('%', #{keyWord}, '%') " +
+            " or a.product_desc like concat('%', #{keyWord}, '%') </if>" +
             " ORDER BY a.create_time DESC LIMIT #{start}, #{pageSize}")
     @ResultType(ProductInfoBO.class)
-    List<ProductInfoBO> pageQueryMyProduct(int offset, int pageSize, String did);
+    List<ProductInfoBO> pageQueryMyProduct(@Param("start") long start,
+                                           @Param("pageSize") int pageSize,
+                                           @Param("keyWord") String keyWord,
+                                           @Param("did") String did);
 }
