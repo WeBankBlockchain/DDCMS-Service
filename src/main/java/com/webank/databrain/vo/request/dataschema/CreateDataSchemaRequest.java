@@ -16,7 +16,6 @@ public class CreateDataSchemaRequest extends CommonRequest {
     @NotBlank(message = "目录名不能为空.")
     private String dataSchemaName;
 
-    @NotBlank(message = "产品ID不能为空.")
     private Long productId;
 
     private List<String> tagNameList;
@@ -25,7 +24,6 @@ public class CreateDataSchemaRequest extends CommonRequest {
      */
     private Integer version;
 
-    @NotBlank(message = "是否可见不能为空.")
     private Integer visible;
 
     @NotBlank(message = "目录描述不能为空.")
