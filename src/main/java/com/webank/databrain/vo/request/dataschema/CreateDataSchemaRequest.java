@@ -1,5 +1,6 @@
 package com.webank.databrain.vo.request.dataschema;
 
+import com.webank.databrain.aspect.JsonValid;
 import com.webank.databrain.vo.common.CommonRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -50,11 +51,13 @@ public class CreateDataSchemaRequest extends CommonRequest {
     /**
      * 内容格式
      */
+    @JsonValid(message = "内容格式需要为Json格式")
     private String contentSchema;
 
     /**
      * 数据的查询条件定义
      */
+    @JsonValid(message = "查询条件格式需要为Json格式")
     private String accessCondition;
 
     /**
