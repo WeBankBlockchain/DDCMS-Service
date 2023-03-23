@@ -12,4 +12,6 @@ public class PageQueryProductRequest extends CommonPageQueryRequest {
 
     private int status = -1;
 
+    private Long providerId;
+
 }

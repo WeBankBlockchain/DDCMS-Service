@@ -69,7 +69,7 @@ public class ProductServiceImpl implements ProductService {
 
     public CommonResponse pageQueryProducts(PageQueryProductRequest request) {
 
-        int totalCount = productInfoMapper.count(null,request.getKeyWord(),request.getStatus());
+        int totalCount = productInfoMapper.count(null,request.getKeyWord(),request.getStatus(),request.getProviderId());
         int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
 
         PageListData pageListData = new PageListData<>();
@@ -83,7 +83,8 @@ public class ProductServiceImpl implements ProductService {
                 offset,
                 request.getPageSize(),
                 request.getKeyWord(),
-                request.getStatus());
+                request.getStatus(),
+                request.getProviderId());
 
         pageListData.setItemList(productInfoPOList);
         return CommonResponse.success(pageListData);
@@ -192,7 +193,7 @@ public class ProductServiceImpl implements ProductService {
         LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String did = bo.getEntity().getDid();
 
-        int totalCount = productInfoMapper.count(did, request.getKeyWord(), request.getStatus());
+        int totalCount = productInfoMapper.count(did, request.getKeyWord(), request.getStatus(),null);
         int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
 
         PageListData pageListData = new PageListData<>();
