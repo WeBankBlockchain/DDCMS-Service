@@ -28,6 +28,7 @@ import org.fisco.bcos.sdk.v3.transaction.codec.decode.TransactionDecoderInterfac
 import org.fisco.bcos.sdk.v3.transaction.model.exception.TransactionException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -84,7 +85,9 @@ public class DataSchemaServiceImpl implements DataSchemaService {
     public CommonResponse pageQuerySchema(PageQueryDataSchemaRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String did = null;
-        if (authentication != null){
+        if (authentication != null
+                && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken)){
             LoginUserBO bo = (LoginUserBO)authentication.getPrincipal();
             did = bo.getEntity().getDid();
         }
