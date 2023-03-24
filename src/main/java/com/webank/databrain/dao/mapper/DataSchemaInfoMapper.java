@@ -35,7 +35,7 @@ public interface DataSchemaInfoMapper {
             "<if test='reviewState != null and reviewState >= 0'> AND a.status = #{reviewState} </if>" +
             "<if test='productId != null and productId &gt; 0'> AND a.product_id = #{productId} </if>" +
             "<if test='providerId != null and providerId &gt; 0'> AND a.provider_id = #{providerId} </if>" +
-            "<if test='keyWord != null'> AND a.data_schema_name like concat('%', #{keyWord}, '%') " +
+            "<if test='keyWord != null and keyWord.trim() != \"\"'> AND a.data_schema_name like concat('%', #{keyWord}, '%') " +
             " or a.data_schema_desc like concat('%', #{keyWord}, '%') </if>" +
             " ORDER BY a.create_time DESC LIMIT #{start}, #{pageSize} " +
             "</script>" )
@@ -72,7 +72,7 @@ public interface DataSchemaInfoMapper {
             "t_account_info f on e.account_id = f.pk_id " +
             "where f.did = #{did} " +
             "<if test='reviewState != null and reviewState >= 0'> AND a.status = #{reviewState} </if>" +
-            "<if test='keyWord != null'> AND a.data_schema_name like concat('%', #{keyWord}, '%') " +
+            "<if test='keyWord != null and keyWord.trim() != \"\"'> AND a.data_schema_name like concat('%', #{keyWord}, '%') " +
             " or a.data_schema_desc like concat('%', #{keyWord}, '%') </if>" +
             " ORDER BY a.create_time DESC LIMIT #{start}, #{pageSize} " +
             "</script>" )
@@ -93,7 +93,7 @@ public interface DataSchemaInfoMapper {
             "<if test='reviewState != null and reviewState >= 0'> AND a.status = #{reviewState} </if>" +
             "<if test='productId != null and productId &gt; 0'> AND a.product_id = #{productId} </if>" +
             "<if test='providerId != null and providerId &gt; 0'> AND a.provider_id = #{providerId} </if>" +
-            "<if test='keyWord != null'> AND a.data_schema_name like concat('%', #{keyWord}, '%') " +
+            "<if test='keyWord != null and keyWord.trim() != \"\"'> AND a.data_schema_name like concat('%', #{keyWord}, '%') " +
             " or a.data_schema_desc like concat('%', #{keyWord}, '%') </if>" +
             "<if test='did != null'> AND f.did = #{did} </if>" +
             "</script>")

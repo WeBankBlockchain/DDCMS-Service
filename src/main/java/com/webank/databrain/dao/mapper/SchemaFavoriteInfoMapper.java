@@ -50,7 +50,7 @@ public interface SchemaFavoriteInfoMapper {
             "t_company_info e on a.provider_id = e.account_id " +
             "where f.account_id=#{accountId} " +
             "<if test='reviewState != null and reviewState >= 0'> AND a.status = #{reviewState} </if>" +
-            "<if test='keyWord != null'> AND a.data_schema_name like concat('%', #{keyWord}, '%') " +
+            "<if test='keyWord != null and keyWord.trim() != \"\"'> AND a.data_schema_name like concat('%', #{keyWord}, '%') " +
             " or a.data_schema_desc like concat('%', #{keyWord}, '%') </if>" +
             " ORDER BY a.create_time DESC LIMIT #{start}, #{pageSize} " +
             "</script>" )
@@ -68,7 +68,7 @@ public interface SchemaFavoriteInfoMapper {
             "t_data_schema_info a on f.schema_id = a.pk_id " +
             " where f.account_id=#{accountId} " +
             "<if test='reviewState != null and reviewState >= 0'> AND a.status = #{reviewState} </if>" +
-            "<if test='keyWord != null'> AND a.data_schema_name like concat('%', #{keyWord}, '%') " +
+            "<if test='keyWord != null and keyWord.trim() != \"\"'> AND a.data_schema_name like concat('%', #{keyWord}, '%') " +
             " or a.data_schema_desc like concat('%', #{keyWord}, '%') </if>" +
             "</script>" )
     int count(@Param("accountId") Long accountId,

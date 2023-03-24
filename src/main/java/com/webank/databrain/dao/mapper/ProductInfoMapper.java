@@ -18,7 +18,7 @@ public interface ProductInfoMapper {
             " where 1=1 " +
             " <if test='providerId != null and providerId >= 0'> AND a.provider_id = #{providerId} </if>" +
             " <if test='reviewState != null and reviewState >= 0'> AND a.status = #{reviewState} </if>" +
-            " <if test='keyWord != null'> AND a.product_name like concat('%', #{keyWord}, '%') " +
+            " <if test='keyWord != null and keyWord.trim() != \"\"'> AND a.product_name like concat('%', #{keyWord}, '%') " +
             " or a.product_desc like concat('%', #{keyWord}, '%') </if>" +
             " ORDER BY a.create_time DESC LIMIT #{start}, #{pageSize}" +
             " </script>")
@@ -90,7 +90,7 @@ public interface ProductInfoMapper {
             "<if test='providerId != null and providerId >= 0'> AND a.provider_id = #{providerId} </if>" +
             "<if test='reviewState != null and reviewState >= 0'> AND a.status = #{reviewState} </if>" +
             "<if test='did != null'> AND c.did = #{did} </if> " +
-            " <if test='keyWord != null'> AND a.product_name like concat('%', #{keyWord}, '%') " +
+            " <if test='keyWord != null and keyWord.trim() != \"\"'> AND a.product_name like concat('%', #{keyWord}, '%') " +
             " or a.product_desc like concat('%', #{keyWord}, '%') </if>" +
             "</script>")
     int count(@Param("did") String did,
@@ -121,7 +121,7 @@ public interface ProductInfoMapper {
             " LEFT JOIN t_account_info c ON b.account_id = c.pk_id " +
             " where c.did = #{did}" +
             "<if test='reviewState != null and reviewState >= 0'> AND a.status = #{reviewState} </if>" +
-            " <if test='keyWord != null'> AND a.product_name like concat('%', #{keyWord}, '%') " +
+            " <if test='keyWord != null and keyWord.trim() != \"\"'> AND a.product_name like concat('%', #{keyWord}, '%') " +
             " or a.product_desc like concat('%', #{keyWord}, '%') </if>" +
             " ORDER BY a.create_time DESC LIMIT #{start}, #{pageSize}" +
             "</script>")
