@@ -1,9 +1,9 @@
 package com.webank.databrain.starter;
 
 import com.webank.databrain.config.SysConfig;
-import com.webank.databrain.dao.bc.contract.AccountModule;
-import com.webank.databrain.dao.bc.contract.DataSchemaModule;
-import com.webank.databrain.dao.bc.contract.ProductModule;
+import com.webank.databrain.contracts.AccountContract;
+import com.webank.databrain.contracts.DataSchemaContract;
+import com.webank.databrain.contracts.ProductContract;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
@@ -19,7 +19,7 @@ public class BlockchainStarter implements ApplicationListener<ContextRefreshedEv
     @Autowired
     private SysConfig sysConfig;
     @Autowired
-    private CryptoKeyPair witnessKeyPair;
+    private CryptoKeyPair adminKeyPair;
 
     @Autowired
     private Client client;
@@ -29,13 +29,13 @@ public class BlockchainStarter implements ApplicationListener<ContextRefreshedEv
         try{
             SysConfig.ContractConfig contractConfig = new SysConfig.ContractConfig();
 
-            AccountModule accountModule = AccountModule.deploy(client, witnessKeyPair, witnessKeyPair.getAddress());
-            contractConfig.setAccountContract(accountModule.getContractAddress());
+            AccountContract accountContract = AccountContract.deploy(client, adminKeyPair);
+            contractConfig.setAccountContract(accountContract.getContractAddress());
 
-            ProductModule productModule = ProductModule.deploy(client, witnessKeyPair, witnessKeyPair.getAddress(), accountModule.getContractAddress());
-            contractConfig.setProductContract(productModule.getContractAddress());
+            ProductContract productContract = ProductContract.deploy(client, adminKeyPair, accountContract.getContractAddress());
+            contractConfig.setProductContract(productContract.getContractAddress());
 
-            DataSchemaModule dataSchemaModule = DataSchemaModule.deploy(client, witnessKeyPair, witnessKeyPair.getAddress(), accountModule.getContractAddress());
+            DataSchemaContract dataSchemaModule = DataSchemaContract.deploy(client, adminKeyPair, accountContract.getContractAddress(), productContract.getContractAddress());
             contractConfig.setDataSchemaContract(dataSchemaModule.getContractAddress());
             System.out.println("合约地址替换为临时部署的");
         }catch (Exception ex){

@@ -5,10 +5,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webank.databrain.bo.LoginUserBO;
 import com.webank.databrain.config.SysConfig;
-import com.webank.databrain.dao.bc.contract.AccountModule;
+import com.webank.databrain.contracts.AccountContract;
 import com.webank.databrain.dao.entity.AccountInfoEntity;
 import com.webank.databrain.dao.entity.CompanyInfoEntity;
-import com.webank.databrain.dao.entity.PersonInfoEntity;
 import com.webank.databrain.dao.mapper.AccountInfoMapper;
 import com.webank.databrain.dao.mapper.CompanyInfoMapper;
 import com.webank.databrain.dao.mapper.PersonInfoMapper;
@@ -89,7 +88,7 @@ public class AccountServiceImpl implements AccountService {
         CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
         CryptoKeyPair keyPair = cryptoSuite.generateRandomKeyPair();
         //Save to blockchain
-        AccountModule accountContract = AccountModule.load(
+        AccountContract accountContract = AccountContract.load(
                 sysConfig.getContractConfig().getAccountContract(),
                 client,
                 keyPair);
@@ -159,7 +158,7 @@ public class AccountServiceImpl implements AccountService {
         }
         byte[] didBytes = Base64.decode(did);
         CryptoKeyPair witnessKeyPair = this.witnessKeyPair;
-        AccountModule accountModule = AccountModule.load(sysConfig.getContractConfig().getAccountContract(), client, witnessKeyPair);
+        AccountContract accountModule = AccountContract.load(sysConfig.getContractConfig().getAccountContract(), client, witnessKeyPair);
         TransactionReceipt txReceipt = accountModule.approve(didBytes, approve);
         BlockchainUtils.ensureTransactionSuccess(txReceipt, txDecoder);
         //修改数据库状态

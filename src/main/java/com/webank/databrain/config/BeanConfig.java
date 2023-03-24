@@ -30,8 +30,8 @@ public class BeanConfig {
     }
 
     @Bean
-    public CryptoKeyPair witnessKeyPair(CryptoSuite cryptoSuite){
-        return cryptoSuite.loadKeyPair(sysConfig.getWitnessPrivateKey());
+    public CryptoKeyPair adminKeyPair(CryptoSuite cryptoSuite){
+        return cryptoSuite.loadKeyPair(sysConfig.getAdminPrivateKey());
     }
 
     @Bean

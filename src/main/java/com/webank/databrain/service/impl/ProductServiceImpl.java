@@ -5,7 +5,7 @@ import com.webank.databrain.bo.HotProductBO;
 import com.webank.databrain.bo.LoginUserBO;
 import com.webank.databrain.bo.ProductInfoBO;
 import com.webank.databrain.config.SysConfig;
-import com.webank.databrain.dao.bc.contract.ProductModule;
+import com.webank.databrain.contracts.ProductContract;
 import com.webank.databrain.dao.entity.AccountInfoEntity;
 import com.webank.databrain.dao.entity.ProductInfoEntity;
 import com.webank.databrain.dao.mapper.AccountInfoMapper;
@@ -15,7 +15,6 @@ import com.webank.databrain.enums.ReviewStatus;
 import com.webank.databrain.handler.ThreadLocalKeyPairHandler;
 import com.webank.databrain.service.ProductService;
 import com.webank.databrain.utils.BlockchainUtils;
-import com.webank.databrain.vo.common.CommonPageQueryRequest;
 import com.webank.databrain.vo.common.CommonResponse;
 import com.webank.databrain.vo.common.HotDataRequest;
 import com.webank.databrain.vo.common.PageListData;
@@ -103,7 +102,7 @@ public class ProductServiceImpl implements ProductService {
 
         String privateKey = entity.getPrivateKey();
         CryptoKeyPair keyPair = cryptoSuite.loadKeyPair(privateKey);
-        ProductModule productModule = ProductModule.load(
+        ProductContract productModule = ProductContract.load(
                 sysConfig.getContractConfig().getProductContract(),
                 client,
                 keyPair);
@@ -135,7 +134,7 @@ public class ProductServiceImpl implements ProductService {
         String privateKey = entity.getPrivateKey();
         CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
         CryptoKeyPair keyPair = cryptoSuite.loadKeyPair(privateKey);
-        ProductModule productModule = ProductModule.load(
+        ProductContract productModule = ProductContract.load(
                 sysConfig.getContractConfig().getAccountContract(),
                 client,
                 keyPair);
@@ -144,7 +143,7 @@ public class ProductServiceImpl implements ProductService {
                 HexUtil.decodeHex(productInfoEntity.getProductBid()),
                 cryptoSuite.hash((
                         productRequest.getProductName() + productRequest.getProductDesc())
-                        .getBytes(StandardCharsets.UTF_8)));
+                        .getBytes(StandardCharsets.UTF_8)));//TODO：没有modify方法
         BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
 
         ProductInfoEntity product = new ProductInfoEntity();
@@ -170,7 +169,7 @@ public class ProductServiceImpl implements ProductService {
             return CommonResponse.error(CodeEnum.PRODUCT_NOT_EXISTS);
         }
         CryptoKeyPair witnessKeyPair = this.witnessKeyPair;
-        ProductModule productModule = ProductModule.load(
+        ProductContract productModule = ProductContract.load(
                 sysConfig.getContractConfig().getProductContract(),
                 client,
                 witnessKeyPair);
