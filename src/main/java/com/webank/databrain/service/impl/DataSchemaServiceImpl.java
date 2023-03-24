@@ -8,6 +8,7 @@ import com.webank.databrain.bo.DataSchemaWithAccessBO;
 import com.webank.databrain.bo.LoginUserBO;
 import com.webank.databrain.config.SysConfig;
 import com.webank.databrain.contracts.DataSchemaContract;
+import com.webank.databrain.contracts.ProductContract;
 import com.webank.databrain.dao.entity.*;
 import com.webank.databrain.dao.mapper.*;
 import com.webank.databrain.enums.CodeEnum;
@@ -24,6 +25,7 @@ import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
 import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
 import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
 import org.fisco.bcos.sdk.v3.transaction.codec.decode.TransactionDecoderInterface;
+import org.fisco.bcos.sdk.v3.transaction.model.exception.TransactionException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -273,13 +275,31 @@ public class DataSchemaServiceImpl implements DataSchemaService {
 
 
     @Override
-    public CommonResponse approveDataSchema(ApproveDataSchemaRequest request) {
+    public CommonResponse approveDataSchema(ApproveDataSchemaRequest request) throws TransactionException {
+        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String did = bo.getEntity().getDid();
+        AccountInfoEntity entity = accountInfoMapper.selectByDid(did);
+        if (entity == null) {
+            return CommonResponse.error(CodeEnum.USER_NOT_EXISTS);
+        }
         DataSchemaInfoEntity dataSchemaInfoEntity = dataSchemaInfoMapper.getSchemaBySchemaId(request.getSchemaId());
         if (dataSchemaInfoEntity == null){
             return CommonResponse.error(CodeEnum.SCHEMA_NOT_EXISTS);
         }
-        dataSchemaInfoMapper.updateDataSchemaState(request.getSchemaId(),
-                request.isAgree() ? ReviewStatus.Approved.ordinal() : ReviewStatus.Denied.ordinal());
+        String privateKey = entity.getPrivateKey();
+        CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
+        CryptoKeyPair witnessKeyPair = cryptoSuite.loadKeyPair(privateKey);
+        DataSchemaContract schemaContract = DataSchemaContract.load(
+                sysConfig.getContractConfig().getDataSchemaContract(),
+                client,
+                witnessKeyPair);
+        TransactionReceipt receipt = schemaContract.approveDataSchema(
+                HexUtil.decodeHex(dataSchemaInfoEntity.getDataSchemaBid()), request.isAgree()
+        );
+        BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
+        int reviewState = schemaContract.getApproveDataSchemaOutput(receipt).getValue4().intValue();
+
+        dataSchemaInfoMapper.updateDataSchemaState(request.getSchemaId(), reviewState);
         return CommonResponse.success(dataSchemaInfoEntity.getPkId());
     }
 

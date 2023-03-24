@@ -168,7 +168,9 @@ public class ProductServiceImpl implements ProductService {
         if (productInfoEntity == null) {
             return CommonResponse.error(CodeEnum.PRODUCT_NOT_EXISTS);
         }
-        CryptoKeyPair witnessKeyPair = this.witnessKeyPair;
+        String privateKey = entity.getPrivateKey();
+        CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
+        CryptoKeyPair witnessKeyPair = cryptoSuite.loadKeyPair(privateKey);
         ProductContract productModule = ProductContract.load(
                 sysConfig.getContractConfig().getProductContract(),
                 client,
@@ -177,10 +179,11 @@ public class ProductServiceImpl implements ProductService {
                 HexUtil.decodeHex(productInfoEntity.getProductBid()), productRequest.isAgree()
         );
         BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
+        int reviewState = productModule.getApproveProductOutput(receipt).getValue4().intValue();
 
         ProductInfoEntity productInfoEntityUp = new ProductInfoEntity();
         productInfoEntityUp.setPkId(productRequest.getProductId());
-        productInfoEntityUp.setStatus(productRequest.isAgree() ? ReviewStatus.Approved.ordinal() : ReviewStatus.Denied.ordinal());
+        productInfoEntityUp.setStatus(reviewState);
         // 不需要set
         // productInfoEntity.setReviewTime(new Date());
         productInfoMapper.updateProductInfoState(productInfoEntity);
