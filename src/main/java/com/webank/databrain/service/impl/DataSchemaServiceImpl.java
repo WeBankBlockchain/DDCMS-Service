@@ -8,7 +8,7 @@ import com.webank.databrain.bo.DataSchemaWithAccessBO;
 import com.webank.databrain.bo.LoginUserBO;
 import com.webank.databrain.bo.ProductInfoBO;
 import com.webank.databrain.config.SysConfig;
-import com.webank.databrain.dao.bc.contract.DataSchemaModule;
+import com.webank.databrain.contracts.DataSchemaContract;
 import com.webank.databrain.dao.entity.*;
 import com.webank.databrain.dao.mapper.*;
 import com.webank.databrain.enums.CodeEnum;
@@ -239,7 +239,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         AccountInfoEntity entity = accountInfoMapper.selectByDid(bo.getEntity().getDid());
         String privateKey = entity.getPrivateKey();
         CryptoKeyPair keyPair = cryptoSuite.loadKeyPair(privateKey);
-        DataSchemaModule dataSchemaModule = DataSchemaModule.load(
+        DataSchemaContract dataSchemaModule = DataSchemaContract.load(
                 sysConfig.getContractConfig().getDataSchemaContract(),
                 client,
                 keyPair);
@@ -251,7 +251,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
 
         byte[] dataSchemaId = HexUtil.decodeHex(dataSchemaInfoEntity.getDataSchemaBid());
 
-        TransactionReceipt receipt = dataSchemaModule.modifyDataSchema(dataSchemaId,hash);
+        TransactionReceipt receipt = dataSchemaModule.modifyDataSchema(dataSchemaId,hash);//TODO:没有update方法
         BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
 
         DataSchemaInfoEntity dataSchemaInfoEntityUp = new DataSchemaInfoEntity();
@@ -296,7 +296,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         }
         String privateKey = entity.getPrivateKey();
         CryptoKeyPair keyPair = cryptoSuite.loadKeyPair(privateKey);
-        DataSchemaModule dataSchemaModule = DataSchemaModule.load(
+        DataSchemaContract dataSchemaModule = DataSchemaContract.load(
                 sysConfig.getContractConfig().getDataSchemaContract(),
                 client,
                 keyPair);
@@ -306,7 +306,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
                 schemaRequest.getDataSchemaName())
                 .getBytes(StandardCharsets.UTF_8));
 
-        TransactionReceipt receipt = dataSchemaModule.createDataSchema(hash);
+        TransactionReceipt receipt = dataSchemaModule.createDataSchema(hash);//TODO:还需要传入product的bid
         BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
 
         String dataSchemaId = HexUtil.encodeHexStr(dataSchemaModule.getCreateDataSchemaOutput(receipt).getValue1());

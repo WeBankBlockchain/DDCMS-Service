@@ -1,8 +1,5 @@
 package com.webank.databrain.contracts;
 
-import com.webank.databrain.dao.bc.contract.AccountModule;
-import com.webank.databrain.dao.bc.contract.DataSchemaModule;
-import com.webank.databrain.dao.bc.contract.ProductModule;
 import org.fisco.bcos.sdk.v3.BcosSDK;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
@@ -16,20 +13,20 @@ public class Deployer {
         Client client = BcosSDK.build("config/config.toml").getClient();
         System.out.println(client);
         //Witness key
-        String witnessPrivateKey = "11afa82f974469792aa0172931b813d4fc7dd9177f3211779efc5f955d5e480f";
+        String adminPrivateKey = "11afa82f974469792aa0172931b813d4fc7dd9177f3211779efc5f955d5e480f";
         CryptoSuite cryptoSuite = new CryptoSuite(0);
-        CryptoKeyPair witness = cryptoSuite.loadKeyPair(witnessPrivateKey);
+        CryptoKeyPair witness = cryptoSuite.loadKeyPair(adminPrivateKey);
 
         //Deploy Account Module
-        AccountModule accountModule = AccountModule.deploy(client, witness, witness.getAddress());
-        System.out.println("Account module address: "+accountModule.getContractAddress());
+        AccountContract accountContract = AccountContract.deploy(client, witness);
+        System.out.println("Account contract address: "+accountContract.getContractAddress());
 
         //Deploy Product Module
-        ProductModule productModule = ProductModule.deploy(client, witness, witness.getAddress(), accountModule.getContractAddress());
-        System.out.println("Product module address: "+productModule.getContractAddress());
+        ProductContract productContract = ProductContract.deploy(client, witness, accountContract.getContractAddress());
+        System.out.println("Product contract address: "+productContract.getContractAddress());
 
         //Deploy Data Schema Module
-        DataSchemaModule dataSchemaModule = DataSchemaModule.deploy(client, witness, witness.getAddress(), accountModule.getContractAddress());
+        DataSchemaContract dataSchemaModule = DataSchemaContract.deploy(client, witness,  accountContract.getContractAddress(), productContract.getContractAddress());
         System.out.println("Data Schema module address: "+dataSchemaModule.getContractAddress());
     }
 }

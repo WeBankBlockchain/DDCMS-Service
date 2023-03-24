@@ -16,7 +16,7 @@ public class SysConfig {
 
     private int cryptoConfig;
 
-    private String witnessPrivateKey;
+    private String adminPrivateKey;
 
     @NestedConfigurationProperty
     private ContractConfig contractConfig;
