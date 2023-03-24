@@ -55,8 +55,8 @@ public class ProductController {
         return productService.approveProduct(approveProductRequest);
     }
 
-    @PostMapping(value = "/updateProduct")
-    public CommonResponse updateProduct(@RequestBody @Valid UpdateProductRequest updateProductRequest) throws Exception{
-        return productService.updateProduct(updateProductRequest);
-    }
+//    @PostMapping(value = "/updateProduct")
+//    public CommonResponse updateProduct(@RequestBody @Valid UpdateProductRequest updateProductRequest) throws Exception{
+//        return productService.updateProduct(updateProductRequest);
+//    }
 }

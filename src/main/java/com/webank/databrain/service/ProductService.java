@@ -18,8 +18,6 @@ public interface ProductService {
 
     CommonResponse createProduct(CreateProductRequest productRequest) throws TransactionException;
 
-    CommonResponse updateProduct(UpdateProductRequest productRequest) throws TransactionException;
-
     CommonResponse approveProduct(ApproveProductRequest productRequest) throws TransactionException;
 
     CommonResponse pageQueryMyProduct(PageQueryProductRequest request);

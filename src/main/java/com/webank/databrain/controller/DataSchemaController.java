@@ -39,10 +39,10 @@ public class DataSchemaController {
         return schemaService.createDataSchema(createDataSchemaRequest);
     }
 
-    @PostMapping(value = "/updateSchema")
-    public CommonResponse updateSchema(@RequestBody @Valid UpdateDataSchemaRequest updateDataSchemaRequest) throws Exception {
-        return schemaService.updateDataSchema(updateDataSchemaRequest);
-    }
+//    @PostMapping(value = "/updateSchema")
+//    public CommonResponse updateSchema(@RequestBody @Valid UpdateDataSchemaRequest updateDataSchemaRequest) throws Exception {
+//        return schemaService.updateDataSchema(updateDataSchemaRequest);
+//    }
 
     @PostMapping(value = "/querySchemaById")
     public CommonResponse querySchemaById(@RequestBody @Valid QuerySchemaByIdRequest request) {

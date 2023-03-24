@@ -6,7 +6,6 @@ import com.google.common.collect.Maps;
 import com.webank.databrain.bo.DataSchemaDetailBO;
 import com.webank.databrain.bo.DataSchemaWithAccessBO;
 import com.webank.databrain.bo.LoginUserBO;
-import com.webank.databrain.bo.ProductInfoBO;
 import com.webank.databrain.config.SysConfig;
 import com.webank.databrain.contracts.DataSchemaContract;
 import com.webank.databrain.dao.entity.*;
@@ -25,7 +24,6 @@ import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
 import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
 import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
 import org.fisco.bcos.sdk.v3.transaction.codec.decode.TransactionDecoderInterface;
-import org.fisco.bcos.sdk.v3.transaction.model.exception.TransactionException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -228,50 +226,50 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         return CommonResponse.success(dataSchemaWithAccessBO);
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public CommonResponse updateDataSchema(UpdateDataSchemaRequest schemaRequest) throws TransactionException {
-        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        DataSchemaInfoEntity dataSchemaInfoEntity = dataSchemaInfoMapper.getSchemaBySchemaId(schemaRequest.getSchemaId());
-        if (dataSchemaInfoEntity == null){
-            return CommonResponse.error(CodeEnum.SCHEMA_NOT_EXISTS);
-        }
-        CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
-        AccountInfoEntity entity = accountInfoMapper.selectByDid(bo.getEntity().getDid());
-        String privateKey = entity.getPrivateKey();
-        CryptoKeyPair keyPair = cryptoSuite.loadKeyPair(privateKey);
-        DataSchemaContract dataSchemaModule = DataSchemaContract.load(
-                sysConfig.getContractConfig().getDataSchemaContract(),
-                client,
-                keyPair);
-
-        byte[] hash = cryptoSuite.hash((dataSchemaInfoEntity.getProductId() +
-                schemaRequest.getContentSchema() +
-                schemaRequest.getDataSchemaName())
-                .getBytes(StandardCharsets.UTF_8));
-
-        byte[] dataSchemaId = HexUtil.decodeHex(dataSchemaInfoEntity.getDataSchemaBid());
-
-        TransactionReceipt receipt = dataSchemaModule.modifyDataSchema(dataSchemaId,hash);//TODO:没有update方法
-        BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
-
-        DataSchemaInfoEntity dataSchemaInfoEntityUp = new DataSchemaInfoEntity();
-        BeanUtils.copyProperties(schemaRequest, dataSchemaInfoEntityUp);
-        dataSchemaInfoEntityUp.setPkId(schemaRequest.getSchemaId());
-        dataSchemaInfoMapper.updateDataSchemaInfo(dataSchemaInfoEntityUp);
-        log.info("save dataSchemaInfoEntity finish, schemaId = {}", dataSchemaId);
-
-        DataSchemaAccessInfoEntity dataSchemaAccessInfoEntity = new DataSchemaAccessInfoEntity();
-        BeanUtils.copyProperties(schemaRequest, dataSchemaAccessInfoEntity);
-        dataSchemaAccessInfoEntity.setDataSchemaId(dataSchemaInfoEntity.getPkId());
-        dataSchemaAccessInfoMapper.updateDataSchemaAccessInfo(dataSchemaAccessInfoEntity);
-        log.info("save dataSchemaAccessInfoEntity finish, schemaId = {}", dataSchemaId);
-
-        //处理标签，从更新的标签中取出不一样的，进行更新，并进行删除
-        handleTag(schemaRequest);
-        log.info("handlerTag finish, schemaId = {}", dataSchemaId);
-
-        return CommonResponse.success(dataSchemaId);
-    }
+//    @Transactional(rollbackFor = Exception.class)
+//    public CommonResponse updateDataSchema(UpdateDataSchemaRequest schemaRequest) throws TransactionException {
+//        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        DataSchemaInfoEntity dataSchemaInfoEntity = dataSchemaInfoMapper.getSchemaBySchemaId(schemaRequest.getSchemaId());
+//        if (dataSchemaInfoEntity == null){
+//            return CommonResponse.error(CodeEnum.SCHEMA_NOT_EXISTS);
+//        }
+//        CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
+//        AccountInfoEntity entity = accountInfoMapper.selectByDid(bo.getEntity().getDid());
+//        String privateKey = entity.getPrivateKey();
+//        CryptoKeyPair keyPair = cryptoSuite.loadKeyPair(privateKey);
+//        DataSchemaContract dataSchemaModule = DataSchemaContract.load(
+//                sysConfig.getContractConfig().getDataSchemaContract(),
+//                client,
+//                keyPair);
+//
+//        byte[] hash = cryptoSuite.hash((dataSchemaInfoEntity.getProductId() +
+//                schemaRequest.getContentSchema() +
+//                schemaRequest.getDataSchemaName())
+//                .getBytes(StandardCharsets.UTF_8));
+//
+//        byte[] dataSchemaId = HexUtil.decodeHex(dataSchemaInfoEntity.getDataSchemaBid());
+//
+//        TransactionReceipt receipt = dataSchemaModule.modifyDataSchema(dataSchemaId,hash);//TODO:没有update方法
+//        BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
+//
+//        DataSchemaInfoEntity dataSchemaInfoEntityUp = new DataSchemaInfoEntity();
+//        BeanUtils.copyProperties(schemaRequest, dataSchemaInfoEntityUp);
+//        dataSchemaInfoEntityUp.setPkId(schemaRequest.getSchemaId());
+//        dataSchemaInfoMapper.updateDataSchemaInfo(dataSchemaInfoEntityUp);
+//        log.info("save dataSchemaInfoEntity finish, schemaId = {}", dataSchemaId);
+//
+//        DataSchemaAccessInfoEntity dataSchemaAccessInfoEntity = new DataSchemaAccessInfoEntity();
+//        BeanUtils.copyProperties(schemaRequest, dataSchemaAccessInfoEntity);
+//        dataSchemaAccessInfoEntity.setDataSchemaId(dataSchemaInfoEntity.getPkId());
+//        dataSchemaAccessInfoMapper.updateDataSchemaAccessInfo(dataSchemaAccessInfoEntity);
+//        log.info("save dataSchemaAccessInfoEntity finish, schemaId = {}", dataSchemaId);
+//
+//        //处理标签，从更新的标签中取出不一样的，进行更新，并进行删除
+//        handleTag(schemaRequest);
+//        log.info("handlerTag finish, schemaId = {}", dataSchemaId);
+//
+//        return CommonResponse.success(dataSchemaId);
+//    }
 
 
     @Override
@@ -290,7 +288,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
         AccountInfoEntity entity = accountInfoMapper.selectByDid(bo.getEntity().getDid());
-        ProductInfoBO product = productInfoMapper.getProductById(schemaRequest.getProductId());
+        ProductInfoEntity product = productInfoMapper.getProductByProductId(schemaRequest.getProductId());
         if(product == null){
             return CommonResponse.error(CodeEnum.PRODUCT_NOT_EXISTS);
         }
@@ -306,7 +304,8 @@ public class DataSchemaServiceImpl implements DataSchemaService {
                 schemaRequest.getDataSchemaName())
                 .getBytes(StandardCharsets.UTF_8));
 
-        TransactionReceipt receipt = dataSchemaModule.createDataSchema(hash);//TODO:还需要传入product的bid
+        TransactionReceipt receipt = dataSchemaModule.createDataSchema(hash,
+                HexUtil.decodeHex(product.getProductBid()));//TODO:还需要传入product的bid
         BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
 
         String dataSchemaId = HexUtil.encodeHexStr(dataSchemaModule.getCreateDataSchemaOutput(receipt).getValue1());

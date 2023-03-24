@@ -2,7 +2,6 @@ package com.webank.databrain.service;
 
 import com.webank.databrain.vo.common.CommonResponse;
 import com.webank.databrain.vo.request.dataschema.*;
-import org.fisco.bcos.sdk.v3.transaction.model.exception.TransactionException;
 
 
 public interface DataSchemaService {
@@ -21,8 +20,6 @@ public interface DataSchemaService {
     CommonResponse getDataSchemaById(Long schemaId);
 
     CommonResponse getDataSchemaAccessById(Long accessId);
-
-    CommonResponse updateDataSchema(UpdateDataSchemaRequest schemaRequest) throws TransactionException;
 
     CommonResponse approveDataSchema(ApproveDataSchemaRequest request);
 

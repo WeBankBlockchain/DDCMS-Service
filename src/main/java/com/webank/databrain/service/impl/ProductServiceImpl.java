@@ -122,38 +122,38 @@ public class ProductServiceImpl implements ProductService {
         productInfoMapper.insertProductInfo(product);
         return CommonResponse.success(productId);
     }
-    @Transactional(rollbackFor = Exception.class)
-    public CommonResponse updateProduct(UpdateProductRequest productRequest) throws TransactionException {
-        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        AccountInfoEntity entity = accountInfoMapper.selectByDid(bo.getEntity().getDid());
+//    @Transactional(rollbackFor = Exception.class)
+//    public CommonResponse updateProduct(UpdateProductRequest productRequest) throws TransactionException {
+//        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        AccountInfoEntity entity = accountInfoMapper.selectByDid(bo.getEntity().getDid());
+//
+//        ProductInfoEntity productInfoEntity = productInfoMapper.getProductByProductId(productRequest.getProductId());
+//        if (productInfoEntity == null) {
+//            return CommonResponse.error(CodeEnum.PRODUCT_NOT_EXISTS);
+//        }
+//        String privateKey = entity.getPrivateKey();
+//        CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
+//        CryptoKeyPair keyPair = cryptoSuite.loadKeyPair(privateKey);
+//        ProductContract productModule = ProductContract.load(
+//                sysConfig.getContractConfig().getAccountContract(),
+//                client,
+//                keyPair);
+//
+//        TransactionReceipt receipt = productModule.modifyProduct(
+//                HexUtil.decodeHex(productInfoEntity.getProductBid()),
+//                cryptoSuite.hash((
+//                        productRequest.getProductName() + productRequest.getProductDesc())
+//                        .getBytes(StandardCharsets.UTF_8)));//TODO：没有modify方法
+//        BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
+//
+//        ProductInfoEntity product = new ProductInfoEntity();
+//        product.setPkId(productRequest.getProductId());
+//        product.setProductName(productRequest.getProductName());
+//        product.setProductDesc(productRequest.getProductDesc());
+//        productInfoMapper.updateProductInfo(product);
 
-        ProductInfoEntity productInfoEntity = productInfoMapper.getProductByProductId(productRequest.getProductId());
-        if (productInfoEntity == null) {
-            return CommonResponse.error(CodeEnum.PRODUCT_NOT_EXISTS);
-        }
-        String privateKey = entity.getPrivateKey();
-        CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
-        CryptoKeyPair keyPair = cryptoSuite.loadKeyPair(privateKey);
-        ProductContract productModule = ProductContract.load(
-                sysConfig.getContractConfig().getAccountContract(),
-                client,
-                keyPair);
-
-        TransactionReceipt receipt = productModule.modifyProduct(
-                HexUtil.decodeHex(productInfoEntity.getProductBid()),
-                cryptoSuite.hash((
-                        productRequest.getProductName() + productRequest.getProductDesc())
-                        .getBytes(StandardCharsets.UTF_8)));//TODO：没有modify方法
-        BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
-
-        ProductInfoEntity product = new ProductInfoEntity();
-        product.setPkId(productRequest.getProductId());
-        product.setProductName(productRequest.getProductName());
-        product.setProductDesc(productRequest.getProductDesc());
-        productInfoMapper.updateProductInfo(product);
-
-        return CommonResponse.success(productInfoEntity.getPkId());
-    }
+//        return CommonResponse.success(productInfoEntity.getPkId());
+//    }
 
 
     @Transactional(rollbackFor = Exception.class)
