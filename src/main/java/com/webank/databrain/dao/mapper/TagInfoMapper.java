@@ -12,7 +12,7 @@ public interface TagInfoMapper {
     @Options(useGeneratedKeys = true, keyProperty = "pkId")
     void insertItem(TagInfoEntity tag);
 
-    @Select("SELECT * FROM t_tag_info ORDER BY pk_id DESC LIMIT #{topN}")
+    @Select("SELECT * FROM t_tag_info ORDER BY create_time DESC LIMIT #{topN}")
     @ResultType(TagInfoEntity.class)
     List<TagInfoEntity> queryHotTags(int topN);
 

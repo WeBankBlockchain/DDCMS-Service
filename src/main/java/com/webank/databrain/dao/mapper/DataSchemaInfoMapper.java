@@ -25,8 +25,13 @@ public interface DataSchemaInfoMapper {
             "a.review_time," +
             "a.create_time," +
             "d.product_name," +
-            "e.company_name as providerName " +
+            "e.company_name as providerName," +
+            "b.tag_id_list  " +
             "from t_data_schema_info a " +
+            "left join " +
+            "(SELECT data_schema_id, GROUP_CONCAT(tag_id SEPARATOR ',') AS tag_id_list " +
+            "FROM t_data_schema_tags " +
+            "GROUP BY data_schema_id) b on a.pk_id = b.data_schema_id " +
             "left join " +
             "t_product_info d on a.product_id = d.pk_id " +
             "left join " +
@@ -37,15 +42,17 @@ public interface DataSchemaInfoMapper {
             "<if test='providerId != null and providerId &gt; 0'> AND a.provider_id = #{providerId} </if>" +
             "<if test='keyWord != null and keyWord.trim() != \"\"'> AND a.data_schema_name like concat('%', #{keyWord}, '%') " +
             " or a.data_schema_desc like concat('%', #{keyWord}, '%') </if>" +
+            "<if test='tagId != null and tagId >= 0'> HAVING FIND_IN_SET(#{tagId}, tag_id_list) </if>" +
             " ORDER BY a.create_time DESC LIMIT #{start}, #{pageSize} " +
             "</script>" )
     @ResultType(DataSchemaDetailBO.class)
     List<DataSchemaDetailBO> pageQuerySchema(@Param("start") int start,
-                                           @Param("pageSize")int pageSize,
-                                           @Param("productId") Long productId,
-                                           @Param("providerId") Long providerId,
-                                           @Param("keyWord") String keyWord,
-                                           @Param("reviewState") Integer reviewState);
+                                             @Param("pageSize")int pageSize,
+                                             @Param("productId") Long productId,
+                                             @Param("providerId") Long providerId,
+                                             @Param("keyWord") String keyWord,
+                                             @Param("reviewState") Integer reviewState,
+                                             @Param("tagId") Long tagId);
 
     @Select("<script>" +
             "SELECT " +
@@ -84,7 +91,13 @@ public interface DataSchemaInfoMapper {
                                                @Param("reviewState") Integer reviewState);
 
     @Select("<script>" +
-            "SELECT COUNT(*) FROM t_data_schema_info a" +
+            " SELECT COUNT(*) FROM (SELECT data_schema_id, GROUP_CONCAT(tag_id SEPARATOR ',') AS tag_id_list " +
+            " FROM t_data_schema_tags " +
+            " GROUP BY data_schema_id " +
+            " <if test='tagId != null and tagId >= 0'> HAVING FIND_IN_SET(#{tagId}, tag_id_list) </if>" +
+            " ) b"  +
+            " left join " +
+            " t_data_schema_info a on a.pk_id = b.data_schema_id " +
             " left join " +
             " t_company_info e on a.provider_id = e.account_id "  +
             " left join " +
@@ -102,7 +115,8 @@ public interface DataSchemaInfoMapper {
               @Param("providerId") Long providerId,
               @Param("keyWord") String keyWord,
               @Param("did") String did,
-              @Param("reviewState") Integer reviewState);
+              @Param("reviewState") Integer reviewState,
+              @Param("tagId") Long tagId);
 
 
     @Insert("INSERT INTO t_data_schema_info(" +

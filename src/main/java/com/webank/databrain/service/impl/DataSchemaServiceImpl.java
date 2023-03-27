@@ -96,7 +96,8 @@ public class DataSchemaServiceImpl implements DataSchemaService {
                 request.getProviderId(),
                 request.getKeyWord(),
                 null,
-                request.getState());
+                request.getState(),
+                request.getTagId());
         int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
         PageListData pageListData = new PageListData<>();
         pageListData.setPageCount(pageCount);
@@ -109,7 +110,8 @@ public class DataSchemaServiceImpl implements DataSchemaService {
                 request.getProductId(),
                 request.getProviderId(),
                 request.getKeyWord(),
-                request.getState());
+                request.getState(),
+                request.getTagId());
         addTag(dataSchemaDetailBOList);
         addFav(did,dataSchemaDetailBOList);
 
@@ -144,7 +146,8 @@ public class DataSchemaServiceImpl implements DataSchemaService {
                 null,
                 request.getKeyWord(),
                 did,
-                request.getState());
+                request.getState(),
+                null);
         int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
         PageListData pageListData = new PageListData<>();
         pageListData.setPageCount(pageCount);

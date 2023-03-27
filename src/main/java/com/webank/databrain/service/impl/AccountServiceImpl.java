@@ -10,7 +10,6 @@ import com.webank.databrain.dao.entity.AccountInfoEntity;
 import com.webank.databrain.dao.entity.CompanyInfoEntity;
 import com.webank.databrain.dao.mapper.AccountInfoMapper;
 import com.webank.databrain.dao.mapper.CompanyInfoMapper;
-import com.webank.databrain.dao.mapper.PersonInfoMapper;
 import com.webank.databrain.enums.AccountStatus;
 import com.webank.databrain.enums.AccountType;
 import com.webank.databrain.enums.CodeEnum;
@@ -65,9 +64,6 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private CompanyInfoMapper companyInfoMapper;
-
-    @Autowired
-    private PersonInfoMapper personInfoMapper;
 
     @Autowired
     private ObjectMapper objectMapper;
