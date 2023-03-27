@@ -12,10 +12,16 @@ import java.util.List;
 public interface ProductInfoMapper {
 
     @Select("<script> " +
-            "SELECT a.pk_id as productId, a.product_name,a.product_desc,a.status,a.review_time,a.create_time,c.company_name" +
+            "SELECT a.pk_id as productId, a.product_name,a.product_desc,a.status,a.review_time,a.create_time,c.company_name," +
+            " r.agree_count," +
+            " r.deny_count," +
+            " r.witness_count" +
             " FROM t_product_info a " +
-            " LEFT JOIN t_company_info c ON a.provider_id = c.account_id " +
-            " where 1=1 " +
+            " left join " +
+            " t_company_info c ON a.provider_id = c.account_id " +
+            " left join " +
+            " t_review_record_info r on a.pk_id = r.item_id " +
+            " where 1=1 and r.item_type = 1 " +
             " <if test='providerId != null and providerId >= 0'> AND a.provider_id = #{providerId} </if>" +
             " <if test='reviewState != null and reviewState >= 0'> AND a.status = #{reviewState} </if>" +
             " <if test='keyWord != null and keyWord.trim() != \"\"'> AND a.product_name like concat('%', #{keyWord}, '%') " +
@@ -84,7 +90,8 @@ public interface ProductInfoMapper {
             " FROM t_product_info a " +
             " LEFT JOIN t_company_info b ON a.provider_id = b.account_id " +
             " LEFT JOIN t_account_info c ON b.account_id = c.pk_id " +
-            " where 1=1 " +
+            " LEFT JOIN t_review_record_info r on a.pk_id = r.item_id " +
+            " where 1=1 and r.item_type = 1 " +
             "<if test='providerId != null and providerId >= 0'> AND a.provider_id = #{providerId} </if>" +
             "<if test='reviewState != null and reviewState >= 0'> AND a.status = #{reviewState} </if>" +
             "<if test='did != null'> AND c.did = #{did} </if> " +

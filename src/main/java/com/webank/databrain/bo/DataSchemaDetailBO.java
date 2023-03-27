@@ -72,4 +72,10 @@ public class DataSchemaDetailBO {
     private Timestamp reviewTime;
 
     private Timestamp createTime;
+
+    private Integer agreeCount;
+
+    private Integer denyCount;
+
+    private Integer witnessCount;
 }

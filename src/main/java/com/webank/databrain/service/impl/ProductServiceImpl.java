@@ -1,7 +1,6 @@
 package com.webank.databrain.service.impl;
 
 import cn.hutool.core.util.HexUtil;
-import cn.hutool.json.JSONUtil;
 import com.webank.databrain.bo.HotProductBO;
 import com.webank.databrain.bo.LoginUserBO;
 import com.webank.databrain.bo.ProductInfoBO;
@@ -9,9 +8,12 @@ import com.webank.databrain.config.SysConfig;
 import com.webank.databrain.contracts.ProductContract;
 import com.webank.databrain.dao.entity.AccountInfoEntity;
 import com.webank.databrain.dao.entity.ProductInfoEntity;
+import com.webank.databrain.dao.entity.ReviewRecordInfoEntity;
 import com.webank.databrain.dao.mapper.AccountInfoMapper;
 import com.webank.databrain.dao.mapper.ProductInfoMapper;
+import com.webank.databrain.dao.mapper.ReviewRecordInfoMapper;
 import com.webank.databrain.enums.CodeEnum;
+import com.webank.databrain.enums.ReviewItemType;
 import com.webank.databrain.enums.ReviewStatus;
 import com.webank.databrain.handler.ThreadLocalKeyPairHandler;
 import com.webank.databrain.service.ProductService;
@@ -23,7 +25,6 @@ import com.webank.databrain.vo.request.product.ApproveProductRequest;
 import com.webank.databrain.vo.request.product.CreateProductRequest;
 import com.webank.databrain.vo.request.product.PageQueryProductRequest;
 import com.webank.databrain.vo.request.product.UpdateProductRequest;
-import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
 import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
@@ -39,7 +40,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Service
-@Slf4j
 public class ProductServiceImpl implements ProductService {
 
     @Autowired
@@ -62,6 +62,10 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductInfoMapper productInfoMapper;
 
+    @Autowired
+    private ReviewRecordInfoMapper reviewRecordInfoMapper;
+
+
 
     public CommonResponse getHotProducts(HotDataRequest request) {
         List<HotProductBO> productInfoEntities = productInfoMapper.getHotProduct(request.getTopCount());
@@ -70,7 +74,7 @@ public class ProductServiceImpl implements ProductService {
 
     public CommonResponse pageQueryProducts(PageQueryProductRequest request) {
 
-        int totalCount = productInfoMapper.count(null, request.getKeyWord(), request.getStatus(), request.getProviderId());
+        int totalCount = productInfoMapper.count(null,request.getKeyWord(),request.getStatus(),request.getProviderId());
         int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
 
         PageListData pageListData = new PageListData<>();
@@ -99,7 +103,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(rollbackFor = Exception.class)
     public CommonResponse createProduct(CreateProductRequest productRequest) throws TransactionException {
         CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
-        LoginUserBO bo = (LoginUserBO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         AccountInfoEntity entity = accountInfoMapper.selectByDid(bo.getEntity().getDid());
 
         String privateKey = entity.getPrivateKey();
@@ -115,6 +119,8 @@ public class ProductServiceImpl implements ProductService {
         BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
 
         String productId = HexUtil.encodeHexStr(productModule.getCreateProductOutput(receipt).getValue1());
+        int witnessCount = productModule.getCreateProductOutput(receipt).getValue2().intValue();
+
         ProductInfoEntity product = new ProductInfoEntity();
         product.setProductBid(productId);
         product.setProviderId(entity.getPkId());
@@ -122,45 +128,20 @@ public class ProductServiceImpl implements ProductService {
         product.setProductName(productRequest.getProductName());
         product.setProductDesc(productRequest.getProductDesc());
         productInfoMapper.insertProductInfo(product);
+
+        ReviewRecordInfoEntity reviewRecordInfoEntity = new ReviewRecordInfoEntity();
+        reviewRecordInfoEntity.setReviewState(ReviewStatus.NotReviewed.ordinal());
+        reviewRecordInfoEntity.setWitnessCount(witnessCount);
+        reviewRecordInfoEntity.setItemId(product.getPkId());
+        reviewRecordInfoEntity.setItemType(ReviewItemType.Product.getCode());
+        reviewRecordInfoMapper.insertReviewRecordInfo(reviewRecordInfoEntity);
+
         return CommonResponse.success(productId);
     }
-//    @Transactional(rollbackFor = Exception.class)
-//    public CommonResponse updateProduct(UpdateProductRequest productRequest) throws TransactionException {
-//        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        AccountInfoEntity entity = accountInfoMapper.selectByDid(bo.getEntity().getDid());
-//
-//        ProductInfoEntity productInfoEntity = productInfoMapper.getProductByProductId(productRequest.getProductId());
-//        if (productInfoEntity == null) {
-//            return CommonResponse.error(CodeEnum.PRODUCT_NOT_EXISTS);
-//        }
-//        String privateKey = entity.getPrivateKey();
-//        CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
-//        CryptoKeyPair keyPair = cryptoSuite.loadKeyPair(privateKey);
-//        ProductContract productModule = ProductContract.load(
-//                sysConfig.getContractConfig().getAccountContract(),
-//                client,
-//                keyPair);
-//
-//        TransactionReceipt receipt = productModule.modifyProduct(
-//                HexUtil.decodeHex(productInfoEntity.getProductBid()),
-//                cryptoSuite.hash((
-//                        productRequest.getProductName() + productRequest.getProductDesc())
-//                        .getBytes(StandardCharsets.UTF_8)));//TODO：没有modify方法
-//        BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
-//
-//        ProductInfoEntity product = new ProductInfoEntity();
-//        product.setPkId(productRequest.getProductId());
-//        product.setProductName(productRequest.getProductName());
-//        product.setProductDesc(productRequest.getProductDesc());
-//        productInfoMapper.updateProductInfo(product);
-
-//        return CommonResponse.success(productInfoEntity.getPkId());
-//    }
-
 
     @Transactional(rollbackFor = Exception.class)
     public CommonResponse approveProduct(ApproveProductRequest productRequest) throws TransactionException {
-        LoginUserBO bo = (LoginUserBO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String did = bo.getEntity().getDid();
         AccountInfoEntity entity = accountInfoMapper.selectByDid(did);
         if (entity == null) {
@@ -182,20 +163,31 @@ public class ProductServiceImpl implements ProductService {
         );
         BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
         int reviewState = productModule.getApproveProductOutput(receipt).getValue4().intValue();
-        log.info("Product approve after: {}", JSONUtil.toJsonPrettyStr(productModule.getApproveProductOutput(receipt)));
+        int agreeCount = productModule.getApproveProductOutput(receipt).getValue2().intValue();
+        int denyCount = productModule.getApproveProductOutput(receipt).getValue3().intValue();
+
         ProductInfoEntity productInfoEntityUp = new ProductInfoEntity();
         productInfoEntityUp.setPkId(productRequest.getProductId());
         productInfoEntityUp.setStatus(reviewState);
         productInfoMapper.updateProductInfoState(productInfoEntityUp);
+
+        ReviewRecordInfoEntity reviewRecordInfoEntity = new ReviewRecordInfoEntity();
+        reviewRecordInfoEntity.setItemType(ReviewItemType.Product.getCode());
+        reviewRecordInfoEntity.setItemId(productRequest.getProductId());
+        reviewRecordInfoEntity.setAgreeCount(agreeCount);
+        reviewRecordInfoEntity.setDenyCount(denyCount);
+        reviewRecordInfoEntity.setReviewState(reviewState);
+        reviewRecordInfoMapper.updateDataSchemaInfo(reviewRecordInfoEntity);
+
         return CommonResponse.success(productInfoEntity.getPkId());
     }
 
     @Override
     public CommonResponse pageQueryMyProduct(PageQueryProductRequest request) {
-        LoginUserBO bo = (LoginUserBO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String did = bo.getEntity().getDid();
 
-        int totalCount = productInfoMapper.count(did, request.getKeyWord(), request.getStatus(), null);
+        int totalCount = productInfoMapper.count(did, request.getKeyWord(), request.getStatus(),null);
         int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
 
         PageListData pageListData = new PageListData<>();

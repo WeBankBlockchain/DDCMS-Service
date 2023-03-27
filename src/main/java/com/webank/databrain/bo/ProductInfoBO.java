@@ -39,4 +39,10 @@ public class ProductInfoBO {
     private Timestamp createTime;
 
     private String companyName;
+
+    private Integer agreeCount;
+
+    private Integer denyCount;
+
+    private Integer witnessCount;
 }
