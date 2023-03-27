@@ -143,7 +143,7 @@ public interface DataSchemaInfoMapper {
             "#{dataSchemaUsage}," +
             "#{price}," +
             "#{status}," +
-            "#{review_time}" +
+            "#{reviewTime}" +
             ")")
     @Options(useGeneratedKeys = true, keyProperty = "pkId", keyColumn = "pk_id")
     void insertDataSchemaInfo(DataSchemaInfoEntity dataSchemaInfoEntity);

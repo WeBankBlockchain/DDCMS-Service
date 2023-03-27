@@ -47,19 +47,22 @@ CREATE TABLE `t_company_info` (
   UNIQUE KEY `company_name` (`company_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
- CREATE TABLE `t_product_info` (
-   `pk_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-   `product_did` varchar(255) NOT NULL COMMENT '产品链上id',
-   `product_name` varchar(255) NOT NULL DEFAULT '' COMMENT '产品名称',
-   `provider_id` bigint(20) unsigned NOT NULL COMMENT '提供方外键ID',
-   `product_desc` text COMMENT '产品详情',
-   `status` int(4) NOT NULL DEFAULT 0 COMMENT '审核状态',
-   `review_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '审核时间',
-   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-   PRIMARY KEY (`pk_id`),
-   UNIQUE KEY (`product_did`)
- ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+create table t_product_info
+(
+    pk_id bigint unsigned auto_increment
+        primary key,
+    product_bid varchar(255) not null comment '产品链上id',
+    product_name varchar(255) default '' not null comment '产品名称',
+    provider_id bigint unsigned not null comment '提供方外键ID',
+    product_desc text null comment '产品详情',
+    status int(4) default 0 not null comment '审核状态',
+    review_time timestamp default CURRENT_TIMESTAMP not null comment '审核时间',
+    create_time timestamp default CURRENT_TIMESTAMP not null,
+    update_time timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
+    constraint product_gid
+        unique (product_bid)
+)  ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
  CREATE TABLE `t_tag_info` (
    `pk_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -70,7 +73,30 @@ CREATE TABLE `t_company_info` (
    UNIQUE KEY (`tag_name`)
  ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
- CREATE TABLE `t_data_schema_info` (
+create table t_data_schema_info
+(
+    pk_id bigint unsigned auto_increment
+        primary key,
+    data_schema_bid varchar(255) default '' not null comment '数据目录链上id',
+    data_schema_name varchar(255) default '' not null comment '数据目录名称',
+    provider_id bigint default 0 not null comment '提供方外键id',
+    product_id bigint unsigned not null comment '产品外键ID',
+    version int(4) default 0 not null comment '版本号',
+    visible int(4) default 0 not null comment '是否可见',
+    data_schema_desc text null comment '描述',
+    data_schema_usage varchar(64) default '' not null comment '用途',
+    price int(32) default 0 not null comment '价格',
+    create_time timestamp default CURRENT_TIMESTAMP not null,
+    update_time timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
+    status int(4) default 0 not null comment '审核状态',
+    review_time timestamp default CURRENT_TIMESTAMP not null comment '审核时间',
+    constraint data_schema_gid
+        unique (data_schema_bid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+CREATE TABLE `t_data_schema_info` (
    `pk_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
    `data_schema_did` varchar(255) NOT NULL DEFAULT '' COMMENT '数据目录链上id',
    `data_schema_name` varchar(255) NOT NULL DEFAULT '' COMMENT '数据目录名称',

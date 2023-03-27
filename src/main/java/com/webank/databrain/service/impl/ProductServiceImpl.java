@@ -1,6 +1,7 @@
 package com.webank.databrain.service.impl;
 
 import cn.hutool.core.util.HexUtil;
+import cn.hutool.json.JSONUtil;
 import com.webank.databrain.bo.HotProductBO;
 import com.webank.databrain.bo.LoginUserBO;
 import com.webank.databrain.bo.ProductInfoBO;
@@ -22,6 +23,7 @@ import com.webank.databrain.vo.request.product.ApproveProductRequest;
 import com.webank.databrain.vo.request.product.CreateProductRequest;
 import com.webank.databrain.vo.request.product.PageQueryProductRequest;
 import com.webank.databrain.vo.request.product.UpdateProductRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
 import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
@@ -37,6 +39,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Service
+@Slf4j
 public class ProductServiceImpl implements ProductService {
 
     @Autowired
@@ -60,7 +63,6 @@ public class ProductServiceImpl implements ProductService {
     private ProductInfoMapper productInfoMapper;
 
 
-
     public CommonResponse getHotProducts(HotDataRequest request) {
         List<HotProductBO> productInfoEntities = productInfoMapper.getHotProduct(request.getTopCount());
         return CommonResponse.success(productInfoEntities);
@@ -68,7 +70,7 @@ public class ProductServiceImpl implements ProductService {
 
     public CommonResponse pageQueryProducts(PageQueryProductRequest request) {
 
-        int totalCount = productInfoMapper.count(null,request.getKeyWord(),request.getStatus(),request.getProviderId());
+        int totalCount = productInfoMapper.count(null, request.getKeyWord(), request.getStatus(), request.getProviderId());
         int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
 
         PageListData pageListData = new PageListData<>();
@@ -97,7 +99,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(rollbackFor = Exception.class)
     public CommonResponse createProduct(CreateProductRequest productRequest) throws TransactionException {
         CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
-        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LoginUserBO bo = (LoginUserBO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         AccountInfoEntity entity = accountInfoMapper.selectByDid(bo.getEntity().getDid());
 
         String privateKey = entity.getPrivateKey();
@@ -158,7 +160,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional(rollbackFor = Exception.class)
     public CommonResponse approveProduct(ApproveProductRequest productRequest) throws TransactionException {
-        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LoginUserBO bo = (LoginUserBO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String did = bo.getEntity().getDid();
         AccountInfoEntity entity = accountInfoMapper.selectByDid(did);
         if (entity == null) {
@@ -180,22 +182,20 @@ public class ProductServiceImpl implements ProductService {
         );
         BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
         int reviewState = productModule.getApproveProductOutput(receipt).getValue4().intValue();
-
+        log.info("Product approve after: {}", JSONUtil.toJsonPrettyStr(productModule.getApproveProductOutput(receipt)));
         ProductInfoEntity productInfoEntityUp = new ProductInfoEntity();
         productInfoEntityUp.setPkId(productRequest.getProductId());
         productInfoEntityUp.setStatus(reviewState);
-        // 不需要set
-        // productInfoEntity.setReviewTime(new Date());
-        productInfoMapper.updateProductInfoState(productInfoEntity);
+        productInfoMapper.updateProductInfoState(productInfoEntityUp);
         return CommonResponse.success(productInfoEntity.getPkId());
     }
 
     @Override
     public CommonResponse pageQueryMyProduct(PageQueryProductRequest request) {
-        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LoginUserBO bo = (LoginUserBO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String did = bo.getEntity().getDid();
 
-        int totalCount = productInfoMapper.count(did, request.getKeyWord(), request.getStatus(),null);
+        int totalCount = productInfoMapper.count(did, request.getKeyWord(), request.getStatus(), null);
         int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
 
         PageListData pageListData = new PageListData<>();
