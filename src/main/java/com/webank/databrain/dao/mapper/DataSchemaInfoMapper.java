@@ -41,7 +41,7 @@ public interface DataSchemaInfoMapper {
             "t_company_info e on a.provider_id = e.account_id " +
             "left join " +
             "t_review_record_info r on a.pk_id = r.item_id " +
-            "where 1 =1  " +
+            "where 1 =1 and r.item_type = 2 " +
             "<if test='reviewState != null and reviewState >= 0'> AND a.status = #{reviewState} </if>" +
             "<if test='productId != null and productId &gt; 0'> AND a.product_id = #{productId} </if>" +
             "<if test='providerId != null and providerId &gt; 0'> AND a.provider_id = #{providerId} </if>" +
@@ -107,7 +107,9 @@ public interface DataSchemaInfoMapper {
             " t_company_info e on a.provider_id = e.account_id "  +
             " left join " +
             " t_account_info f on e.account_id = f.pk_id " +
-            " where 1=1 " +
+            " left join " +
+            " t_review_record_info r on a.pk_id = r.item_id " +
+            " where 1=1 and r.item_type = 2 " +
             "<if test='reviewState != null and reviewState >= 0'> AND a.status = #{reviewState} </if>" +
             "<if test='productId != null and productId &gt; 0'> AND a.product_id = #{productId} </if>" +
             "<if test='providerId != null and providerId &gt; 0'> AND a.provider_id = #{providerId} </if>" +
