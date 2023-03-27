@@ -33,6 +33,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -87,8 +88,8 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         String did = null;
         if (authentication != null
                 && authentication.isAuthenticated()
-                && !(authentication instanceof AnonymousAuthenticationToken)){
-            LoginUserBO bo = (LoginUserBO)authentication.getPrincipal();
+                && !(authentication instanceof AnonymousAuthenticationToken)) {
+            LoginUserBO bo = (LoginUserBO) authentication.getPrincipal();
             did = bo.getEntity().getDid();
         }
         int totalCount = dataSchemaInfoMapper.count(
@@ -113,14 +114,14 @@ public class DataSchemaServiceImpl implements DataSchemaService {
                 request.getState(),
                 request.getTagId());
         addTag(dataSchemaDetailBOList);
-        addFav(did,dataSchemaDetailBOList);
+        addFav(did, dataSchemaDetailBOList);
 
         pageListData.setItemList(dataSchemaDetailBOList);
         return CommonResponse.success(pageListData);
     }
 
     private void addFav(String did, List<DataSchemaDetailBO> dataSchemaDetailBOList) {
-        if (did == null){
+        if (did == null) {
             return;
         }
         AccountInfoEntity accountInfoEntity = accountInfoMapper.selectByDid(did);
@@ -128,9 +129,12 @@ public class DataSchemaServiceImpl implements DataSchemaService {
                 .filter(Objects::nonNull)
                 .map(DataSchemaDetailBO::getSchemaId)
                 .collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(schemaIds)) {
+            return;
+        }
         List<SchemaFavoriteInfoEntity> schemaFavoriteInfoEntities =
                 schemaFavoriteInfoMapper.getSchemaFavBySchemaIds(accountInfoEntity.getPkId(), schemaIds);
-        Map<Long,SchemaFavoriteInfoEntity> favoriteInfoEntityMap = Maps.uniqueIndex(schemaFavoriteInfoEntities,
+        Map<Long, SchemaFavoriteInfoEntity> favoriteInfoEntityMap = Maps.uniqueIndex(schemaFavoriteInfoEntities,
                 SchemaFavoriteInfoEntity::getSchemaId);
         dataSchemaDetailBOList.forEach(dataSchemaDetailBO -> {
             dataSchemaDetailBO.setFavTag(favoriteInfoEntityMap.get(dataSchemaDetailBO.getSchemaId()) == null ? 0 : 1);
@@ -139,7 +143,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
 
     @Override
     public CommonResponse pageQueryMySchema(PageQueryDataSchemaRequest request) {
-        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LoginUserBO bo = (LoginUserBO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String did = bo.getEntity().getDid();
         int totalCount = dataSchemaInfoMapper.count(
                 null,
@@ -168,9 +172,9 @@ public class DataSchemaServiceImpl implements DataSchemaService {
 
     @Override
     public CommonResponse pageQueryMyFavSchema(PageQueryMyFavSchemaRequest request) {
-        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LoginUserBO bo = (LoginUserBO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         AccountInfoEntity entity = accountInfoMapper.selectByDid(bo.getEntity().getDid());
-        int totalCount = schemaFavoriteInfoMapper.count(entity.getPkId(),request.getKeyWord(),request.getState());
+        int totalCount = schemaFavoriteInfoMapper.count(entity.getPkId(), request.getKeyWord(), request.getState());
         int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
         PageListData pageListData = new PageListData<>();
         pageListData.setPageCount(pageCount);
@@ -191,7 +195,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
 
     @Override
     public CommonResponse addSchemaFavorite(CreateFavSchemaRequest request) {
-        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LoginUserBO bo = (LoginUserBO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         AccountInfoEntity entity = accountInfoMapper.selectByDid(bo.getEntity().getDid());
         SchemaFavoriteInfoEntity schemaFavoriteInfoEntity = new SchemaFavoriteInfoEntity();
         schemaFavoriteInfoEntity.setSchemaId(request.getSchemaId());
@@ -202,16 +206,16 @@ public class DataSchemaServiceImpl implements DataSchemaService {
 
     @Override
     public CommonResponse delSchemaFavorite(DelFavSchemaRequest request) {
-        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LoginUserBO bo = (LoginUserBO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         schemaFavoriteInfoMapper.delSchemaFavoriteInfo(request.getFavId());
         return CommonResponse.success();
     }
 
 
-    public CommonResponse getDataSchemaById(Long schemaId){
+    public CommonResponse getDataSchemaById(Long schemaId) {
         DataSchemaWithAccessBO dataSchemaWithAccessBO = dataSchemaInfoMapper.getSchemaById(schemaId);
         List<DataSchemaTagsEntity> schemaTagsEntityList = dataSchemaTagsMapper.getSchemaTagsMap(dataSchemaWithAccessBO.getSchemaId());
-        if (CollectionUtil.isNotEmpty(schemaTagsEntityList)){
+        if (CollectionUtil.isNotEmpty(schemaTagsEntityList)) {
             List<Long> tagIds = schemaTagsEntityList.stream()
                     .filter(Objects::nonNull)
                     .map(DataSchemaTagsEntity::getTagId)
@@ -226,7 +230,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         return CommonResponse.success(dataSchemaWithAccessBO);
     }
 
-    public CommonResponse getDataSchemaAccessById(Long accessId){
+    public CommonResponse getDataSchemaAccessById(Long accessId) {
         DataSchemaWithAccessBO dataSchemaWithAccessBO = dataSchemaAccessInfoMapper.getSchemaAccessByGid(accessId);
         return CommonResponse.success(dataSchemaWithAccessBO);
     }
@@ -279,14 +283,14 @@ public class DataSchemaServiceImpl implements DataSchemaService {
 
     @Override
     public CommonResponse approveDataSchema(ApproveDataSchemaRequest request) throws TransactionException {
-        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LoginUserBO bo = (LoginUserBO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String did = bo.getEntity().getDid();
         AccountInfoEntity entity = accountInfoMapper.selectByDid(did);
         if (entity == null) {
             return CommonResponse.error(CodeEnum.USER_NOT_EXISTS);
         }
         DataSchemaInfoEntity dataSchemaInfoEntity = dataSchemaInfoMapper.getSchemaBySchemaId(request.getSchemaId());
-        if (dataSchemaInfoEntity == null){
+        if (dataSchemaInfoEntity == null) {
             return CommonResponse.error(CodeEnum.SCHEMA_NOT_EXISTS);
         }
         String privateKey = entity.getPrivateKey();
@@ -308,11 +312,11 @@ public class DataSchemaServiceImpl implements DataSchemaService {
 
     @Transactional(rollbackFor = Exception.class)
     public CommonResponse createDataSchema(CreateDataSchemaRequest schemaRequest) throws Exception {
-        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LoginUserBO bo = (LoginUserBO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
         AccountInfoEntity entity = accountInfoMapper.selectByDid(bo.getEntity().getDid());
         ProductInfoEntity product = productInfoMapper.getProductByProductId(schemaRequest.getProductId());
-        if(product == null){
+        if (product == null) {
             return CommonResponse.error(CodeEnum.PRODUCT_NOT_EXISTS);
         }
         String privateKey = entity.getPrivateKey();
@@ -348,7 +352,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         List<String> tagNames = schemaRequest.getTagNameList();
         tagNames.forEach(tagName -> {
             TagInfoEntity tagInfo = tagInfoMapper.queryTagByName(tagName);
-            if (tagInfo == null){
+            if (tagInfo == null) {
                 tagInfo = new TagInfoEntity();
                 tagInfo.setTagName(tagName);
                 tagInfoMapper.insertItem(tagInfo);
@@ -363,7 +367,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         return CommonResponse.success(dataSchemaId);
     }
 
-    private void handleTag(UpdateDataSchemaRequest schemaRequest){
+    private void handleTag(UpdateDataSchemaRequest schemaRequest) {
         List<String> tagNames = schemaRequest.getTagNameList();
         List<DataSchemaTagsEntity> dataSchemaTagsEntityList = dataSchemaTagsMapper.getSchemaTagsMap(schemaRequest.getSchemaId());
         List<Long> tagIds = dataSchemaTagsEntityList.stream()
@@ -382,7 +386,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
 
         addTags.forEach(tagName -> {
             TagInfoEntity tagInfo = tagInfoMapper.queryTagByName(tagName);
-            if (tagInfo == null){
+            if (tagInfo == null) {
                 tagInfo = new TagInfoEntity();
                 tagInfo.setTagName(tagName);
                 tagInfoMapper.insertItem(tagInfo);
@@ -398,17 +402,17 @@ public class DataSchemaServiceImpl implements DataSchemaService {
                 .collect(Collectors.toList());
 
         List<Long> delTagIds = tagInfoMapper.getTagIdsByNames(delTags);
-        dataSchemaTagsMapper.delDataSchemaTag(delTagIds,schemaRequest.getSchemaId());
+        dataSchemaTagsMapper.delDataSchemaTag(delTagIds, schemaRequest.getSchemaId());
     }
 
-    private void addTag(List<DataSchemaDetailBO> dataSchemaDetailBOList){
-        if(CollectionUtil.isNotEmpty(dataSchemaDetailBOList)) {
+    private void addTag(List<DataSchemaDetailBO> dataSchemaDetailBOList) {
+        if (CollectionUtil.isNotEmpty(dataSchemaDetailBOList)) {
             List<Long> schemaIds = dataSchemaDetailBOList.stream()
                     .filter(Objects::nonNull)
                     .map(DataSchemaDetailBO::getSchemaId)
                     .collect(Collectors.toList());
             List<DataSchemaTagsEntity> schemaTagsEntityList = dataSchemaTagsMapper.getSchemaTagsMapByIds(schemaIds);
-            if(CollectionUtil.isNotEmpty(schemaTagsEntityList)) {
+            if (CollectionUtil.isNotEmpty(schemaTagsEntityList)) {
                 List<Long> tagIds = schemaTagsEntityList.stream()
                         .map(DataSchemaTagsEntity::getTagId)
                         .distinct()
