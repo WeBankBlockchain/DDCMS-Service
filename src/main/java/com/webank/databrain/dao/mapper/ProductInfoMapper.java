@@ -15,7 +15,7 @@ public interface ProductInfoMapper {
             "SELECT a.pk_id as productId, a.product_name,a.product_desc,a.status,a.review_time,a.create_time,c.company_name," +
             " r.agree_count," +
             " r.deny_count," +
-            " r.witness_count," +
+            " r.witness_count" +
             " FROM t_product_info a " +
             " left join " +
             " t_company_info c ON a.provider_id = c.account_id " +
