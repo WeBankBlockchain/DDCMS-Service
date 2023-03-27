@@ -27,6 +27,6 @@ public class Deployer {
 
         //Deploy Data Schema Module
         DataSchemaContract dataSchemaModule = DataSchemaContract.deploy(client, witness,  accountContract.getContractAddress(), productContract.getContractAddress());
-        System.out.println("Data Schema module address: "+dataSchemaModule.getContractAddress());
+        System.out.println("Data Schema contract address: "+dataSchemaModule.getContractAddress());
     }
 }
