@@ -8,10 +8,10 @@ import com.webank.databrain.bo.DataSchemaWithAccessBO;
 import com.webank.databrain.bo.LoginUserBO;
 import com.webank.databrain.config.SysConfig;
 import com.webank.databrain.contracts.DataSchemaContract;
-import com.webank.databrain.contracts.ProductContract;
 import com.webank.databrain.dao.entity.*;
 import com.webank.databrain.dao.mapper.*;
 import com.webank.databrain.enums.CodeEnum;
+import com.webank.databrain.enums.ReviewItemType;
 import com.webank.databrain.enums.ReviewStatus;
 import com.webank.databrain.handler.ThreadLocalKeyPairHandler;
 import com.webank.databrain.service.DataSchemaService;
@@ -81,6 +81,9 @@ public class DataSchemaServiceImpl implements DataSchemaService {
 
     @Autowired
     private SchemaFavoriteInfoMapper schemaFavoriteInfoMapper;
+
+    @Autowired
+    private ReviewRecordInfoMapper reviewRecordInfoMapper;
 
 
     public CommonResponse pageQuerySchema(PageQueryDataSchemaRequest request) {
@@ -235,51 +238,6 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         return CommonResponse.success(dataSchemaWithAccessBO);
     }
 
-//    @Transactional(rollbackFor = Exception.class)
-//    public CommonResponse updateDataSchema(UpdateDataSchemaRequest schemaRequest) throws TransactionException {
-//        LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        DataSchemaInfoEntity dataSchemaInfoEntity = dataSchemaInfoMapper.getSchemaBySchemaId(schemaRequest.getSchemaId());
-//        if (dataSchemaInfoEntity == null){
-//            return CommonResponse.error(CodeEnum.SCHEMA_NOT_EXISTS);
-//        }
-//        CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
-//        AccountInfoEntity entity = accountInfoMapper.selectByDid(bo.getEntity().getDid());
-//        String privateKey = entity.getPrivateKey();
-//        CryptoKeyPair keyPair = cryptoSuite.loadKeyPair(privateKey);
-//        DataSchemaContract dataSchemaModule = DataSchemaContract.load(
-//                sysConfig.getContractConfig().getDataSchemaContract(),
-//                client,
-//                keyPair);
-//
-//        byte[] hash = cryptoSuite.hash((dataSchemaInfoEntity.getProductId() +
-//                schemaRequest.getContentSchema() +
-//                schemaRequest.getDataSchemaName())
-//                .getBytes(StandardCharsets.UTF_8));
-//
-//        byte[] dataSchemaId = HexUtil.decodeHex(dataSchemaInfoEntity.getDataSchemaBid());
-//
-//        TransactionReceipt receipt = dataSchemaModule.modifyDataSchema(dataSchemaId,hash);//TODO:没有update方法
-//        BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
-//
-//        DataSchemaInfoEntity dataSchemaInfoEntityUp = new DataSchemaInfoEntity();
-//        BeanUtils.copyProperties(schemaRequest, dataSchemaInfoEntityUp);
-//        dataSchemaInfoEntityUp.setPkId(schemaRequest.getSchemaId());
-//        dataSchemaInfoMapper.updateDataSchemaInfo(dataSchemaInfoEntityUp);
-//        log.info("save dataSchemaInfoEntity finish, schemaId = {}", dataSchemaId);
-//
-//        DataSchemaAccessInfoEntity dataSchemaAccessInfoEntity = new DataSchemaAccessInfoEntity();
-//        BeanUtils.copyProperties(schemaRequest, dataSchemaAccessInfoEntity);
-//        dataSchemaAccessInfoEntity.setDataSchemaId(dataSchemaInfoEntity.getPkId());
-//        dataSchemaAccessInfoMapper.updateDataSchemaAccessInfo(dataSchemaAccessInfoEntity);
-//        log.info("save dataSchemaAccessInfoEntity finish, schemaId = {}", dataSchemaId);
-//
-//        //处理标签，从更新的标签中取出不一样的，进行更新，并进行删除
-//        handleTag(schemaRequest);
-//        log.info("handlerTag finish, schemaId = {}", dataSchemaId);
-//
-//        return CommonResponse.success(dataSchemaId);
-//    }
-
 
     @Override
     public CommonResponse approveDataSchema(ApproveDataSchemaRequest request) throws TransactionException {
@@ -305,8 +263,18 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         );
         BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
         int reviewState = schemaContract.getApproveDataSchemaOutput(receipt).getValue4().intValue();
+        int agreeCount = schemaContract.getApproveDataSchemaOutput(receipt).getValue2().intValue();
+        int denyCount = schemaContract.getApproveDataSchemaOutput(receipt).getValue3().intValue();
 
         dataSchemaInfoMapper.updateDataSchemaState(request.getSchemaId(), reviewState);
+
+        ReviewRecordInfoEntity reviewRecordInfoEntity = new ReviewRecordInfoEntity();
+        reviewRecordInfoEntity.setItemType(ReviewItemType.Schema.getCode());
+        reviewRecordInfoEntity.setItemId(request.getSchemaId());
+        reviewRecordInfoEntity.setAgreeCount(agreeCount);
+        reviewRecordInfoEntity.setDenyCount(denyCount);
+        reviewRecordInfoEntity.setReviewState(reviewState);
+        reviewRecordInfoMapper.updateDataSchemaInfo(reviewRecordInfoEntity);
         return CommonResponse.success(dataSchemaInfoEntity.getPkId());
     }
 
@@ -336,6 +304,8 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
 
         String dataSchemaId = HexUtil.encodeHexStr(dataSchemaModule.getCreateDataSchemaOutput(receipt).getValue1());
+        int witnessCount = dataSchemaModule.getCreateDataSchemaOutput(receipt).getValue2().intValue();
+
         DataSchemaInfoEntity dataSchemaInfoEntity = new DataSchemaInfoEntity();
         BeanUtils.copyProperties(schemaRequest, dataSchemaInfoEntity);
         dataSchemaInfoEntity.setDataSchemaBid(dataSchemaId);
@@ -348,6 +318,13 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         dataSchemaAccessInfoEntity.setDataSchemaId(dataSchemaInfoEntity.getPkId());
         dataSchemaAccessInfoMapper.insertDataSchemaAccessInfo(dataSchemaAccessInfoEntity);
         log.info("save dataSchemaAccessInfoEntity finish, schemaId = {}", dataSchemaId);
+
+        ReviewRecordInfoEntity reviewRecordInfoEntity = new ReviewRecordInfoEntity();
+        reviewRecordInfoEntity.setReviewState(ReviewStatus.NotReviewed.ordinal());
+        reviewRecordInfoEntity.setWitnessCount(witnessCount);
+        reviewRecordInfoEntity.setItemId(product.getPkId());
+        reviewRecordInfoEntity.setItemType(ReviewItemType.Schema.getCode());
+        reviewRecordInfoMapper.insertReviewRecordInfo(reviewRecordInfoEntity);
 
         List<String> tagNames = schemaRequest.getTagNameList();
         tagNames.forEach(tagName -> {

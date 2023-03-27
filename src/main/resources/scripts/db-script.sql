@@ -133,6 +133,22 @@ CREATE TABLE `t_schema_favorite_info` (
   `account_id` bigint(20) unsigned NOT NULL COMMENT '账户外键ID',
   `schema_id` bigint(20) unsigned NOT NULL COMMENT '产品ID',
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`pk_id`),
   UNIQUE KEY `account_schema` (`account_id`,`schema_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+
+CREATE TABLE `t_review_record_info` (
+  `pk_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `item_id` bigint(20) unsigned NOT NULL COMMENT '外键ID，产品或目录ID',
+  `item_type` int(4) NOT NULL DEFAULT 0 COMMENT '类型，产品-1，目录-2',
+  `review_state` int(4) NOT NULL DEFAULT 0 COMMENT '审核状态,审核中-0，已通过-1，已拒绝-2',
+  `agree_count` int(4) NOT NULL DEFAULT 0 COMMENT '赞同人数',
+  `deny_count` int(4) NOT NULL DEFAULT 0 COMMENT '反对人数',
+  `witness_count` int(4) NOT NULL DEFAULT 0 COMMENT '投票总人数',
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`pk_id`),
+  UNIQUE KEY `item_id_type` (`item_id`,`item_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8
