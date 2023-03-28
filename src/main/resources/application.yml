@@ -1,0 +1,90 @@
+server:
+  port: 10880
+
+spring:
+  mvc:
+    async:
+      request-timeout: 500
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  datasource:
+    url: jdbc:mysql://116.205.167.248:3306/databrain?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
+    username: test
+    password: Aa12345!
+    driverClassName: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    defaultAutoCommit: false
+    initialSize: 25
+    maxActive: 128
+    maxIdle: 50
+    minIdle: 25
+    testOnBorrow: false
+    testOnReturn: false
+    testWhileIdle: true
+    validationQuery: SELECT 1
+    timeBetweenEvictionRunsMillis: 34000
+    minEvictableIdleTimeMillis: 34000
+    removeAbandoned: false
+    logAbandoned: true
+    removeAbandonedTimeout: 54
+    maxWait: 10000
+    poolPreparedStatements: false
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+
+mybatis:
+  typeAliasesPackage: com.webank.databrain.dao.entity
+  configuration:
+    map-underscore-to-camel-case: true
+
+jwt:
+  secret: "Ok2Q0AZiRTT1N6CJ3q8ZvQOk2Q0AZiRTT1N6CJ3q8ZvQOk2Q0AZiRTT1N6CJ3q8ZvQOk2Q0AZiRTT1N6CJ3q8ZvQOk2Q0AZiRTT1N6CJ3q8ZvQ"
+  expiration: 8640000
+
+auth:
+  permitAllApiList:
+    - /api/account/register
+    - /api/account/pageQueryCompany
+    - /api/account/queryCompanyByUsername
+    - /api/account/queryPersonByUsername
+    - /api/account/getHotCompanies
+    - /api/account/searchCompany
+    - /api/account/searchPerson
+    - /api/schema/pageQuerySchema
+    - /api/schema/querySchemaById
+    - /api/file/download
+    - /api/file/upload
+    - /api/product/getHotProducts
+    - /api/product/pageQueryProduct
+    - /api/product/queryProductById
+    - /api/tag/getHotTags
+    - /v2/api-docs
+    - /configuration/**
+    - /swagger*/**
+    - /webjars/**
+    - /csrf
+    - /
+  anonymousApi: /api/account/login
+  roleAuth:
+    companyAuth:
+      - /api/product/createProduct
+      - /api/schema/createSchema
+      - /api/product/updateProduct
+    witnessAuth:
+      - /api/product/approveProduct
+    adminAuth:
+      - /api/account/approveAccount
+system:
+  bcos-cfg: "config/config.toml"
+  bcos-group-id: "group0"
+  crypto-type: 0
+  admin-private-key: '11afa82f974469792aa0172931b813d4fc7dd9177f3211779efc5f955d5e480f'
+  contractConfig:
+    account-contract: "0x696f782b4f34d31ee6edf47ff0ce92bb50197f05"
+    product-contract: "0xf1091018ea5d3a50d0c4e459cf7e232016f6341d"
+    dataSchema-contract: "0x7b6fdd8d9de62478eb92b67928cef3549884f8f2"
+  fileConfig:
+    file-dir: "tmp"
+swagger:
+  enabled: true

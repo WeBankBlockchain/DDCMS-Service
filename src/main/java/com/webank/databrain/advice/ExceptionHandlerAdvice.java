@@ -36,6 +36,7 @@ public class ExceptionHandlerAdvice {
     @ResponseBody
     public CommonResponse handleSQLDuplicateKeyException(HttpServletRequest req, Exception e) throws JsonProcessingException {
         CommonResponse response = CommonResponse.error(CodeEnum.SQL_DUPLICATE_RECORD);
+        e.printStackTrace();
         log.info("response : {}", objectMapper.writeValueAsString(response));
         return response;
     }
