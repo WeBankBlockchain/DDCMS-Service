@@ -247,7 +247,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         if(did != null) {
             entity = accountInfoMapper.selectByDid(did);
         }
-        DataSchemaWithAccessBO dataSchemaWithAccessBO = dataSchemaAccessInfoMapper.getSchemaAccessByGid(accessId);
+        DataSchemaWithAccessBO dataSchemaWithAccessBO = dataSchemaAccessInfoMapper.getSchemaAccessById(accessId);
         DataSchemaInfoEntity dataSchemaInfoEntity = dataSchemaInfoMapper.getSchemaBySchemaId(dataSchemaWithAccessBO.getSchemaId());
         if ((entity != null && entity.getAccountType() == AccountType.WITNESS.getRoleKey())|| dataSchemaInfoEntity.getVisible() == 1){
             return CommonResponse.success(dataSchemaWithAccessBO);
