@@ -29,6 +29,11 @@ public class DataSchemaController {
         return schemaService.pageQuerySchema(querySchemaRequest);
     }
 
+    @PostMapping(value = "/pageQuerySchemaByHome")
+    public CommonResponse pageQuerySchemaByHome(@RequestBody @Valid PageQueryDataSchemaRequest querySchemaRequest) {
+        return schemaService.pageQuerySchemaByHome(querySchemaRequest);
+    }
+
     @PostMapping(value = "/pageQueryMySchema")
     public CommonResponse pageQueryMySchema(@RequestBody @Valid PageQueryDataSchemaRequest querySchemaRequest) {
         return schemaService.pageQueryMySchema(querySchemaRequest);

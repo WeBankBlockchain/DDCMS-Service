@@ -124,6 +124,46 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         return CommonResponse.success(pageListData);
     }
 
+    @Override
+    public CommonResponse pageQuerySchemaByHome(PageQueryDataSchemaRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String did = null;
+        if (authentication != null
+                && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken)) {
+            LoginUserBO bo = (LoginUserBO) authentication.getPrincipal();
+            did = bo.getEntity().getDid();
+        }
+        request.setState(ReviewStatus.Approved.ordinal());
+        int totalCount = dataSchemaInfoMapper.count(
+                request.getProductId(),
+                request.getProviderId(),
+                request.getKeyWord(),
+                null,
+                request.getState(),
+                request.getTagId());
+        int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
+        PageListData pageListData = new PageListData<>();
+        pageListData.setPageCount(pageCount);
+        pageListData.setTotalCount(totalCount);
+        int offset = (request.getPageNo() - 1) * request.getPageSize();
+
+        List<DataSchemaDetailBO> dataSchemaDetailBOList = dataSchemaInfoMapper.pageQuerySchema(
+                offset,
+                request.getPageSize(),
+                request.getProductId(),
+                request.getProviderId(),
+                request.getKeyWord(),
+                request.getState(),
+                request.getTagId());
+        addTag(dataSchemaDetailBOList);
+        addFav(did, dataSchemaDetailBOList);
+
+        pageListData.setItemList(dataSchemaDetailBOList);
+        return CommonResponse.success(pageListData);
+    }
+
+
     private void addFav(String did, List<DataSchemaDetailBO> dataSchemaDetailBOList) {
         if (did == null) {
             return;
