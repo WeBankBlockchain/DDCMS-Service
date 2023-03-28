@@ -322,7 +322,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
 
         ReviewRecordInfoEntity reviewRecordInfoEntity = new ReviewRecordInfoEntity();
         reviewRecordInfoEntity.setWitnessCount(witnessCount);
-        reviewRecordInfoEntity.setItemId(product.getPkId());
+        reviewRecordInfoEntity.setItemId(dataSchemaInfoEntity.getPkId());
         reviewRecordInfoEntity.setItemType(ReviewItemType.Schema.getCode());
         reviewRecordInfoMapper.insertReviewRecordInfo(reviewRecordInfoEntity);
 
