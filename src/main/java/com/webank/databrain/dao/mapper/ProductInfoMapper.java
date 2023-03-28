@@ -120,11 +120,16 @@ public interface ProductInfoMapper {
     ProductInfoEntity getProductByProductId(Long productId);
 
     @Select("<script>" +
-            "SELECT a.pk_id as productId, a.product_name,a.product_desc,a.status,a.review_time,a.create_time,b.company_name" +
+            "SELECT a.pk_id as productId, a.product_name,a.product_desc,a.status,a.review_time,a.create_time,b.company_name," +
+            " r.agree_count," +
+            " r.deny_count," +
+            " r.witness_count" +
             " FROM t_product_info a " +
-            " LEFT JOIN t_company_info b ON a.provider_id = b.account_id " +
-            " LEFT JOIN t_account_info c ON b.account_id = c.pk_id " +
-            " where c.did = #{did}" +
+            " left join t_company_info b ON a.provider_id = b.account_id " +
+            " left join t_account_info c ON b.account_id = c.pk_id " +
+            " left join " +
+            " t_review_record_info r on a.pk_id = r.item_id " +
+            " where c.did = #{did} and r.item_type = 1 " +
             "<if test='reviewState != null and reviewState >= 0'> AND a.status = #{reviewState} </if>" +
             " <if test='keyWord != null and keyWord.trim() != \"\"'> AND a.product_name like concat('%', #{keyWord}, '%') " +
             " or a.product_desc like concat('%', #{keyWord}, '%') </if>" +

@@ -74,6 +74,9 @@ public interface DataSchemaInfoMapper {
             "a.review_time," +
             "a.create_time," +
             "d.product_name," +
+            "r.agree_count," +
+            "r.deny_count," +
+            "r.witness_count," +
             "e.company_name as providerName " +
             "from t_data_schema_info a " +
             "left join " +
@@ -82,7 +85,9 @@ public interface DataSchemaInfoMapper {
             "t_company_info e on a.provider_id = e.account_id " +
             "left join " +
             "t_account_info f on e.account_id = f.pk_id " +
-            "where f.did = #{did} " +
+            "left join " +
+            "t_review_record_info r on a.pk_id = r.item_id " +
+            "where f.did = #{did} and r.item_type = 2 " +
             "<if test='reviewState != null and reviewState >= 0'> AND a.status = #{reviewState} </if>" +
             "<if test='keyWord != null and keyWord.trim() != \"\"'> AND a.data_schema_name like concat('%', #{keyWord}, '%') " +
             " or a.data_schema_desc like concat('%', #{keyWord}, '%') </if>" +
