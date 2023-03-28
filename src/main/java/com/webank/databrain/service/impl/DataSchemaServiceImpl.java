@@ -10,6 +10,7 @@ import com.webank.databrain.config.SysConfig;
 import com.webank.databrain.contracts.DataSchemaContract;
 import com.webank.databrain.dao.entity.*;
 import com.webank.databrain.dao.mapper.*;
+import com.webank.databrain.enums.AccountType;
 import com.webank.databrain.enums.CodeEnum;
 import com.webank.databrain.enums.ReviewItemType;
 import com.webank.databrain.enums.ReviewStatus;
@@ -234,8 +235,24 @@ public class DataSchemaServiceImpl implements DataSchemaService {
     }
 
     public CommonResponse getDataSchemaAccessById(Long accessId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String did = null;
+        if (authentication != null
+                && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken)) {
+            LoginUserBO bo = (LoginUserBO) authentication.getPrincipal();
+            did = bo.getEntity().getDid();
+        }
+        AccountInfoEntity entity = null;
+        if(did != null) {
+            entity = accountInfoMapper.selectByDid(did);
+        }
         DataSchemaWithAccessBO dataSchemaWithAccessBO = dataSchemaAccessInfoMapper.getSchemaAccessByGid(accessId);
-        return CommonResponse.success(dataSchemaWithAccessBO);
+        DataSchemaInfoEntity dataSchemaInfoEntity = dataSchemaInfoMapper.getSchemaBySchemaId(dataSchemaWithAccessBO.getSchemaId());
+        if ((entity != null && entity.getAccountType() == AccountType.WITNESS.getRoleKey())|| dataSchemaInfoEntity.getVisible() == 1){
+            return CommonResponse.success(dataSchemaWithAccessBO);
+        }
+        return CommonResponse.success(null);
     }
 
 
@@ -244,9 +261,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         LoginUserBO bo = (LoginUserBO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String did = bo.getEntity().getDid();
         AccountInfoEntity entity = accountInfoMapper.selectByDid(did);
-        if (entity == null) {
-            return CommonResponse.error(CodeEnum.USER_NOT_EXISTS);
-        }
+
         DataSchemaInfoEntity dataSchemaInfoEntity = dataSchemaInfoMapper.getSchemaBySchemaId(request.getSchemaId());
         if (dataSchemaInfoEntity == null) {
             return CommonResponse.error(CodeEnum.SCHEMA_NOT_EXISTS);
