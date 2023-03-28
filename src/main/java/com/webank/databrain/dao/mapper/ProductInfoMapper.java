@@ -40,7 +40,7 @@ public interface ProductInfoMapper {
     @ResultType(HotProductBO.class)
     List<HotProductBO> getHotProduct(@Param("topN") int topN);
 
-    @Select("SELECT * FROM t_product_info WHERE provider_id = #{providerId}")
+    @Select("SELECT * FROM t_product_info WHERE provider_id = #{providerId} and status = 1")
     List<ProductInfoEntity> getProductsByProviderId(long providerId);
 
 

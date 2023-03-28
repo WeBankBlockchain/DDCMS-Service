@@ -24,6 +24,7 @@ import com.webank.databrain.vo.common.PageListData;
 import com.webank.databrain.vo.request.product.ApproveProductRequest;
 import com.webank.databrain.vo.request.product.CreateProductRequest;
 import com.webank.databrain.vo.request.product.PageQueryProductRequest;
+import com.webank.databrain.vo.request.product.UpdateProductRequest;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
 import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
@@ -138,7 +139,6 @@ public class ProductServiceImpl implements ProductService {
         return CommonResponse.success(productId);
     }
 
-
     @Transactional(rollbackFor = Exception.class)
     public CommonResponse approveProduct(ApproveProductRequest productRequest) throws TransactionException {
         LoginUserBO bo = (LoginUserBO)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -169,7 +169,7 @@ public class ProductServiceImpl implements ProductService {
         ProductInfoEntity productInfoEntityUp = new ProductInfoEntity();
         productInfoEntityUp.setPkId(productRequest.getProductId());
         productInfoEntityUp.setStatus(reviewState);
-        productInfoMapper.updateProductInfoState(productInfoEntity);
+        productInfoMapper.updateProductInfoState(productInfoEntityUp);
 
         ReviewRecordInfoEntity reviewRecordInfoEntity = new ReviewRecordInfoEntity();
         reviewRecordInfoEntity.setItemType(ReviewItemType.Product.getCode());

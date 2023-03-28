@@ -133,6 +133,7 @@ public class AccountServiceImpl implements AccountService {
             String token = JwtTokenHandler.TOKEN_PREFIX + tokenHandler.generateToken(loginInfoBo.getEntity().getDid());
             LoginResponse response = new LoginResponse();
             response.setToken(token);
+            response.setAccountType(String.valueOf(accountInfo.getAccountType()));
 
             return CommonResponse.success(response);
         } catch (AuthenticationException e) {

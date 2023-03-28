@@ -22,7 +22,7 @@ public class CreateDataSchemaRequest extends CommonRequest {
     /**
      * 版本号
      */
-    private Integer version;
+    private Integer version = 1;
 
     private Integer visible;
 

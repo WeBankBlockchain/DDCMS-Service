@@ -310,6 +310,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         BeanUtils.copyProperties(schemaRequest, dataSchemaInfoEntity);
         dataSchemaInfoEntity.setDataSchemaBid(dataSchemaId);
         dataSchemaInfoEntity.setProviderId(entity.getPkId());
+        dataSchemaInfoEntity.setStatus(ReviewStatus.NotReviewed.ordinal());
         dataSchemaInfoMapper.insertDataSchemaInfo(dataSchemaInfoEntity);
         log.info("save dataSchemaInfoEntity finish, schemaId = {}", dataSchemaId);
 
