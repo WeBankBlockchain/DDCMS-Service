@@ -24,7 +24,6 @@ import com.webank.databrain.vo.common.PageListData;
 import com.webank.databrain.vo.request.product.ApproveProductRequest;
 import com.webank.databrain.vo.request.product.CreateProductRequest;
 import com.webank.databrain.vo.request.product.PageQueryProductRequest;
-import com.webank.databrain.vo.request.product.UpdateProductRequest;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
 import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
