@@ -229,6 +229,7 @@ public class DataSchemaContract extends Contract {
 
     public static DataSchemaContract load(String contractAddress, Client client,
             CryptoKeyPair credential) {
+        System.out.println(credential.getAddress());
         return new DataSchemaContract(contractAddress, client, credential);
     }
 

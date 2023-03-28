@@ -175,8 +175,8 @@ public interface DataSchemaInfoMapper {
 
 
     @Update("UPDATE t_data_schema_info SET " +
-            "state=#{state}, " +
-            "WHERE pk_id=#{schemaId}")
+            "state= #{state} " +
+            "WHERE pk_id= #{schemaId}")
     void updateDataSchemaState(Long schemaId, int state);
 
     @Select("SELECT " +

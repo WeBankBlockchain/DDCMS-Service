@@ -321,7 +321,6 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         log.info("save dataSchemaAccessInfoEntity finish, schemaId = {}", dataSchemaId);
 
         ReviewRecordInfoEntity reviewRecordInfoEntity = new ReviewRecordInfoEntity();
-        reviewRecordInfoEntity.setReviewState(ReviewStatus.NotReviewed.ordinal());
         reviewRecordInfoEntity.setWitnessCount(witnessCount);
         reviewRecordInfoEntity.setItemId(product.getPkId());
         reviewRecordInfoEntity.setItemType(ReviewItemType.Schema.getCode());

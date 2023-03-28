@@ -1,5 +1,6 @@
 package com.webank.databrain.dao.entity;
 
+import com.webank.databrain.enums.ReviewStatus;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -15,11 +16,11 @@ public class ReviewRecordInfoEntity implements Serializable {
 
     private Integer itemType;
 
-    private Integer reviewState;
+    private Integer reviewState = ReviewStatus.NotReviewed.ordinal();
 
-    private Integer agreeCount;
+    private Integer agreeCount = 0;
 
-    private Integer denyCount;
+    private Integer denyCount = 0;
 
     private Integer witnessCount;
 
