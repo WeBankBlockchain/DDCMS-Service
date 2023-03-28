@@ -9,8 +9,6 @@ public interface DataSchemaService {
 
     CommonResponse pageQuerySchema(PageQueryDataSchemaRequest request);
 
-    CommonResponse pageQuerySchemaByHome(PageQueryDataSchemaRequest request);
-
     CommonResponse pageQueryMySchema(PageQueryDataSchemaRequest request);
 
     CommonResponse pageQueryMyFavSchema(PageQueryMyFavSchemaRequest request);
