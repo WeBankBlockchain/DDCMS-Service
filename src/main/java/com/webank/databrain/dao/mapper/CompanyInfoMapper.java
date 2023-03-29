@@ -9,7 +9,11 @@ import java.util.List;
 @Mapper
 public interface CompanyInfoMapper {
 
-    @Select("SELECT * FROM t_company_info ORDER BY create_time DESC LIMIT 1, #{topCount}")
+    @Select("SELECT * FROM t_company_info a" +
+            " left join " +
+            " t_account_info c ON a.account_id = c.pk_id " +
+            " where c.account_type = 1 " +
+            " ORDER BY a.create_time DESC LIMIT 0, #{topCount}")
     List<CompanyInfoEntity> listHotCompanies(int topCount);
 
     @Select("SELECT a.*, c.* FROM t_company_info c JOIN t_account_info a ORDER BY c.create_time DESC LIMIT #{offset}, #{pageSize}")
