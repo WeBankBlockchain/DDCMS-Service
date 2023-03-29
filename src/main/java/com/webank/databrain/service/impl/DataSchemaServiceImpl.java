@@ -211,7 +211,9 @@ public class DataSchemaServiceImpl implements DataSchemaService {
     @Override
     public CommonResponse delSchemaFavorite(DelFavSchemaRequest request) {
         LoginUserBO bo = (LoginUserBO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        schemaFavoriteInfoMapper.delSchemaFavoriteInfo(request.getFavId());
+        String did = bo.getEntity().getDid();
+        AccountInfoEntity entity = accountInfoMapper.selectByDid(did);
+        schemaFavoriteInfoMapper.delSchemaFavoriteInfo(request.getSchemaId(),entity.getPkId());
         return CommonResponse.success();
     }
 
