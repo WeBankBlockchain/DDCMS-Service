@@ -8,5 +8,5 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class DelFavSchemaRequest extends CommonRequest {
 
-    private Long favId;
+    private Long schemaId;
 }
