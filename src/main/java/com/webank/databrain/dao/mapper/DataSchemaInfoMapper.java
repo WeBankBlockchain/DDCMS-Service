@@ -43,11 +43,11 @@ public interface DataSchemaInfoMapper {
             "t_review_record_info r on a.pk_id = r.item_id " +
             "where 1 =1 and r.item_type = 2 " +
             "<if test='reviewState != null and reviewState >= 0'> AND a.status = #{reviewState} </if>" +
-            "<if test='productId != null and productId &gt; 0'> AND a.product_id = #{productId} </if>" +
-            "<if test='providerId != null and providerId &gt; 0'> AND a.provider_id = #{providerId} </if>" +
+            "<if test='productId != null and productId > 0'> AND a.product_id = #{productId} </if>" +
+            "<if test='providerId != null and providerId > 0'> AND a.provider_id = #{providerId} </if>" +
             "<if test='keyWord != null and keyWord.trim() != \"\"'> AND a.data_schema_name like concat('%', #{keyWord}, '%') " +
             " or a.data_schema_desc like concat('%', #{keyWord}, '%') </if>" +
-            "<if test='tagId != null and tagId >= 0'> HAVING FIND_IN_SET(#{tagId}, tag_id_list) </if>" +
+            "<if test='tagId != null and tagId > 0'> HAVING FIND_IN_SET(#{tagId}, tag_id_list) </if>" +
             " ORDER BY a.create_time DESC LIMIT #{start}, #{pageSize} " +
             "</script>" )
     @ResultType(DataSchemaDetailBO.class)
@@ -104,7 +104,7 @@ public interface DataSchemaInfoMapper {
             " SELECT COUNT(*) FROM (SELECT data_schema_id, GROUP_CONCAT(tag_id SEPARATOR ',') AS tag_id_list " +
             " FROM t_data_schema_tags " +
             " GROUP BY data_schema_id " +
-            " <if test='tagId != null and tagId >= 0'> HAVING FIND_IN_SET(#{tagId}, tag_id_list) </if>" +
+            " <if test='tagId != null and tagId > 0'> HAVING FIND_IN_SET(#{tagId}, tag_id_list) </if>" +
             " ) b"  +
             " left join " +
             " t_data_schema_info a on a.pk_id = b.data_schema_id " +
@@ -116,8 +116,8 @@ public interface DataSchemaInfoMapper {
             " t_review_record_info r on a.pk_id = r.item_id " +
             " where 1=1 and r.item_type = 2 " +
             "<if test='reviewState != null and reviewState >= 0'> AND a.status = #{reviewState} </if>" +
-            "<if test='productId != null and productId &gt; 0'> AND a.product_id = #{productId} </if>" +
-            "<if test='providerId != null and providerId &gt; 0'> AND a.provider_id = #{providerId} </if>" +
+            "<if test='productId != null and productId > 0'> AND a.product_id = #{productId} </if>" +
+            "<if test='providerId != null and providerId > 0'> AND a.provider_id = #{providerId} </if>" +
             "<if test='keyWord != null and keyWord.trim() != \"\"'> AND a.data_schema_name like concat('%', #{keyWord}, '%') " +
             " or a.data_schema_desc like concat('%', #{keyWord}, '%') </if>" +
             "<if test='did != null'> AND f.did = #{did} </if>" +

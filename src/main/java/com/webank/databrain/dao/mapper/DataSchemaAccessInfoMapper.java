@@ -45,7 +45,8 @@ public interface DataSchemaAccessInfoMapper {
 
 
     @Select("SELECT " +
-            " pk_id as accessId," +
+            "data_schema_id as schema_id, " +
+            "pk_id as accessId," +
             " data_format," +
             " data_protocol," +
             " content_schema," +
@@ -56,6 +57,6 @@ public interface DataSchemaAccessInfoMapper {
             " from t_data_schema_access_info " +
             " where pk_id = #{accessId}")
     @ResultType(DataSchemaWithAccessBO.class)
-    DataSchemaWithAccessBO getSchemaAccessByGid(Long accessId);
+    DataSchemaWithAccessBO getSchemaAccessById(Long accessId);
 
 }
