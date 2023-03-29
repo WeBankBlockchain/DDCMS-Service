@@ -21,8 +21,8 @@ public interface SchemaFavoriteInfoMapper {
     @Options(useGeneratedKeys = true, keyProperty = "pkId", keyColumn = "pk_id")
     void insertSchemaFavoriteInfo(SchemaFavoriteInfoEntity schemaFavoriteInfoEntity);
 
-    @Delete("delete from t_schema_favorite_info where pk_id = #{favoriteId}")
-    void delSchemaFavoriteInfo(@Param("favoriteId")  Long favoriteId);
+    @Delete("delete from t_schema_favorite_info where schema_id = #{schemaId} and account_id = #{accountId}")
+    void delSchemaFavoriteInfo(@Param("schemaId")  Long schemaId, @Param("accountId")  Long accountId);
 
 
     @Select("<script>" +
