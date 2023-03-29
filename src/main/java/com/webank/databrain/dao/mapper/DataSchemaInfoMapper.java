@@ -46,7 +46,8 @@ public interface DataSchemaInfoMapper {
             "<if test='productId != null and productId > 0'> AND a.product_id = #{productId} </if>" +
             "<if test='providerId != null and providerId > 0'> AND a.provider_id = #{providerId} </if>" +
             "<if test='keyWord != null and keyWord.trim() != \"\"'> AND a.data_schema_name like concat('%', #{keyWord}, '%') " +
-            " or a.data_schema_desc like concat('%', #{keyWord}, '%') </if>" +
+            " or a.data_schema_desc like concat('%', #{keyWord}, '%')  or e.company_name like concat('%', #{keyWord}, '%')  or " +
+            " d.product_name like concat('%', #{keyWord}, '%') </if>" +
             "<if test='tagId != null and tagId > 0'> HAVING FIND_IN_SET(#{tagId}, tag_id_list) </if>" +
             " ORDER BY a.create_time DESC LIMIT #{start}, #{pageSize} " +
             "</script>" )
@@ -90,7 +91,8 @@ public interface DataSchemaInfoMapper {
             "where f.did = #{did} and r.item_type = 2 " +
             "<if test='reviewState != null and reviewState >= 0'> AND a.status = #{reviewState} </if>" +
             "<if test='keyWord != null and keyWord.trim() != \"\"'> AND a.data_schema_name like concat('%', #{keyWord}, '%') " +
-            " or a.data_schema_desc like concat('%', #{keyWord}, '%') </if>" +
+            " or a.data_schema_desc like concat('%', #{keyWord}, '%')  or e.company_name like concat('%', #{keyWord}, '%')  or " +
+            " d.product_name like concat('%', #{keyWord}, '%') </if>" +
             " ORDER BY a.create_time DESC LIMIT #{start}, #{pageSize} " +
             "</script>" )
     @ResultType(DataSchemaDetailBO.class)
@@ -109,6 +111,8 @@ public interface DataSchemaInfoMapper {
             " left join " +
             " t_data_schema_info a on a.pk_id = b.data_schema_id " +
             " left join " +
+            " t_product_info d on a.product_id = d.pk_id " +
+            " left join " +
             " t_company_info e on a.provider_id = e.account_id "  +
             " left join " +
             " t_account_info f on e.account_id = f.pk_id " +
@@ -119,7 +123,8 @@ public interface DataSchemaInfoMapper {
             "<if test='productId != null and productId > 0'> AND a.product_id = #{productId} </if>" +
             "<if test='providerId != null and providerId > 0'> AND a.provider_id = #{providerId} </if>" +
             "<if test='keyWord != null and keyWord.trim() != \"\"'> AND a.data_schema_name like concat('%', #{keyWord}, '%') " +
-            " or a.data_schema_desc like concat('%', #{keyWord}, '%') </if>" +
+            " or a.data_schema_desc like concat('%', #{keyWord}, '%')  or e.company_name like concat('%', #{keyWord}, '%')  or " +
+            " d.product_name like concat('%', #{keyWord}, '%') </if>" +
             "<if test='did != null'> AND f.did = #{did} </if>" +
             "</script>")
     int count(
