@@ -35,11 +35,9 @@ public interface ProductInfoMapper {
                                          @Param("reviewState") Integer reviewState,
                                          @Param("providerId") Long providerId);
 
-    @Select("SELECT a.product_name, a.pk_id as productId FROM t_product_info a" +
-            " left join " +
-            " t_account_info c ON a.provider_id = c.pk_id " +
-            " where c.account_type = 1" +
-            " ORDER BY a.create_time DESC LIMIT 1, #{topN}")
+    @Select("SELECT product_name, pk_id as productId FROM t_product_info" +
+            " where status = 1" +
+            " ORDER BY create_time DESC LIMIT 0, #{topN}")
     @ResultType(HotProductBO.class)
     List<HotProductBO> getHotProduct(@Param("topN") int topN);
 
