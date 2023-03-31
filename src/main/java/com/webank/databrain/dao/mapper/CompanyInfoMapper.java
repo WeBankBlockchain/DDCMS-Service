@@ -12,7 +12,7 @@ public interface CompanyInfoMapper {
     @Select("SELECT * FROM t_company_info a" +
             " left join " +
             " t_account_info c ON a.account_id = c.pk_id " +
-            " where c.account_type = 1 " +
+            " where c.account_type = 1 and c.status = 2 " +
             " ORDER BY a.create_time DESC LIMIT 0, #{topCount}")
     List<CompanyInfoEntity> listHotCompanies(int topCount);
 
