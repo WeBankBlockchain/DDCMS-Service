@@ -17,7 +17,7 @@ public class Deployer {
         //Admin key
 
         CryptoSuite cryptoSuite = new CryptoSuite(0);
-        CryptoKeyPair admin = cryptoSuite.generateRandomKeyPair();
+        CryptoKeyPair admin = cryptoSuite.loadKeyPair("11afa82f974469792aa0172931b813d4fc7dd9177f3211779efc5f955d5e480f");
         System.out.println("可信第三方的私钥为:"+ admin.getHexPrivateKey());
         System.out.println("可信第三方的地址为:"+ admin.getAddress());
 
