@@ -53,6 +53,7 @@ auth:
     - /api/account/searchPerson
     - /api/schema/pageQuerySchema
     - /api/schema/querySchemaById
+    - /api/schema/querySchemaAccessById
     - /api/file/download
     - /api/file/upload
     - /api/product/getHotProducts
