@@ -16,7 +16,14 @@ public class SysConfig {
 
     private int cryptoConfig;
 
+
+    private String adminAccount;
+
+    private String adminPassword;
+
     private String adminPrivateKey;
+
+    private String adminCompany;
 
     @NestedConfigurationProperty
     private ContractConfig contractConfig;

@@ -13,6 +13,7 @@ import com.webank.databrain.dao.mapper.CompanyInfoMapper;
 import com.webank.databrain.enums.AccountStatus;
 import com.webank.databrain.enums.AccountType;
 import com.webank.databrain.enums.CodeEnum;
+import com.webank.databrain.exception.DataBrainException;
 import com.webank.databrain.handler.JwtTokenHandler;
 import com.webank.databrain.handler.ThreadLocalKeyPairHandler;
 import com.webank.databrain.service.AccountService;
@@ -29,6 +30,7 @@ import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
 import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
 import org.fisco.bcos.sdk.v3.transaction.codec.decode.TransactionDecoderInterface;
 import org.fisco.bcos.sdk.v3.transaction.model.exception.TransactionException;
+import org.fisco.bcos.sdk.v3.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -82,7 +84,12 @@ public class AccountServiceImpl implements AccountService {
     public CommonResponse registerAccount(RegisterRequest request) throws TransactionException, JsonProcessingException {
         //Generation private key
         CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
-        CryptoKeyPair keyPair = cryptoSuite.generateRandomKeyPair();
+        CryptoKeyPair keyPair = null;
+        if (StringUtils.isEmpty(request.getHexPrivateKey())){
+            keyPair = cryptoSuite.loadKeyPair(request.getHexPrivateKey());
+        } else{
+            keyPair = cryptoSuite.generateRandomKeyPair();
+        }
         //Save to blockchain
         AccountContract accountContract = AccountContract.load(
                 sysConfig.getContractConfig().getAccountContract(),
@@ -99,12 +106,18 @@ public class AccountServiceImpl implements AccountService {
         accountInfoEntity.setStatus(AccountStatus.Registered.ordinal());
         accountInfoEntity.setPrivateKey(keyPair.getHexPrivateKey());
         accountInfoEntity.setUserName(request.getUserName());
-
+        if(accountInfoEntity.getAccountType() == AccountType.ADMIN.getRoleKey()){
+            if(accountInfoMapper.selectTheFirstOne() != null){
+                throw new DataBrainException(CodeEnum.ADMIN_EXISTED);
+            }
+            accountInfoEntity.setStatus(AccountStatus.Approved.ordinal());
+        }
         accountInfoMapper.insertAccount(accountInfoEntity);
 
         CompanyInfoEntity companyInfo = objectMapper.readValue(request.getDetailJson(), CompanyInfoEntity.class);
         companyInfo.setAccountId(accountInfoEntity.getPkId());
         companyInfoMapper.insertCompany(companyInfo);
+
 
         return CommonResponse.success();
     }
@@ -162,5 +175,14 @@ public class AccountServiceImpl implements AccountService {
         AccountStatus status = approve ? AccountStatus.Approved : AccountStatus.Denied;
         accountInfoMapper.updateStatus(did, status.ordinal());
         return CommonResponse.success();
+    }
+
+    @Override
+    public AccountInfoEntity loadAdminAccount() throws Exception {
+        AccountInfoEntity accountInfo = accountInfoMapper.selectTheFirstOne();
+        if (accountInfo != null && accountInfo.getAccountType() != AccountType.ADMIN.getRoleKey()){
+            throw new RuntimeException("The first account in system must be admin");
+        }
+        return accountInfo;
     }
 }

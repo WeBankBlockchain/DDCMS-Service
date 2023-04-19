@@ -26,4 +26,8 @@ public interface AccountInfoMapper {
             "<if test='keyWord != null'> AND c.company_name LIKE CONCAT('%', #{keyWord}, '%') </if>" +
             "</script>")
     int totalCountWithStatus(String keyWord, int status);
+
+    @Select("SELECT * FROM t_account_info  ORDER BY pk_id LIMIT 1")
+    @ResultType(AccountInfoEntity.class)
+    AccountInfoEntity selectTheFirstOne();
 }
