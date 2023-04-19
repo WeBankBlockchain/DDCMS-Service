@@ -10,7 +10,7 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
   datasource:
-    url: jdbc:mysql://116.205.167.248:3306/databrain?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
+    url: jdbc:mysql://116.205.167.248:3306/databrain3?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
     username: test
     password: Aa12345!
     driverClassName: com.mysql.cj.jdbc.Driver
@@ -83,9 +83,9 @@ system:
   crypto-type: 0
   admin-private-key: '11afa82f974469792aa0172931b813d4fc7dd9177f3211779efc5f955d5e480f'
   contractConfig:
-    account-contract: "0x696f782b4f34d31ee6edf47ff0ce92bb50197f05"
-    product-contract: "0xf1091018ea5d3a50d0c4e459cf7e232016f6341d"
-    dataSchema-contract: "0x7b6fdd8d9de62478eb92b67928cef3549884f8f2"
+    account-contract: "0x1e0171e2f59d00a1851c5f8ca8af1b208f52627b"
+    product-contract: "0x2f45c1aac14531d8bd3269d7d2c9ffc342798dcb"
+    dataSchema-contract: "0xb426ac2d4436c051ae71a149621c76620733ede3"
   fileConfig:
     file-dir: "tmp"
 swagger:
