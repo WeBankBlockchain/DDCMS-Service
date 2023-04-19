@@ -101,7 +101,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
                 request.getProviderId(),
                 request.getKeyWord(),
                 null,
-                request.getState(),
+                request.getStatus(),
                 request.getTagId());
         int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
         PageListData pageListData = new PageListData<>();
@@ -115,7 +115,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
                 request.getProductId(),
                 request.getProviderId(),
                 request.getKeyWord(),
-                request.getState(),
+                request.getStatus(),
                 request.getTagId());
         addTag(dataSchemaDetailBOList);
         addFav(did, dataSchemaDetailBOList);
@@ -154,7 +154,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
                 null,
                 request.getKeyWord(),
                 did,
-                request.getState(),
+                request.getStatus(),
                 null);
         int pageCount = (int) Math.ceil(1.0 * totalCount / request.getPageSize());
         PageListData pageListData = new PageListData<>();
@@ -167,7 +167,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
                 request.getPageSize(),
                 did,
                 request.getKeyWord(),
-                request.getState());
+                request.getStatus());
         addTag(dataSchemaDetailBOList);
 
         pageListData.setItemList(dataSchemaDetailBOList);
@@ -251,8 +251,13 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         }
         DataSchemaWithAccessBO dataSchemaWithAccessBO = dataSchemaAccessInfoMapper.getSchemaAccessById(accessId);
         DataSchemaInfoEntity dataSchemaInfoEntity = dataSchemaInfoMapper.getSchemaBySchemaId(dataSchemaWithAccessBO.getSchemaId());
-        if ((entity != null && entity.getAccountType() == AccountType.WITNESS.getRoleKey())|| dataSchemaInfoEntity.getVisible() == 1){
+        if (dataSchemaInfoEntity.getVisible() == 1){
             return CommonResponse.success(dataSchemaWithAccessBO);
+        }
+        if(entity != null){
+            if (entity.getAccountType() == AccountType.ADMIN.getRoleKey() || entity.getPkId().longValue() == dataSchemaInfoEntity.getProviderId().longValue()){
+                return CommonResponse.success(dataSchemaWithAccessBO);
+            }
         }
         return CommonResponse.success(null);
     }
