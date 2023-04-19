@@ -5,13 +5,13 @@ import com.webank.databrain.bo.AccAndComInfoBO;
 import com.webank.databrain.dao.entity.CompanyInfoEntity;
 import com.webank.databrain.dao.mapper.AccountInfoMapper;
 import com.webank.databrain.dao.mapper.CompanyInfoMapper;
-import com.webank.databrain.enums.AccountType;
 import com.webank.databrain.service.CompanyService;
 import com.webank.databrain.vo.common.CommonPageQueryRequest;
 import com.webank.databrain.vo.common.CommonResponse;
 import com.webank.databrain.vo.common.PageListData;
 import com.webank.databrain.vo.common.HotDataRequest;
 import com.webank.databrain.vo.request.account.QueryByUsernameRequest;
+import com.webank.databrain.vo.request.account.QueryCompanyByAccountIdRequest;
 import com.webank.databrain.vo.request.account.SearchAccountRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,5 +74,12 @@ public class CompanyServiceImpl implements CompanyService {
         pageListData.setItemList(boList);
 
         return CommonResponse.success(pageListData);
+    }
+
+    @Override
+    public CommonResponse getCompanyByAccountId(QueryCompanyByAccountIdRequest request) {
+        AccAndComInfoBO accAndComInfoBO = companyInfoMapper.queryCompanyByAccountId(request.getAccountId());
+        accAndComInfoBO.setPrivateKey("");
+        return CommonResponse.success(accAndComInfoBO);
     }
 }

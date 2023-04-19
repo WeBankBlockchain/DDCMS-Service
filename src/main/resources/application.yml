@@ -48,6 +48,7 @@ auth:
     - /api/account/pageQueryCompany
     - /api/account/queryCompanyByUsername
     - /api/account/queryPersonByUsername
+    - /api/account/queryCompanyByAccountId
     - /api/account/getHotCompanies
     - /api/account/searchCompany
     - /api/account/searchPerson

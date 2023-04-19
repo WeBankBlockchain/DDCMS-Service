@@ -4,6 +4,7 @@ import com.webank.databrain.vo.common.CommonPageQueryRequest;
 import com.webank.databrain.vo.common.CommonResponse;
 import com.webank.databrain.vo.common.HotDataRequest;
 import com.webank.databrain.vo.request.account.QueryByUsernameRequest;
+import com.webank.databrain.vo.request.account.QueryCompanyByAccountIdRequest;
 import com.webank.databrain.vo.request.account.SearchAccountRequest;
 
 public interface CompanyService {
@@ -11,4 +12,6 @@ public interface CompanyService {
     CommonResponse listCompanyByPage(CommonPageQueryRequest request);
     CommonResponse getCompanyByUsername(QueryByUsernameRequest request);
     CommonResponse searchCompanies(SearchAccountRequest request);
+
+    CommonResponse getCompanyByAccountId(QueryCompanyByAccountIdRequest request);
 }
