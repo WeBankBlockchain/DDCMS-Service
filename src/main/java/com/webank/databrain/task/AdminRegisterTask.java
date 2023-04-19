@@ -23,33 +23,18 @@ public class AdminRegisterTask implements ApplicationRunner {
     @Autowired
     private AccountService accountService;
 
-    @Autowired
-    private SysConfig sysConfig;
+
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
         AccountInfoEntity adminAccount = accountService.loadAdminAccount();
         if (adminAccount != null) {
             log.info("Admin already registered. ");
-            return;
+        }else {
+            log.info("Initialize admin account");
+            accountService.initAdmin();
         }
 
-        log.info("Initialize admin account");
-        CompanyInfoEntity companyInfo = new CompanyInfoEntity();
-        companyInfo.setCompanyName(sysConfig.getAdminCompany());
-        companyInfo.setCompanyDesc(sysConfig.getAdminCompany());
-        companyInfo.setCompanyCertType("TBD");
-        companyInfo.setCompanyContact("TBD");
-        companyInfo.setCompanyCertNo("TBD");
-        companyInfo.setCompanyCertFileUri("TBD");
-
-        RegisterRequest request = new RegisterRequest();
-        request.setUserName(sysConfig.getAdminAccount());
-        request.setPassword(sysConfig.getAdminPassword());
-        request.setAccountType(String.valueOf(AccountType.ADMIN.getRoleKey()));
-        request.setHexPrivateKey(sysConfig.getAdminPrivateKey());
-        request.setDetailJson(JsonUtils.toJson(companyInfo));
-        accountService.registerAccount(request);
         log.info("Initialize admin account register success ");
     }
 }

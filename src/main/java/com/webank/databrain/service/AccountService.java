@@ -15,4 +15,6 @@ public interface AccountService {
     CommonResponse approveAccount(ApproveAccountRequest request) throws TransactionException;
 
     AccountInfoEntity loadAdminAccount() throws Exception;
+
+    void initAdmin() throws Exception;
 }
