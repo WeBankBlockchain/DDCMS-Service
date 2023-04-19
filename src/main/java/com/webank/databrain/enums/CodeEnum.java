@@ -16,7 +16,7 @@ public enum CodeEnum {
     ACCOUNT_HAS_APPROVED(203, "账户已审核"),
     ACCOUNT_NOT_APPROVED(204, "账户未审核"),
 
-    ADMIN_EXISTED(205, "管理员角色已存在"),
+    ADMIN_NOT_ALLOWED(205, "不允许注册管理员角色"),
     PRODUCT_NOT_EXISTS(400, "产品不存在"),
 
     UN_AUTHORIZED(401, "用户认证失败"),

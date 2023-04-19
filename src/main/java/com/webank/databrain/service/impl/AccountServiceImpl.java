@@ -82,6 +82,11 @@ public class AccountServiceImpl implements AccountService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public CommonResponse registerAccount(RegisterRequest request) throws TransactionException, JsonProcessingException {
+        //Args
+        int accountType = Integer.parseInt(request.getAccountType());
+        if (accountType != AccountType.WITNESS.getRoleKey() && accountType != AccountType.COMPANY.getRoleKey()){
+            throw new DataBrainException(CodeEnum.ADMIN_NOT_ALLOWED);
+        }
         //Generation private key
         CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
         CryptoKeyPair keyPair = null;
@@ -108,7 +113,7 @@ public class AccountServiceImpl implements AccountService {
         accountInfoEntity.setUserName(request.getUserName());
         if(accountInfoEntity.getAccountType() == AccountType.ADMIN.getRoleKey()){
             if(accountInfoMapper.selectTheFirstOne() != null){
-                throw new DataBrainException(CodeEnum.ADMIN_EXISTED);
+                throw new DataBrainException(CodeEnum.ADMIN_NOT_ALLOWED);
             }
             accountInfoEntity.setStatus(AccountStatus.Approved.ordinal());
         }
@@ -184,5 +189,39 @@ public class AccountServiceImpl implements AccountService {
             throw new RuntimeException("The first account in system must be admin");
         }
         return accountInfo;
+    }
+
+    @Override
+    public void initAdmin() throws Exception{
+        //Generation private key
+        CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
+        CryptoKeyPair keyPair = cryptoSuite.loadKeyPair(sysConfig.getAdminPrivateKey());
+        //Save to blockchain
+        AccountContract accountContract = AccountContract.load(
+                sysConfig.getContractConfig().getAccountContract(),
+                client,
+                keyPair);
+        AccountContract.AccountData accountData = accountContract.getAccountByAddress(keyPair.getAddress());
+
+        AccountInfoEntity accountInfoEntity = new AccountInfoEntity();
+        accountInfoEntity.setAccountType(AccountType.ADMIN.getRoleKey());
+        accountInfoEntity.setDid(Base64.encode(accountData.did));
+        accountInfoEntity.setPassword(bCryptPasswordEncoder.encode(sysConfig.getAdminPassword()));
+        accountInfoEntity.setStatus(AccountStatus.Approved.ordinal());
+        accountInfoEntity.setPrivateKey(keyPair.getHexPrivateKey());
+        accountInfoEntity.setUserName(sysConfig.getAdminAccount());
+
+        accountInfoMapper.insertAccount(accountInfoEntity);
+
+        CompanyInfoEntity companyInfo = new CompanyInfoEntity();
+        companyInfo.setCompanyName(sysConfig.getAdminCompany());
+        companyInfo.setCompanyDesc(sysConfig.getAdminCompany());
+        companyInfo.setCompanyCertType("TBD");
+        companyInfo.setCompanyContact("TBD");
+        companyInfo.setCompanyCertNo("TBD");
+        companyInfo.setCompanyCertFileUri("TBD");
+        companyInfo.setAccountId(accountInfoEntity.getPkId());
+        companyInfoMapper.insertCompany(companyInfo);
+
     }
 }
