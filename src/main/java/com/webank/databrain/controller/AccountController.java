@@ -3,7 +3,6 @@ package com.webank.databrain.controller;
 import com.webank.databrain.service.AccountService;
 import com.webank.databrain.service.CompanyService;
 import com.webank.databrain.vo.common.CommonPageQueryRequest;
-import com.webank.databrain.vo.common.CommonRequest;
 import com.webank.databrain.vo.common.CommonResponse;
 import com.webank.databrain.vo.common.HotDataRequest;
 import com.webank.databrain.vo.request.account.*;
@@ -62,6 +61,12 @@ public class AccountController {
     @PostMapping("queryCompanyByUsername")
     public CommonResponse queryCompanyByUsername(@RequestBody @Valid QueryByUsernameRequest request) {
         return companyService.getCompanyByUsername(request);
+    }
+
+    @ApiOperation(value = "查询机构用户详情")
+    @PostMapping("queryCompanyByAccountId")
+    public CommonResponse queryCompanyByAccountId(@RequestBody @Valid QueryCompanyByAccountIdRequest request) {
+        return companyService.getCompanyByAccountId(request);
     }
 
     @ApiOperation(value = "根据条件搜索机构")

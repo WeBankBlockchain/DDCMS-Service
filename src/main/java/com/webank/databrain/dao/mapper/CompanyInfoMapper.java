@@ -24,6 +24,10 @@ public interface CompanyInfoMapper {
     @ResultType(AccAndComInfoBO.class)
     AccAndComInfoBO queryCompanyByUsername(String userName);
 
+    @Select("SELECT * FROM t_company_info c INNER JOIN t_account_info a ON c.account_id = a.pk_id WHERE a.pk_id=#{accountId}")
+    @ResultType(AccAndComInfoBO.class)
+    AccAndComInfoBO queryCompanyByAccountId(long accountId);
+
     @Select("<script>" +
             "SELECT a.*, c.* FROM t_company_info c INNER JOIN t_account_info a ON c.account_id = a.pk_id WHERE a.account_type &lt; 3 " +
             "<if test='status &gt; 0'> AND a.status = #{status} </if>" +
