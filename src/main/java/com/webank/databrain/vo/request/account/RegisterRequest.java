@@ -18,4 +18,6 @@ public class RegisterRequest extends CommonRequest {
     private String accountType;
     @NotBlank(message = "注册详细信息不能为空.")
     private String detailJson;
+
+    private String hexPrivateKey;
 }

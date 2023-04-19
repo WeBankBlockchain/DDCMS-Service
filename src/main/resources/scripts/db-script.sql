@@ -12,7 +12,7 @@ CREATE TABLE `t_account_info` (
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`pk_id`),
   UNIQUE KEY `did` (`did`),
-  UNIQUE KEY `username` (`user_name`)
+  UNIQUE KEY `username` (`user_name`),
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
 
@@ -182,7 +182,7 @@ CREATE TABLE `t_review_record_info` (
 
 INSERT INTO t_menu_info (pk_id, menu_id, menu_name, parent_id, menu_url, menu_role, create_time, update_time) VALUES (1, 1, '用户管理', 0, '', 3, '2023-03-20 15:46:40', '2023-03-20 16:09:20');
 INSERT INTO t_menu_info (pk_id, menu_id, menu_name, parent_id, menu_url, menu_role, create_time, update_time) VALUES (2, 1, '用户管理', 0, '', 2, '2023-03-20 15:48:21', '2023-03-20 16:09:24');
-INSERT INTO t_menu_info (pk_id, menu_id, menu_name, parent_id, menu_url, menu_role, create_time, update_time) VALUES (3, 2, '业务管理', 0, '', 3, '2023-03-20 15:48:41', '2023-03-20 16:09:27');
+INSERT INTO t_menu_info (pk_id, menu_id, menu_namse, parent_id, menu_url, menu_role, create_time, update_time) VALUES (3, 2, '业务管理', 0, '', 3, '2023-03-20 15:48:41', '2023-03-20 16:09:27');
 INSERT INTO t_menu_info (pk_id, menu_id, menu_name, parent_id, menu_url, menu_role, create_time, update_time) VALUES (4, 2, '业务管理', 0, '', 2, '2023-03-20 15:49:10', '2023-03-20 16:09:28');
 INSERT INTO t_menu_info (pk_id, menu_id, menu_name, parent_id, menu_url, menu_role, create_time, update_time) VALUES (5, 2, '业务管理', 0, '', 1, '2023-03-20 15:49:19', '2023-03-20 16:09:31');
 INSERT INTO t_menu_info (pk_id, menu_id, menu_name, parent_id, menu_url, menu_role, create_time, update_time) VALUES (6, 3, '产品管理', 0, '', 3, '2023-03-20 15:49:37', '2023-03-20 16:09:33');
@@ -198,3 +198,4 @@ INSERT INTO t_menu_info (pk_id, menu_id, menu_name, parent_id, menu_url, menu_ro
 INSERT INTO t_menu_info (pk_id, menu_id, menu_name, parent_id, menu_url, menu_role, create_time, update_time) VALUES (17, 7, '我的产品', 3, 'schema/my', 1, '2023-03-20 16:16:30', '2023-03-21 16:07:52');
 INSERT INTO t_menu_info (pk_id, menu_id, menu_name, parent_id, menu_url, menu_role, create_time, update_time) VALUES (18, 8, '收藏产品', 3, 'schema/fav', 1, '2023-03-20 16:16:53', '2023-03-21 19:04:12');
 INSERT INTO t_menu_info (pk_id, menu_id, menu_name, parent_id, menu_url, menu_role, create_time, update_time) VALUES (19, 11, '用户审核', 1, 'account/list', 3, '2023-03-21 16:34:15', '2023-03-21 18:43:27');
+

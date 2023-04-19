@@ -1,6 +1,7 @@
 package com.webank.databrain.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.webank.databrain.dao.entity.AccountInfoEntity;
 import com.webank.databrain.vo.common.CommonResponse;
 import com.webank.databrain.vo.request.account.ApproveAccountRequest;
 import com.webank.databrain.vo.request.account.LoginRequest;
@@ -12,4 +13,6 @@ public interface AccountService {
     CommonResponse registerAccount(RegisterRequest request) throws TransactionException, JsonProcessingException;
     CommonResponse login(LoginRequest request);
     CommonResponse approveAccount(ApproveAccountRequest request) throws TransactionException;
+
+    AccountInfoEntity loadAdminAccount() throws Exception;
 }
