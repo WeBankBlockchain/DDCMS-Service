@@ -90,7 +90,7 @@ public class AccountServiceImpl implements AccountService {
         //Generation private key
         CryptoSuite cryptoSuite = keyPairHandler.getCryptoSuite();
         CryptoKeyPair keyPair = null;
-        if (StringUtils.isEmpty(request.getHexPrivateKey())){
+        if (!StringUtils.isEmpty(request.getHexPrivateKey())){
             keyPair = cryptoSuite.loadKeyPair(request.getHexPrivateKey());
         } else{
             keyPair = cryptoSuite.generateRandomKeyPair();
