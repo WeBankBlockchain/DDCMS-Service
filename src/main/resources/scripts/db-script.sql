@@ -164,7 +164,7 @@ CREATE TABLE `t_review_record_info` (
 
 INSERT INTO t_menu_info (pk_id, menu_id, menu_name, parent_id, menu_url, menu_role, create_time, update_time) VALUES (1, 1, '用户管理', 0, '', 3, '2023-03-20 15:46:40', '2023-03-20 16:09:20');
 INSERT INTO t_menu_info (pk_id, menu_id, menu_name, parent_id, menu_url, menu_role, create_time, update_time) VALUES (2, 1, '用户管理', 0, '', 2, '2023-03-20 15:48:21', '2023-03-20 16:09:24');
-INSERT INTO t_menu_info (pk_id, menu_id, menu_namse, parent_id, menu_url, menu_role, create_time, update_time) VALUES (3, 2, '业务管理', 0, '', 3, '2023-03-20 15:48:41', '2023-03-20 16:09:27');
+INSERT INTO t_menu_info (pk_id, menu_id, menu_name, parent_id, menu_url, menu_role, create_time, update_time) VALUES (3, 2, '业务管理', 0, '', 3, '2023-03-20 15:48:41', '2023-03-20 16:09:27');
 INSERT INTO t_menu_info (pk_id, menu_id, menu_name, parent_id, menu_url, menu_role, create_time, update_time) VALUES (4, 2, '业务管理', 0, '', 2, '2023-03-20 15:49:10', '2023-03-20 16:09:28');
 INSERT INTO t_menu_info (pk_id, menu_id, menu_name, parent_id, menu_url, menu_role, create_time, update_time) VALUES (5, 2, '业务管理', 0, '', 1, '2023-03-20 15:49:19', '2023-03-20 16:09:31');
 INSERT INTO t_menu_info (pk_id, menu_id, menu_name, parent_id, menu_url, menu_role, create_time, update_time) VALUES (6, 3, '数据目录管理', 0, '', 3, '2023-03-20 15:49:37', '2023-03-20 16:09:33');
