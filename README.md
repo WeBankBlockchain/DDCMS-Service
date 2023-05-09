@@ -11,13 +11,28 @@ cd Data-Brain-Server
 git checkout origin/dev
 ```
 
+### 编译
+
+在Data-Brain-Server项目根目录下执行
+```
+bash ./gradlew bootJar
+```
+这条指令会编译代码成springboot jar包，并执行。
 ### 链配置
 由于后端服务需要访问区块链，因此需要先配置链信息，包括证书、sdk配置，这些信息可以直接从sdk里拷贝。
 
 首先拷贝控制台里的证书到Data-Brain-Server工程的conf目录下:
 
 ```
-cp [控制台目录]/conf/* ./config
+cp [控制台目录]/conf/* dist/config
+```
+
+注意，检查证书的certPath配置，确保它指向了config目录，例如：
+```
+[cryptoMaterial]
+
+certPath = "config"                           # not conf
+
 ```
 
 ### 数据库初始化
@@ -26,7 +41,7 @@ cp [控制台目录]/conf/* ./config
 
 
 ### 服务配置
-在src/main/resources目录下创建application.yml，按照下面的模板进行配置，其中打了${}的需要自己配置。
+编辑dist/config/application.yml，按照下面的模板进行配置，其中打了${}的需要自己配置。
 ```
 server:
   port: 10880
@@ -139,8 +154,9 @@ swagger:
 
 
 ### 启动
-
+在Data-Brain-Server项目根目录下执行
 ```
+cd dist
 bash start.sh
 ```
 这条指令会编译代码成springboot jar包，并执行。
