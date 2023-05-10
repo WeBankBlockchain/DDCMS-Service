@@ -21,6 +21,7 @@ public class Deployer {
         System.out.println("可信第三方的私钥为:"+ admin.getHexPrivateKey());
         System.out.println("可信第三方的地址为:"+ admin.getAddress());
 
+        admin.storeKeyPairWithPem(String.format(""));
         //Deploy Account Module
         AccountContract accountContract = AccountContract.deploy(client, admin);
         System.out.println("Account contract部署地址为： "+accountContract.getContractAddress());
