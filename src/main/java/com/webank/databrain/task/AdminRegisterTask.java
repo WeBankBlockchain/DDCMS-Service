@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
 
 /**
  * 启动时初始化admin账户
@@ -34,7 +37,8 @@ public class AdminRegisterTask implements ApplicationRunner {
             log.info("Initialize admin account");
             accountService.initAdmin();
         }
-
+        MultipartFile f;
+        f.get
         log.info("Initialize admin account register success ");
     }
 }

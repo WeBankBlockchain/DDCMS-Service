@@ -74,6 +74,7 @@ auth:
       - /api/schema/createSchema
       - /api/product/updateProduct
     witnessAuth:
+      -
       - /api/product/approveProduct
     adminAuth:
       - /api/account/approveAccount
