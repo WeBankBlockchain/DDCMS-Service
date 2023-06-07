@@ -1,6 +1,7 @@
 package com.webank.databrain.bo;
 
 import lombok.Data;
+
 import java.util.List;
 
 @Data

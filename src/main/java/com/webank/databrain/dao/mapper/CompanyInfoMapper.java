@@ -2,7 +2,11 @@ package com.webank.databrain.dao.mapper;
 
 import com.webank.databrain.bo.AccAndComInfoBO;
 import com.webank.databrain.dao.entity.CompanyInfoEntity;
-import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.ResultType;
+import org.apache.ibatis.annotations.Select;
+
 import java.util.List;
 
 

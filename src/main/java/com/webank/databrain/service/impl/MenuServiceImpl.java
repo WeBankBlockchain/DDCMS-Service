@@ -3,7 +3,6 @@ package com.webank.databrain.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import com.webank.databrain.bo.LoginUserBO;
 import com.webank.databrain.bo.RoleMenuBO;
-import com.webank.databrain.dao.entity.AccountInfoEntity;
 import com.webank.databrain.dao.entity.MenuInfoEntity;
 import com.webank.databrain.dao.mapper.MenuInfoMapper;
 import com.webank.databrain.service.MenuService;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

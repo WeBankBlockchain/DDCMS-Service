@@ -1,12 +1,9 @@
 package com.webank.databrain.vo.request.account;
 
 import com.webank.databrain.vo.common.CommonPageQueryRequest;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 
 @Data

@@ -2,10 +2,12 @@ package com.webank.databrain.handler;
 
 
 import com.webank.databrain.config.JWTConfig;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import javax.annotation.PostConstruct;
 import java.security.Key;
 import java.util.Date;

@@ -1,10 +1,12 @@
 package com.webank.databrain.controller;
 
 import com.webank.databrain.service.ProductService;
-import com.webank.databrain.vo.common.CommonPageQueryRequest;
 import com.webank.databrain.vo.common.CommonResponse;
 import com.webank.databrain.vo.common.HotDataRequest;
-import com.webank.databrain.vo.request.product.*;
+import com.webank.databrain.vo.request.product.ApproveProductRequest;
+import com.webank.databrain.vo.request.product.CreateProductRequest;
+import com.webank.databrain.vo.request.product.PageQueryProductRequest;
+import com.webank.databrain.vo.request.product.QueryProductByIdRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;

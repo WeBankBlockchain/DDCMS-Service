@@ -1,7 +1,6 @@
 package com.webank.databrain.dao.mapper;
 
 import com.webank.databrain.dao.entity.DataSchemaTagsEntity;
-import com.webank.databrain.dao.entity.TagInfoEntity;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

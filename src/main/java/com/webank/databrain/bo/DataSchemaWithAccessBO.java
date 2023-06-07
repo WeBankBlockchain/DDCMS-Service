@@ -1,9 +1,10 @@
 package com.webank.databrain.bo;
 
 
-import java.sql.Timestamp;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.sql.Timestamp;
 
 @EqualsAndHashCode(callSuper = true)
 @Data

@@ -1,9 +1,8 @@
 package com.webank.databrain.dao.mapper;
 
 import com.webank.databrain.bo.HotProductBO;
-import com.webank.databrain.dao.entity.DataSchemaInfoEntity;
-import com.webank.databrain.dao.entity.ProductInfoEntity;
 import com.webank.databrain.bo.ProductInfoBO;
+import com.webank.databrain.dao.entity.ProductInfoEntity;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

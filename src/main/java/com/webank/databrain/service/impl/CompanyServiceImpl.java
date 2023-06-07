@@ -8,14 +8,15 @@ import com.webank.databrain.dao.mapper.CompanyInfoMapper;
 import com.webank.databrain.service.CompanyService;
 import com.webank.databrain.vo.common.CommonPageQueryRequest;
 import com.webank.databrain.vo.common.CommonResponse;
-import com.webank.databrain.vo.common.PageListData;
 import com.webank.databrain.vo.common.HotDataRequest;
+import com.webank.databrain.vo.common.PageListData;
 import com.webank.databrain.vo.request.account.QueryByUsernameRequest;
 import com.webank.databrain.vo.request.account.QueryCompanyByAccountIdRequest;
 import com.webank.databrain.vo.request.account.SearchAccountRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service

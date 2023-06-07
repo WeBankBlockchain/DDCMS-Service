@@ -2,9 +2,10 @@ package com.webank.databrain.dao.mapper;
 
 
 import com.webank.databrain.bo.DataSchemaDetailBO;
-import com.webank.databrain.dao.entity.DataSchemaInfoEntity;
 import com.webank.databrain.bo.DataSchemaWithAccessBO;
+import com.webank.databrain.dao.entity.DataSchemaInfoEntity;
 import org.apache.ibatis.annotations.*;
+
 import java.util.List;
 
 @Mapper

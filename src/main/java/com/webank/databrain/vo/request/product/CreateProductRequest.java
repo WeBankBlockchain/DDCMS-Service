@@ -1,7 +1,6 @@
 package com.webank.databrain.vo.request.product;
 
 import com.webank.databrain.vo.common.CommonRequest;
-import com.webank.databrain.vo.common.HotDataRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

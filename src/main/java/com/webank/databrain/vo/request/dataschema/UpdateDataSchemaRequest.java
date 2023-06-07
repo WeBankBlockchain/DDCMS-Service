@@ -4,7 +4,6 @@ import com.webank.databrain.vo.common.CommonRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-
 import javax.validation.constraints.NotBlank;
 import java.sql.Timestamp;
 import java.util.List;
