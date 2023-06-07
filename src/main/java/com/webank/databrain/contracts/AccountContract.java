@@ -59,14 +59,12 @@ public class AccountContract extends Contract {
   public static final String FUNC_REGISTER = "register";
 
   public static final Event ACCOUNTAPPROVEDEVENT_EVENT =
-      new Event(
-          "AccountApprovedEvent", Arrays.asList(new TypeReference<Bytes32>() {}));
+      new Event("AccountApprovedEvent", Arrays.asList(new TypeReference<Bytes32>() {}));
 
-    public static final Event ACCOUNTDENIEDEVENT_EVENT =
-      new Event(
-          "AccountDeniedEvent", Arrays.asList(new TypeReference<Bytes32>() {}));
+  public static final Event ACCOUNTDENIEDEVENT_EVENT =
+      new Event("AccountDeniedEvent", Arrays.asList(new TypeReference<Bytes32>() {}));
 
-    public static final Event ACCOUNTREGISTEREDEVENT_EVENT =
+  public static final Event ACCOUNTREGISTEREDEVENT_EVENT =
       new Event(
           "AccountRegisteredEvent",
           Arrays.asList(
@@ -75,7 +73,7 @@ public class AccountContract extends Contract {
               new TypeReference<Uint8>() {},
               new TypeReference<Bytes32>() {}));
 
-    protected AccountContract(String contractAddress, Client client, CryptoKeyPair credential) {
+  protected AccountContract(String contractAddress, Client client, CryptoKeyPair credential) {
     super(getBinary(client.getCryptoSuite()), contractAddress, client, credential);
   }
 
@@ -206,8 +204,7 @@ public class AccountContract extends Contract {
         new Function(
             FUNC_APPROVE,
             Arrays.asList(),
-            Arrays.asList(
-                new TypeReference<Bytes32>() {}, new TypeReference<Bool>() {}));
+            Arrays.asList(new TypeReference<Bytes32>() {}, new TypeReference<Bool>() {}));
     List<Type> results = this.functionReturnDecoder.decode(data, function.getOutputParameters());
     return new Tuple2<byte[], Boolean>(
         (byte[]) results.get(0).getValue(), (Boolean) results.get(1).getValue());
@@ -288,8 +285,7 @@ public class AccountContract extends Contract {
         new Function(
             FUNC_REGISTER,
             Arrays.asList(),
-            Arrays.asList(
-                new TypeReference<Uint8>() {}, new TypeReference<Bytes32>() {}));
+            Arrays.asList(new TypeReference<Uint8>() {}, new TypeReference<Bytes32>() {}));
     List<Type> results = this.functionReturnDecoder.decode(data, function.getOutputParameters());
     return new Tuple2<BigInteger, byte[]>(
         (BigInteger) results.get(0).getValue(), (byte[]) results.get(1).getValue());
@@ -299,9 +295,7 @@ public class AccountContract extends Contract {
     String data = transactionReceipt.getOutput();
     final Function function =
         new Function(
-            FUNC_REGISTER,
-            Arrays.asList(),
-            Arrays.asList(new TypeReference<Bytes32>() {}));
+            FUNC_REGISTER, Arrays.asList(), Arrays.asList(new TypeReference<Bytes32>() {}));
     List<Type> results = this.functionReturnDecoder.decode(data, function.getOutputParameters());
     return new Tuple1<byte[]>((byte[]) results.get(0).getValue());
   }

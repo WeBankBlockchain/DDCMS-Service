@@ -55,10 +55,9 @@ public class DataSchemaContract extends Contract {
   public static final Event CREATEDATASCHEMAEVENT_EVENT =
       new Event(
           "CreateDataSchemaEvent",
-          Arrays.asList(
-              new TypeReference<Bytes32>() {}, new TypeReference<Bytes32>() {}));
+          Arrays.asList(new TypeReference<Bytes32>() {}, new TypeReference<Bytes32>() {}));
 
-    public static final Event VOTEDATASCHEMAEVENT_EVENT =
+  public static final Event VOTEDATASCHEMAEVENT_EVENT =
       new Event(
           "VoteDataSchemaEvent",
           Arrays.asList(
@@ -69,7 +68,7 @@ public class DataSchemaContract extends Contract {
               new TypeReference<Uint256>() {},
               new TypeReference<Uint8>() {}));
 
-    protected DataSchemaContract(String contractAddress, Client client, CryptoKeyPair credential) {
+  protected DataSchemaContract(String contractAddress, Client client, CryptoKeyPair credential) {
     super(getBinary(client.getCryptoSuite()), contractAddress, client, credential);
   }
 
@@ -178,8 +177,7 @@ public class DataSchemaContract extends Contract {
         new Function(
             FUNC_APPROVEDATASCHEMA,
             Arrays.asList(),
-            Arrays.asList(
-                new TypeReference<Bytes32>() {}, new TypeReference<Bool>() {}));
+            Arrays.asList(new TypeReference<Bytes32>() {}, new TypeReference<Bool>() {}));
     List<Type> results = this.functionReturnDecoder.decode(data, function.getOutputParameters());
     return new Tuple2<byte[], Boolean>(
         (byte[]) results.get(0).getValue(), (Boolean) results.get(1).getValue());
@@ -241,8 +239,7 @@ public class DataSchemaContract extends Contract {
         new Function(
             FUNC_CREATEDATASCHEMA,
             Arrays.asList(),
-            Arrays.asList(
-                new TypeReference<Bytes32>() {}, new TypeReference<Bytes32>() {}));
+            Arrays.asList(new TypeReference<Bytes32>() {}, new TypeReference<Bytes32>() {}));
     List<Type> results = this.functionReturnDecoder.decode(data, function.getOutputParameters());
     return new Tuple2<byte[], byte[]>(
         (byte[]) results.get(0).getValue(), (byte[]) results.get(1).getValue());
@@ -255,8 +252,7 @@ public class DataSchemaContract extends Contract {
         new Function(
             FUNC_CREATEDATASCHEMA,
             Arrays.asList(),
-            Arrays.asList(
-                new TypeReference<Bytes32>() {}, new TypeReference<Uint256>() {}));
+            Arrays.asList(new TypeReference<Bytes32>() {}, new TypeReference<Uint256>() {}));
     List<Type> results = this.functionReturnDecoder.decode(data, function.getOutputParameters());
     return new Tuple2<byte[], BigInteger>(
         (byte[]) results.get(0).getValue(), (BigInteger) results.get(1).getValue());
@@ -268,8 +264,7 @@ public class DataSchemaContract extends Contract {
         new Function(
             FUNC_GETDATASCHEMA,
             Arrays.asList(new Bytes32(dataSchemaId)),
-            Arrays.asList(
-                new TypeReference<DataSchemaContract.DataSchemaInfo>() {}));
+            Arrays.asList(new TypeReference<DataSchemaContract.DataSchemaInfo>() {}));
     return executeCallWithSingleValueReturn(function, DataSchemaContract.DataSchemaInfo.class);
   }
 

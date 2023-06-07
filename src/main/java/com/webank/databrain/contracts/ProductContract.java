@@ -58,10 +58,9 @@ public class ProductContract extends Contract {
   public static final Event CREATEPRODUCTEVENT_EVENT =
       new Event(
           "CreateProductEvent",
-          Arrays.asList(
-              new TypeReference<Bytes32>() {}, new TypeReference<Bytes32>() {}));
+          Arrays.asList(new TypeReference<Bytes32>() {}, new TypeReference<Bytes32>() {}));
 
-    public static final Event VOTEPRODUCTEVENT_EVENT =
+  public static final Event VOTEPRODUCTEVENT_EVENT =
       new Event(
           "VoteProductEvent",
           Arrays.asList(
@@ -72,7 +71,7 @@ public class ProductContract extends Contract {
               new TypeReference<Uint256>() {},
               new TypeReference<Uint8>() {}));
 
-    protected ProductContract(String contractAddress, Client client, CryptoKeyPair credential) {
+  protected ProductContract(String contractAddress, Client client, CryptoKeyPair credential) {
     super(getBinary(client.getCryptoSuite()), contractAddress, client, credential);
   }
 
@@ -93,8 +92,7 @@ public class ProductContract extends Contract {
       Client client, CryptoKeyPair credential, String _accountContract) throws ContractException {
     byte[] encodedConstructor =
         FunctionEncoder.encodeConstructor(
-            Arrays.asList(
-                new org.fisco.bcos.sdk.v3.codec.datatypes.Address(_accountContract)));
+            Arrays.asList(new org.fisco.bcos.sdk.v3.codec.datatypes.Address(_accountContract)));
     return deploy(
         ProductContract.class,
         client,
@@ -177,8 +175,7 @@ public class ProductContract extends Contract {
         new Function(
             FUNC_APPROVEPRODUCT,
             Arrays.asList(),
-            Arrays.asList(
-                new TypeReference<Bytes32>() {}, new TypeReference<Bool>() {}));
+            Arrays.asList(new TypeReference<Bytes32>() {}, new TypeReference<Bool>() {}));
     List<Type> results = this.functionReturnDecoder.decode(data, function.getOutputParameters());
     return new Tuple2<byte[], Boolean>(
         (byte[]) results.get(0).getValue(), (Boolean) results.get(1).getValue());
@@ -207,30 +204,21 @@ public class ProductContract extends Contract {
   public TransactionReceipt createProduct(byte[] hash) {
     final Function function =
         new Function(
-            FUNC_CREATEPRODUCT,
-            Arrays.asList(new Bytes32(hash)),
-            Collections.emptyList(),
-            0);
+            FUNC_CREATEPRODUCT, Arrays.asList(new Bytes32(hash)), Collections.emptyList(), 0);
     return executeTransaction(function);
   }
 
   public String createProduct(byte[] hash, TransactionCallback callback) {
     final Function function =
         new Function(
-            FUNC_CREATEPRODUCT,
-            Arrays.asList(new Bytes32(hash)),
-            Collections.emptyList(),
-            0);
+            FUNC_CREATEPRODUCT, Arrays.asList(new Bytes32(hash)), Collections.emptyList(), 0);
     return asyncExecuteTransaction(function, callback);
   }
 
   public String getSignedTransactionForCreateProduct(byte[] hash) {
     final Function function =
         new Function(
-            FUNC_CREATEPRODUCT,
-            Arrays.asList(new Bytes32(hash)),
-            Collections.emptyList(),
-            0);
+            FUNC_CREATEPRODUCT, Arrays.asList(new Bytes32(hash)), Collections.emptyList(), 0);
     return createSignedTransaction(function);
   }
 
@@ -238,9 +226,7 @@ public class ProductContract extends Contract {
     String data = transactionReceipt.getInput().substring(10);
     final Function function =
         new Function(
-            FUNC_CREATEPRODUCT,
-            Arrays.asList(),
-            Arrays.asList(new TypeReference<Bytes32>() {}));
+            FUNC_CREATEPRODUCT, Arrays.asList(), Arrays.asList(new TypeReference<Bytes32>() {}));
     List<Type> results = this.functionReturnDecoder.decode(data, function.getOutputParameters());
     return new Tuple1<byte[]>((byte[]) results.get(0).getValue());
   }
@@ -251,8 +237,7 @@ public class ProductContract extends Contract {
         new Function(
             FUNC_CREATEPRODUCT,
             Arrays.asList(),
-            Arrays.asList(
-                new TypeReference<Bytes32>() {}, new TypeReference<Uint256>() {}));
+            Arrays.asList(new TypeReference<Bytes32>() {}, new TypeReference<Uint256>() {}));
     List<Type> results = this.functionReturnDecoder.decode(data, function.getOutputParameters());
     return new Tuple2<byte[], BigInteger>(
         (byte[]) results.get(0).getValue(), (BigInteger) results.get(1).getValue());
