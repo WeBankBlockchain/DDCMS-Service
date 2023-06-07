@@ -8,10 +8,9 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class PageQueryProductRequest extends CommonPageQueryRequest {
 
-    private String keyWord;
+  private String keyWord;
 
-    private int status = -1;
+  private int status = -1;
 
-    private Long providerId;
-
+  private Long providerId;
 }

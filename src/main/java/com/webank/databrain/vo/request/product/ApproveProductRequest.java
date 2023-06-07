@@ -4,14 +4,11 @@ import com.webank.databrain.vo.common.CommonRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.validation.constraints.NotBlank;
-
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class ApproveProductRequest extends CommonRequest {
 
-    private Long productId;
+  private Long productId;
 
-    private boolean agree;
-
+  private boolean agree;
 }

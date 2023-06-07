@@ -13,30 +13,27 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class BeanConfig {
 
-    @Autowired
-    private SysConfig sysConfig;
+  @Autowired private SysConfig sysConfig;
 
+  @Bean
+  public Client client() {
+    BcosSDK bcosSDK = BcosSDK.build(sysConfig.getBcosCfg());
+    return bcosSDK.getClient(sysConfig.getBcosGroupId());
+  }
 
-    @Bean
-    public Client client(){
-        BcosSDK bcosSDK = BcosSDK.build(sysConfig.getBcosCfg());
-        return bcosSDK.getClient(sysConfig.getBcosGroupId());
-    }
+  @Bean
+  public CryptoSuite cryptoSuite() {
+    CryptoSuite suite = new CryptoSuite(sysConfig.getCryptoConfig());
+    return suite;
+  }
 
-    @Bean
-    public CryptoSuite cryptoSuite(){
-        CryptoSuite suite = new CryptoSuite(sysConfig.getCryptoConfig());
-        return suite;
-    }
+  @Bean
+  public CryptoKeyPair adminKeyPair(CryptoSuite cryptoSuite) {
+    return cryptoSuite.loadKeyPair(sysConfig.getAdminPrivateKey());
+  }
 
-    @Bean
-    public CryptoKeyPair adminKeyPair(CryptoSuite cryptoSuite){
-        return cryptoSuite.loadKeyPair(sysConfig.getAdminPrivateKey());
-    }
-
-    @Bean
-    public TransactionDecoderInterface decoderService(CryptoSuite cryptoSuite){
-        return new TransactionDecoderService(cryptoSuite, false);
-    }
-
+  @Bean
+  public TransactionDecoderInterface decoderService(CryptoSuite cryptoSuite) {
+    return new TransactionDecoderService(cryptoSuite, false);
+  }
 }

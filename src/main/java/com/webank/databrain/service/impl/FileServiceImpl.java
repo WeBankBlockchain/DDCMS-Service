@@ -21,50 +21,50 @@ import javax.annotation.PostConstruct;
 import java.io.*;
 import java.util.UUID;
 
-
 @Service
 @Slf4j
 public class FileServiceImpl implements FileService {
 
-    @Autowired
-    private SysConfig sysConfig;
+  @Autowired private SysConfig sysConfig;
 
-    private File fileUploadFolder;
-    @PostConstruct
-    private void init(){
-        this.fileUploadFolder = new File(sysConfig.getFileConfig().getFileDir());
-        this.fileUploadFolder.mkdirs();
+  private File fileUploadFolder;
+
+  @PostConstruct
+  private void init() {
+    this.fileUploadFolder = new File(sysConfig.getFileConfig().getFileDir());
+    this.fileUploadFolder.mkdirs();
+  }
+
+  @Override
+  public String uploadFile(MultipartFile file) throws Exception {
+    String originalFileName = file.getOriginalFilename();
+    String suffix = FileUtil.getSuffix(originalFileName);
+    suffix = StrUtil.isBlank(suffix) ? "" : "." + suffix;
+    String fileName = UUID.randomUUID().toString().replace("-", "") + suffix;
+    File outputFile = new File(this.fileUploadFolder, fileName);
+
+    try (InputStream ins = file.getInputStream();
+        OutputStream os = new BufferedOutputStream(new FileOutputStream(outputFile))) {
+      IoUtil.copy(ins, os);
+    }
+    return fileName;
+  }
+
+  @Override
+  public ResponseEntity<Resource> downloadFile(String filename) {
+    File file = new File(this.fileUploadFolder, filename);
+    if (!file.exists() || file.isDirectory()) {
+      throw new DataBrainException(CodeEnum.FILE_NOT_EXIST);
     }
 
-    @Override
-    public String uploadFile(MultipartFile file) throws Exception{
-        String originalFileName = file.getOriginalFilename();
-        String suffix = FileUtil.getSuffix(originalFileName);
-        suffix = StrUtil.isBlank(suffix)?"":"."+suffix;
-        String fileName = UUID.randomUUID().toString().replace("-", "") + suffix;
-        File outputFile = new File(this.fileUploadFolder, fileName);
+    HttpHeaders headers = new HttpHeaders();
+    headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE);
+    headers.add(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()));
 
-        try(InputStream ins = file.getInputStream(); OutputStream os = new BufferedOutputStream(new FileOutputStream(outputFile))){
-            IoUtil.copy(ins, os);
-        }
-        return fileName;
-    }
+    // Set the filename header
+    headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"");
 
-    @Override
-    public ResponseEntity<Resource> downloadFile(String filename) {
-        File file = new File(this.fileUploadFolder, filename);
-        if(!file.exists() || file.isDirectory()){
-            throw new DataBrainException(CodeEnum.FILE_NOT_EXIST);
-        }
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE);
-        headers.add(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()));
-
-        // Set the filename header
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"");
-
-        Resource resource = new FileSystemResource(file);
-        return ResponseEntity.ok().headers(headers).body(resource);
-    }
+    Resource resource = new FileSystemResource(file);
+    return ResponseEntity.ok().headers(headers).body(resource);
+  }
 }

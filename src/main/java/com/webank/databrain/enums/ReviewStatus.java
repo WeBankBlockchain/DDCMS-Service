@@ -1,12 +1,10 @@
 package com.webank.databrain.enums;
 
-//审核状态
+// 审核状态
 public enum ReviewStatus {
+  NotReviewed,
 
-    NotReviewed,
+  Approved,
 
-    Approved,
-
-    Denied
-
+  Denied
 }

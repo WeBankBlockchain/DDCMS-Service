@@ -1,7 +1,6 @@
 package com.webank.databrain.vo.request.product;
 
 import com.webank.databrain.vo.common.CommonRequest;
-import com.webank.databrain.vo.common.HotDataRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,9 +14,9 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 public class CreateProductRequest extends CommonRequest {
 
-    @NotBlank(message = "productName不能为空.")
-    private String productName;
+  @NotBlank(message = "productName不能为空.")
+  private String productName;
 
-    @NotBlank(message = "productDesc不能为空.")
-    private String productDesc;
+  @NotBlank(message = "productDesc不能为空.")
+  private String productDesc;
 }

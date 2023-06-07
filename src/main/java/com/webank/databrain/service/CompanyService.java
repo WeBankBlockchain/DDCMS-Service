@@ -8,10 +8,13 @@ import com.webank.databrain.vo.request.account.QueryCompanyByAccountIdRequest;
 import com.webank.databrain.vo.request.account.SearchAccountRequest;
 
 public interface CompanyService {
-    CommonResponse listHotCompanies(HotDataRequest request);
-    CommonResponse listCompanyByPage(CommonPageQueryRequest request);
-    CommonResponse getCompanyByUsername(QueryByUsernameRequest request);
-    CommonResponse searchCompanies(SearchAccountRequest request);
+  CommonResponse listHotCompanies(HotDataRequest request);
 
-    CommonResponse getCompanyByAccountId(QueryCompanyByAccountIdRequest request);
+  CommonResponse listCompanyByPage(CommonPageQueryRequest request);
+
+  CommonResponse getCompanyByUsername(QueryByUsernameRequest request);
+
+  CommonResponse searchCompanies(SearchAccountRequest request);
+
+  CommonResponse getCompanyByAccountId(QueryCompanyByAccountIdRequest request);
 }

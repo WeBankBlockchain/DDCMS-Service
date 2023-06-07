@@ -10,36 +10,33 @@ import org.springframework.context.annotation.Configuration;
 @Data
 public class SysConfig {
 
-    private String bcosCfg;
+  private String bcosCfg;
 
-    private String bcosGroupId;
+  private String bcosGroupId;
 
-    private int cryptoConfig;
+  private int cryptoConfig;
 
+  private String adminAccount;
 
-    private String adminAccount;
+  private String adminPassword;
 
-    private String adminPassword;
+  private String adminPrivateKey;
 
-    private String adminPrivateKey;
+  private String adminCompany;
 
-    private String adminCompany;
+  @NestedConfigurationProperty private ContractConfig contractConfig;
 
-    @NestedConfigurationProperty
-    private ContractConfig contractConfig;
+  @NestedConfigurationProperty private FileConfig fileConfig;
 
-    @NestedConfigurationProperty
-    private FileConfig fileConfig;
+  @Data
+  public static class ContractConfig {
+    private String accountContract;
+    private String productContract;
+    private String dataSchemaContract;
+  }
 
-    @Data
-    public static class ContractConfig {
-        private String accountContract;
-        private String productContract;
-        private String dataSchemaContract;
-    }
-
-    @Data
-    public static class FileConfig {
-        private String fileDir;
-    }
+  @Data
+  public static class FileConfig {
+    private String fileDir;
+  }
 }

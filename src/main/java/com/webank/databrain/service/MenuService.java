@@ -4,5 +4,5 @@ import com.webank.databrain.vo.common.CommonResponse;
 
 public interface MenuService {
 
-    CommonResponse getMenuByRole();
+  CommonResponse getMenuByRole();
 }

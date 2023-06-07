@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class HotProductBO {
-    private String productName;
-    private Long productId;
+  private String productName;
+  private Long productId;
 }
