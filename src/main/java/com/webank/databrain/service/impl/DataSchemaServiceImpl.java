@@ -255,7 +255,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
             return CommonResponse.success(dataSchemaWithAccessBO);
         }
         if(entity != null){
-            if (entity.getAccountType() == AccountType.ADMIN.getRoleKey() || entity.getPkId().longValue() == dataSchemaInfoEntity.getProviderId().longValue()){
+            if (entity.getAccountType() == AccountType.ADMIN.getRoleKey() || entity.getAccountType() == AccountType.WITNESS.getRoleKey() || entity.getPkId().longValue() == dataSchemaInfoEntity.getProviderId().longValue()){
                 return CommonResponse.success(dataSchemaWithAccessBO);
             }
         }
