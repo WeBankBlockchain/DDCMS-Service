@@ -37,8 +37,6 @@ public class AdminRegisterTask implements ApplicationRunner {
             log.info("Initialize admin account");
             accountService.initAdmin();
         }
-        MultipartFile f;
-        f.get
         log.info("Initialize admin account register success ");
     }
 }
