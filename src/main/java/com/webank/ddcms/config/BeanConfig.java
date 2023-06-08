@@ -29,7 +29,11 @@ public class BeanConfig {
 
   @Bean
   public CryptoKeyPair adminKeyPair(CryptoSuite cryptoSuite) {
-    return cryptoSuite.loadKeyPair(sysConfig.getAdminPrivateKey());
+    String adminPrivateKey = sysConfig.getAdminPrivateKey();
+    if (adminPrivateKey.startsWith("0x") || adminPrivateKey.startsWith("0X")){
+      adminPrivateKey = adminPrivateKey.substring(2);
+    }
+    return cryptoSuite.loadKeyPair(adminPrivateKey);
   }
 
   @Bean
