@@ -34,7 +34,7 @@ spring:
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
 
 mybatis:
-  typeAliasesPackage: com.webank.databrain.dao.entity
+  typeAliasesPackage: com.webank.ddcms.dao.entity
   configuration:
     map-underscore-to-camel-case: true
 

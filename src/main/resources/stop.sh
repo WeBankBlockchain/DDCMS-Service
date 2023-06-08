@@ -1,2 +1,2 @@
 #!/bin/bash
-pgrep -f databrain |  xargs kill -9
+pgrep -f ddcms |  xargs kill -9
