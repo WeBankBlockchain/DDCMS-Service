@@ -8,17 +8,17 @@ import com.webank.databrain.vo.request.product.PageQueryProductRequest;
 import org.fisco.bcos.sdk.v3.transaction.model.exception.TransactionException;
 
 public interface ProductService {
-    CommonResponse getHotProducts(HotDataRequest request);
+  CommonResponse getHotProducts(HotDataRequest request);
 
-    CommonResponse pageQueryProducts(PageQueryProductRequest request);
+  CommonResponse pageQueryProducts(PageQueryProductRequest request);
 
-    CommonResponse getProductDetail(Long productId);
+  CommonResponse getProductDetail(Long productId);
 
-    CommonResponse createProduct(CreateProductRequest productRequest) throws TransactionException;
+  CommonResponse createProduct(CreateProductRequest productRequest) throws TransactionException;
 
-    CommonResponse approveProduct(ApproveProductRequest productRequest) throws TransactionException;
+  CommonResponse approveProduct(ApproveProductRequest productRequest) throws TransactionException;
 
-    CommonResponse pageQueryMyProduct(PageQueryProductRequest request);
+  CommonResponse pageQueryMyProduct(PageQueryProductRequest request);
 
-    CommonResponse getProductsByProviderId();
+  CommonResponse getProductsByProviderId();
 }

@@ -19,13 +19,17 @@ import java.io.IOException;
 @Slf4j
 public class AuthenticationEntryPointHandler implements AuthenticationEntryPoint {
 
-    @Autowired
-    private ObjectMapper objectMapper;
+  @Autowired private ObjectMapper objectMapper;
 
-    @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        String responseStr = objectMapper.writeValueAsString(CommonResponse.error(CodeEnum.UN_AUTHORIZED));
-        log.info("response : {}", responseStr);
-        WebUtil.renderString(response, responseStr);
-    }
+  @Override
+  public void commence(
+      HttpServletRequest request,
+      HttpServletResponse response,
+      AuthenticationException authException)
+      throws IOException, ServletException {
+    String responseStr =
+        objectMapper.writeValueAsString(CommonResponse.error(CodeEnum.UN_AUTHORIZED));
+    log.info("response : {}", responseStr);
+    WebUtil.renderString(response, responseStr);
+  }
 }

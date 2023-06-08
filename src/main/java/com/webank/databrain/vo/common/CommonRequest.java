@@ -9,5 +9,4 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CommonRequest {
-}
+public class CommonRequest {}

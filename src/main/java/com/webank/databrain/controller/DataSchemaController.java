@@ -17,56 +17,58 @@ import javax.validation.Valid;
 @RequestMapping("api/schema")
 public class DataSchemaController {
 
+  @Autowired private DataSchemaService schemaService;
 
-    @Autowired
-    private DataSchemaService schemaService;
+  @PostMapping(value = "/pageQuerySchema")
+  public CommonResponse pageQuerySchema(
+      @RequestBody @Valid PageQueryDataSchemaRequest querySchemaRequest) {
+    return schemaService.pageQuerySchema(querySchemaRequest);
+  }
 
+  @PostMapping(value = "/pageQueryMySchema")
+  public CommonResponse pageQueryMySchema(
+      @RequestBody @Valid PageQueryDataSchemaRequest querySchemaRequest) {
+    return schemaService.pageQueryMySchema(querySchemaRequest);
+  }
 
+  @PostMapping(value = "/createSchema")
+  public CommonResponse createSchema(
+      @RequestBody @Valid CreateDataSchemaRequest createDataSchemaRequest) throws Exception {
+    return schemaService.createDataSchema(createDataSchemaRequest);
+  }
 
+  @PostMapping(value = "/querySchemaById")
+  public CommonResponse querySchemaById(@RequestBody @Valid QuerySchemaByIdRequest request) {
+    return schemaService.getDataSchemaById(request.getSchemaId());
+  }
 
-    @PostMapping(value = "/pageQuerySchema")
-    public CommonResponse pageQuerySchema(@RequestBody @Valid PageQueryDataSchemaRequest querySchemaRequest) {
-        return schemaService.pageQuerySchema(querySchemaRequest);
-    }
+  @PostMapping(value = "/querySchemaAccessById")
+  public CommonResponse getDataSchemaAccessById(
+      @RequestBody @Valid QuerySchemaAccessByIdRequest request) {
+    return schemaService.getDataSchemaAccessById(request.getAccessId());
+  }
 
-    @PostMapping(value = "/pageQueryMySchema")
-    public CommonResponse pageQueryMySchema(@RequestBody @Valid PageQueryDataSchemaRequest querySchemaRequest) {
-        return schemaService.pageQueryMySchema(querySchemaRequest);
-    }
+  @PostMapping(value = "/approveDataSchema")
+  public CommonResponse approveDataSchema(
+      @RequestBody @Valid ApproveDataSchemaRequest approveDataSchemaRequest) throws Exception {
+    return schemaService.approveDataSchema(approveDataSchemaRequest);
+  }
 
-    @PostMapping(value = "/createSchema")
-    public CommonResponse createSchema(@RequestBody @Valid CreateDataSchemaRequest createDataSchemaRequest) throws Exception {
-        return schemaService.createDataSchema(createDataSchemaRequest);
-    }
+  @PostMapping(value = "/pageQueryMyFavSchema")
+  public CommonResponse pageQueryMyFavSchema(
+      @RequestBody @Valid PageQueryMyFavSchemaRequest querySchemaRequest) {
+    return schemaService.pageQueryMyFavSchema(querySchemaRequest);
+  }
 
-    @PostMapping(value = "/querySchemaById")
-    public CommonResponse querySchemaById(@RequestBody @Valid QuerySchemaByIdRequest request) {
-        return schemaService.getDataSchemaById(request.getSchemaId());
-    }
+  @PostMapping(value = "/addSchemaFavorite")
+  public CommonResponse addSchemaFavorite(
+      @RequestBody @Valid CreateFavSchemaRequest createDataSchemaRequest) throws Exception {
+    return schemaService.addSchemaFavorite(createDataSchemaRequest);
+  }
 
-    @PostMapping(value = "/querySchemaAccessById")
-    public CommonResponse getDataSchemaAccessById(@RequestBody @Valid QuerySchemaAccessByIdRequest request) {
-        return schemaService.getDataSchemaAccessById(request.getAccessId());
-    }
-
-    @PostMapping(value = "/approveDataSchema")
-    public CommonResponse approveDataSchema(@RequestBody @Valid ApproveDataSchemaRequest approveDataSchemaRequest) throws Exception {
-        return schemaService.approveDataSchema(approveDataSchemaRequest);
-    }
-
-    @PostMapping(value = "/pageQueryMyFavSchema")
-    public CommonResponse pageQueryMyFavSchema(@RequestBody @Valid PageQueryMyFavSchemaRequest querySchemaRequest) {
-        return schemaService.pageQueryMyFavSchema(querySchemaRequest);
-    }
-
-    @PostMapping(value = "/addSchemaFavorite")
-    public CommonResponse addSchemaFavorite(@RequestBody @Valid CreateFavSchemaRequest createDataSchemaRequest) throws Exception {
-        return schemaService.addSchemaFavorite(createDataSchemaRequest);
-    }
-
-    @PostMapping(value = "/delSchemaFavorite")
-    public CommonResponse delSchemaFavorite(@RequestBody @Valid DelFavSchemaRequest delFavSchemaRequest) throws Exception {
-        return schemaService.delSchemaFavorite(delFavSchemaRequest);
-    }
-
+  @PostMapping(value = "/delSchemaFavorite")
+  public CommonResponse delSchemaFavorite(
+      @RequestBody @Valid DelFavSchemaRequest delFavSchemaRequest) throws Exception {
+    return schemaService.delSchemaFavorite(delFavSchemaRequest);
+  }
 }

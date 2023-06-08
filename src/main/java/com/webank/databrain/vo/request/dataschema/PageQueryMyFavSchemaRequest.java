@@ -8,8 +8,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class PageQueryMyFavSchemaRequest extends CommonPageQueryRequest {
 
-    private String keyWord;
+  private String keyWord;
 
-    private int state = -1;
-
+  private int state = -1;
 }

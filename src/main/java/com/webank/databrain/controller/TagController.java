@@ -17,11 +17,10 @@ import javax.validation.Valid;
 @RequestMapping("api/tag")
 public class TagController {
 
-    @Autowired
-    private TagService tagService;
+  @Autowired private TagService tagService;
 
-    @PostMapping("getHotTags")
-    public CommonResponse getHotTags(@RequestBody @Valid HotDataRequest request) {
-        return tagService.listHotTags(request);
-    }
+  @PostMapping("getHotTags")
+  public CommonResponse getHotTags(@RequestBody @Valid HotDataRequest request) {
+    return tagService.listHotTags(request);
+  }
 }

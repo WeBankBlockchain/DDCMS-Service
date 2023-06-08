@@ -11,8 +11,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableTransactionManagement
 @MapperScan(value = "com.webank.databrain.dao.mapper")
 public class DataBrainApplication {
-	public static void main(String[] args) {
-		SpringApplication.run(DataBrainApplication.class, args);
-	}
-
+  public static void main(String[] args) {
+    SpringApplication.run(DataBrainApplication.class, args);
+  }
 }

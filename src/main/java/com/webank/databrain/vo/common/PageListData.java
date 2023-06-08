@@ -11,7 +11,7 @@ import java.util.List;
 @Accessors(chain = true)
 @NoArgsConstructor
 public class PageListData<T> {
-    private int totalCount = 0;
-    private int pageCount = 0;
-    private List<T> itemList = Collections.EMPTY_LIST;
+  private int totalCount = 0;
+  private int pageCount = 0;
+  private List<T> itemList = Collections.EMPTY_LIST;
 }

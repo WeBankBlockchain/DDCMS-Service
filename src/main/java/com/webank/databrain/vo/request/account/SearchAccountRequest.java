@@ -1,18 +1,16 @@
 package com.webank.databrain.vo.request.account;
 
 import com.webank.databrain.vo.common.CommonPageQueryRequest;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class SearchAccountRequest extends CommonPageQueryRequest {
-    @Pattern(regexp = "0|1|2|3", message = "账户状态不正确")
-    private String accountStatus = "0";
-    private String keyWord;
+  @Pattern(regexp = "0|1|2|3", message = "账户状态不正确")
+  private String accountStatus = "0";
+
+  private String keyWord;
 }

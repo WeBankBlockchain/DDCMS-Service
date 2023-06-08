@@ -9,6 +9,6 @@ import java.util.List;
 @Mapper
 public interface MenuInfoMapper {
 
-    @Select("SELECT * FROM t_menu_info ORDER BY parent_id, pk_id")
-    List<MenuInfoEntity> getAllMenu();
+  @Select("SELECT * FROM t_menu_info ORDER BY parent_id, pk_id")
+  List<MenuInfoEntity> getAllMenu();
 }

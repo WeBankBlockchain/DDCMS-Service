@@ -9,6 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CreateTagRequest {
 
-    private String tagName;
-
+  private String tagName;
 }

@@ -9,10 +9,9 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class SchemaFavoriteInfoEntity implements Serializable {
 
-    private Long pkId;
+  private Long pkId;
 
-    private Long schemaId;
+  private Long schemaId;
 
-    private Long accountId;
-
+  private Long accountId;
 }

@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class MenuController {
 
-    @Autowired
-    private MenuService menuService;
-    @PostMapping(value = "/getMenuByRole")
-    public CommonResponse getMenuByRole() {
-        return menuService.getMenuByRole();
-    }
+  @Autowired private MenuService menuService;
+
+  @PostMapping(value = "/getMenuByRole")
+  public CommonResponse getMenuByRole() {
+    return menuService.getMenuByRole();
+  }
 }

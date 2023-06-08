@@ -9,15 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 @Service
 public class TagServiceImpl implements TagService {
 
-    @Autowired
-    private TagInfoMapper tagInfoMapper;
+  @Autowired private TagInfoMapper tagInfoMapper;
 
-    @Override
-    public CommonResponse listHotTags(HotDataRequest request) {
-        List<TagInfoEntity> tags = tagInfoMapper.queryHotTags(request.getTopCount());
-        return CommonResponse.success(tags);
-    }
+  @Override
+  public CommonResponse listHotTags(HotDataRequest request) {
+    List<TagInfoEntity> tags = tagInfoMapper.queryHotTags(request.getTopCount());
+    return CommonResponse.success(tags);
+  }
 }

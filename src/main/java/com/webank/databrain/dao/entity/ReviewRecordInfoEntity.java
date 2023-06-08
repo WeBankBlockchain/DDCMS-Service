@@ -10,18 +10,17 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class ReviewRecordInfoEntity implements Serializable {
 
-    private Long pkId;
+  private Long pkId;
 
-    private Long itemId;
+  private Long itemId;
 
-    private Integer itemType;
+  private Integer itemType;
 
-    private Integer reviewState = ReviewStatus.NotReviewed.ordinal();
+  private Integer reviewState = ReviewStatus.NotReviewed.ordinal();
 
-    private Integer agreeCount = 0;
+  private Integer agreeCount = 0;
 
-    private Integer denyCount = 0;
+  private Integer denyCount = 0;
 
-    private Integer witnessCount;
-
+  private Integer witnessCount;
 }

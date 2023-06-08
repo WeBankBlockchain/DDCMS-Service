@@ -8,18 +8,17 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Slf4j
 public enum ReviewItemType {
+  Product(1),
+  Schema(2);
 
-    Product(1),
-    Schema(2);
+  private final int code;
 
-    private int code;
-
-    public static ReviewItemType getAccountType(int code) {
-        for (ReviewItemType type : ReviewItemType.values()) {
-            if (type.code == code) {
-                return type;
-            }
-        }
-        return null;
+  public static ReviewItemType getAccountType(int code) {
+    for (ReviewItemType type : ReviewItemType.values()) {
+      if (type.code == code) {
+        return type;
+      }
     }
+    return null;
+  }
 }

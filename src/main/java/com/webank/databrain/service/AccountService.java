@@ -10,11 +10,14 @@ import org.fisco.bcos.sdk.v3.transaction.model.exception.TransactionException;
 
 public interface AccountService {
 
-    CommonResponse registerAccount(RegisterRequest request) throws TransactionException, JsonProcessingException;
-    CommonResponse login(LoginRequest request);
-    CommonResponse approveAccount(ApproveAccountRequest request) throws TransactionException;
+  CommonResponse registerAccount(RegisterRequest request)
+      throws TransactionException, JsonProcessingException;
 
-    AccountInfoEntity loadAdminAccount() throws Exception;
+  CommonResponse login(LoginRequest request);
 
-    void initAdmin() throws Exception;
+  CommonResponse approveAccount(ApproveAccountRequest request) throws TransactionException;
+
+  AccountInfoEntity loadAdminAccount() throws Exception;
+
+  void initAdmin() throws Exception;
 }

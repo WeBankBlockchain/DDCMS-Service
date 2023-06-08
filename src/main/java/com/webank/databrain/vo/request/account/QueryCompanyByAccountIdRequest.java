@@ -10,7 +10,5 @@ import javax.validation.constraints.NotNull;
 @EqualsAndHashCode(callSuper = true)
 public class QueryCompanyByAccountIdRequest extends CommonRequest {
 
-    @NotNull
-    private Long accountId;
-
+  @NotNull private Long accountId;
 }

@@ -8,8 +8,7 @@ import lombok.EqualsAndHashCode;
 @Data
 public class ApproveDataSchemaRequest extends CommonRequest {
 
-    private Long schemaId;
+  private Long schemaId;
 
-    private boolean agree;
-
+  private boolean agree;
 }

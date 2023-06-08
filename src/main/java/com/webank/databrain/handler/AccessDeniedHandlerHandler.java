@@ -19,13 +19,16 @@ import java.io.IOException;
 @Slf4j
 public class AccessDeniedHandlerHandler implements AccessDeniedHandler {
 
-    @Autowired
-    private ObjectMapper objectMapper;
+  @Autowired private ObjectMapper objectMapper;
 
-    @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        String responseStr = objectMapper.writeValueAsString(CommonResponse.error(CodeEnum.FORBIDDEN));
-        log.info("response:{}", responseStr);
-        WebUtil.renderString(response, responseStr);
-    }
+  @Override
+  public void handle(
+      HttpServletRequest request,
+      HttpServletResponse response,
+      AccessDeniedException accessDeniedException)
+      throws IOException, ServletException {
+    String responseStr = objectMapper.writeValueAsString(CommonResponse.error(CodeEnum.FORBIDDEN));
+    log.info("response:{}", responseStr);
+    WebUtil.renderString(response, responseStr);
+  }
 }
