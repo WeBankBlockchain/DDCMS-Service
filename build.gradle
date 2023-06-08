@@ -62,8 +62,8 @@ bootJar {
 	archiveName "ddcms_" + version + '.jar'
 	doLast {
 		copy {
-			from file('config')
-			into 'dist/config/'
+			from file('conf')
+			into 'dist/conf/'
 		}
 		copy {
 			from configurations.runtimeClasspath
@@ -71,7 +71,7 @@ bootJar {
 		}
 		copy {
 			from file('src/main/resources/application.yml')
-			into 'dist/config/'
+			into 'dist'
 		}
 		copy {
 			from file('src/main/resources/start.sh')
