@@ -1,6 +1,8 @@
 package com.webank.ddcms.config;
 
 import lombok.Data;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.context.annotation.Configuration;
@@ -8,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "system")
 @Configuration
 @Data
-public class SysConfig {
+public class SysConfig implements InitializingBean {
 
   private String bcosCfg;
 
@@ -27,6 +29,13 @@ public class SysConfig {
   @NestedConfigurationProperty private ContractConfig contractConfig;
 
   @NestedConfigurationProperty private FileConfig fileConfig;
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    if (adminPrivateKey.startsWith("0x") || adminPrivateKey.startsWith("0X")){
+      adminPrivateKey = adminPrivateKey.substring(2);
+    }
+  }
 
   @Data
   public static class ContractConfig {
