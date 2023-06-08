@@ -71,7 +71,7 @@ bootJar {
 		}
 		copy {
 			from file('src/main/resources/application.yml')
-			into 'dist'
+			into 'dist/conf/'
 		}
 		copy {
 			from file('src/main/resources/start.sh')
