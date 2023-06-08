@@ -60,7 +60,7 @@ tasks.named('test') {
 
 bootJar {
 	destinationDir file('dist')
-	archiveName "databrain_" + version + '.jar'
+	archiveName "ddcms_" + version + '.jar'
 	doLast {
 		copy {
 			from file('config')
