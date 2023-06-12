@@ -1,6 +1,7 @@
 package com.webank.ddcms;
 
 import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
+import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,8 +15,5 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 public class DDCMSApplication {
   public static void main(String[] args) {
     SpringApplication.run(DDCMSApplication.class, args);
-//    CryptoSuite cs = new CryptoSuite(0);
-//    cs.loadKeyPair("")
-
   }
 }

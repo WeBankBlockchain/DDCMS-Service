@@ -36,6 +36,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -121,6 +123,8 @@ public class ProductServiceImpl implements ProductService {
     product.setStatus(ReviewStatus.NotReviewed.ordinal());
     product.setProductName(productRequest.getProductName());
     product.setProductDesc(productRequest.getProductDesc());
+    product.setReviewTime(new Timestamp(System.currentTimeMillis()));
+    product.setCreateTime(new Timestamp(System.currentTimeMillis()));
     productInfoMapper.insertProductInfo(product);
 
     ReviewRecordInfoEntity reviewRecordInfoEntity = new ReviewRecordInfoEntity();
