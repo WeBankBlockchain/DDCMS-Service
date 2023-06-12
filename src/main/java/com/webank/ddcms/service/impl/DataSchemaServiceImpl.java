@@ -37,10 +37,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.sql.Timestamp;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -334,12 +332,15 @@ public class DataSchemaServiceImpl implements DataSchemaService {
     dataSchemaInfoEntity.setDataSchemaBid(dataSchemaId);
     dataSchemaInfoEntity.setProviderId(entity.getPkId());
     dataSchemaInfoEntity.setStatus(ReviewStatus.NotReviewed.ordinal());
+    dataSchemaInfoEntity.setReviewTime(new Timestamp(System.currentTimeMillis()));
+    dataSchemaInfoEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
     dataSchemaInfoMapper.insertDataSchemaInfo(dataSchemaInfoEntity);
     log.info("save dataSchemaInfoEntity finish, schemaId = {}", dataSchemaId);
 
     DataSchemaAccessInfoEntity dataSchemaAccessInfoEntity = new DataSchemaAccessInfoEntity();
     BeanUtils.copyProperties(schemaRequest, dataSchemaAccessInfoEntity);
     dataSchemaAccessInfoEntity.setDataSchemaId(dataSchemaInfoEntity.getPkId());
+    dataSchemaAccessInfoEntity.setCreateTime(new Date());
     dataSchemaAccessInfoMapper.insertDataSchemaAccessInfo(dataSchemaAccessInfoEntity);
     log.info("save dataSchemaAccessInfoEntity finish, schemaId = {}", dataSchemaId);
 
