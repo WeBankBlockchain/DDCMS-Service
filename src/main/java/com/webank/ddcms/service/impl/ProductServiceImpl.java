@@ -169,6 +169,8 @@ public class ProductServiceImpl implements ProductService {
     ProductInfoEntity productInfoEntityUp = new ProductInfoEntity();
     productInfoEntityUp.setPkId(productRequest.getProductId());
     productInfoEntityUp.setStatus(reviewState);
+    productInfoEntityUp.setReviewTime(new Timestamp(System.currentTimeMillis()));
+    productInfoEntityUp.setUpdateTime(new Timestamp(System.currentTimeMillis()));
     productInfoMapper.updateProductInfoState(productInfoEntityUp);
 
     ReviewRecordInfoEntity reviewRecordInfoEntity = new ReviewRecordInfoEntity();
