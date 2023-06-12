@@ -69,10 +69,10 @@ bootJar {
 			from configurations.runtimeClasspath
 			into 'dist/lib'
 		}
-		copy {
-			from file('src/main/resources/application.yml')
-			into 'dist/conf/'
-		}
+//		copy {
+//			from file('src/main/resources/application.yml')
+//			into 'dist/conf/'
+//		}
 		copy {
 			from file('src/main/resources/start.sh')
 			into 'dist/'
