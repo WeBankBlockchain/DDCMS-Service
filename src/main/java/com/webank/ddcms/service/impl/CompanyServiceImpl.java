@@ -79,6 +79,9 @@ public class CompanyServiceImpl implements CompanyService {
             request.getPageSize());
     pageListData.setItemList(boList);
 
+    for(int i=0;i<boList.size();i++) {
+      boList.get(i).setPrivateKey(null);
+    }
     return CommonResponse.success(pageListData);
   }
 
