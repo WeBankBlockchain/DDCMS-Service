@@ -71,7 +71,10 @@ bootJar {
 		}
 		copy {
 			from file('src/main/resources/application.yml')
-			into 'dist/conf/application-example.yml'
+			into 'dist/conf'
+			rename { fileName ->
+				fileName.replace("application", "application-example")
+			}
 		}
 		copy {
 			from file('src/main/resources/start.sh')
