@@ -50,7 +50,6 @@ auth:
     - /api/account/queryPersonByUsername
     - /api/account/queryCompanyByAccountId
     - /api/account/getHotCompanies
-    - /api/account/searchCompany
     - /api/account/searchPerson
     - /api/schema/pageQuerySchema
     - /api/schema/querySchemaById
@@ -76,6 +75,7 @@ auth:
     witnessAuth:
       - /api/product/approveProduct
     adminAuth:
+      - /api/account/searchCompany
       - /api/account/approveAccount
 system:
   bcos-cfg: "conf/config.toml"
