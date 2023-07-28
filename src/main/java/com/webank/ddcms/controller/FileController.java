@@ -39,7 +39,7 @@ public class FileController {
   public CommonResponse handleFileUpload(@RequestParam("file") MultipartFile file)
       throws Exception {
     String contentType = file.getContentType();
-    String fileName = file.getName();
+    String fileName = file.getOriginalFilename();
     if (contentType == null || !contentType.startsWith("image/")) {
       return CommonResponse.error(CodeEnum.PARAMETER_ERROR);
     }
