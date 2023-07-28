@@ -1,5 +1,7 @@
 package com.webank.ddcms.controller;
 
+import cn.hutool.core.io.FileTypeUtil;
+import cn.hutool.core.io.FileUtil;
 import com.google.common.base.Strings;
 import com.google.common.io.Files;
 import com.webank.ddcms.enums.CodeEnum;
@@ -41,7 +43,11 @@ public class FileController {
     if (contentType == null || !contentType.startsWith("image/")) {
       return CommonResponse.error(CodeEnum.PARAMETER_ERROR);
     }
-    String ext = Files.getFileExtension(fileName);
+    String ext = null;
+    int dotIndex = fileName.lastIndexOf('.');
+    if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
+        ext = fileName.substring(dotIndex + 1).toLowerCase();
+    }
     if (Strings.isNullOrEmpty(ext) || !ALLOWED_FILE_TYPES.contains(ext)) {
       return CommonResponse.error(CodeEnum.PARAMETER_ERROR);
     }
