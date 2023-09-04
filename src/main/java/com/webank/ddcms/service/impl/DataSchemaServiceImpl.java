@@ -10,10 +10,7 @@ import com.webank.ddcms.config.SysConfig;
 import com.webank.ddcms.contracts.DataSchemaContract;
 import com.webank.ddcms.dao.entity.*;
 import com.webank.ddcms.dao.mapper.*;
-import com.webank.ddcms.enums.AccountType;
-import com.webank.ddcms.enums.CodeEnum;
-import com.webank.ddcms.enums.ReviewItemType;
-import com.webank.ddcms.enums.ReviewStatus;
+import com.webank.ddcms.enums.*;
 import com.webank.ddcms.handler.ThreadLocalKeyPairHandler;
 import com.webank.ddcms.service.DataSchemaService;
 import com.webank.ddcms.utils.BlockchainUtils;
@@ -322,6 +319,19 @@ public class DataSchemaServiceImpl implements DataSchemaService {
         dataSchemaModule.createDataSchema(
             hash, HexUtil.decodeHex(product.getProductBid())); // TODO:还需要传入product的bid
     BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
+
+    // TODO
+    if(schemaRequest.getVisible().equals(DataSchemaType.VISIBLE.ordinal())){
+
+      TransactionReceipt dataDetailReceipt = dataSchemaModule.createDataDetail(
+              HexUtil.decodeHex(product.getProductBid()),
+              dataSchemaModule.getCreateDataSchemaOutput(receipt).getValue1(),
+              String.valueOf(schemaRequest.getProductId()),
+              schemaRequest.getAccessCondition(),
+              schemaRequest.getContentSchema(),
+              schemaRequest.getDataSchemaName());
+      BlockchainUtils.ensureTransactionSuccess(dataDetailReceipt,txDecoder);
+    }
 
     String dataSchemaId =
         HexUtil.encodeHexStr(dataSchemaModule.getCreateDataSchemaOutput(receipt).getValue1());
