@@ -2,6 +2,8 @@ package com.webank.ddcms.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.HexUtil;
+import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
+import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import com.google.common.collect.Maps;
 import com.webank.ddcms.bo.DataSchemaDetailBO;
 import com.webank.ddcms.bo.DataSchemaWithAccessBO;
@@ -19,7 +21,9 @@ import com.webank.ddcms.vo.common.PageListData;
 import com.webank.ddcms.vo.request.dataschema.*;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.sdk.v3.client.Client;
+import org.fisco.bcos.sdk.v3.codec.datatypes.generated.Bytes32;
 import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
+import org.fisco.bcos.sdk.v3.crypto.hash.Keccak256;
 import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
 import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
 import org.fisco.bcos.sdk.v3.transaction.codec.decode.TransactionDecoderInterface;
@@ -317,21 +321,35 @@ public class DataSchemaServiceImpl implements DataSchemaService {
 
     TransactionReceipt receipt =
         dataSchemaModule.createDataSchema(
-            hash, HexUtil.decodeHex(product.getProductBid())); // TODO:还需要传入product的bid
+            hash, HexUtil.decodeHex(product.getProductBid()));
     BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
 
-    // TODO
-    if(schemaRequest.getVisible().equals(DataSchemaType.VISIBLE.ordinal())){
-
-      TransactionReceipt dataDetailReceipt = dataSchemaModule.createDataDetail(
+    TransactionReceipt dataDetailReceipt = null;
+    // determine visibility
+    if (schemaRequest.getVisible().equals(DataSchemaType.VISIBLE.getCode())) {
+      dataDetailReceipt = dataSchemaModule.createDataDetail(
+              Bytes32.DEFAULT.getValue(),
               HexUtil.decodeHex(product.getProductBid()),
               dataSchemaModule.getCreateDataSchemaOutput(receipt).getValue1(),
               String.valueOf(schemaRequest.getProductId()),
-              schemaRequest.getAccessCondition(),
               schemaRequest.getContentSchema(),
               schemaRequest.getDataSchemaName());
-      BlockchainUtils.ensureTransactionSuccess(dataDetailReceipt,txDecoder);
+    } else {
+      // encode
+      byte[] key = new Keccak256().hash(bo.getEntity().getPrivateKey().getBytes(StandardCharsets.UTF_8));
+      SymmetricCrypto ase = new SymmetricCrypto(SymmetricAlgorithm.AES,key);
+      String encodeContent = ase.encryptHex(schemaRequest.getContentSchema());
+      String encodeName = ase.encryptHex(schemaRequest.getDataSchemaName());
+
+      dataDetailReceipt = dataSchemaModule.createDataDetail(
+              hash,
+              HexUtil.decodeHex(product.getProductBid()),
+              dataSchemaModule.getCreateDataSchemaOutput(receipt).getValue1(),
+              String.valueOf(schemaRequest.getProductId()),
+              encodeContent,
+              encodeName);
     }
+    BlockchainUtils.ensureTransactionSuccess(dataDetailReceipt, txDecoder);
 
     String dataSchemaId =
         HexUtil.encodeHexStr(dataSchemaModule.getCreateDataSchemaOutput(receipt).getValue1());
