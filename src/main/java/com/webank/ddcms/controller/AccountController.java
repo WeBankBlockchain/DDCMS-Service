@@ -1,5 +1,6 @@
 package com.webank.ddcms.controller;
 
+import com.webank.ddcms.enums.ThirdPartyType;
 import com.webank.ddcms.service.AccountService;
 import com.webank.ddcms.service.CompanyService;
 import com.webank.ddcms.vo.common.CommonPageQueryRequest;
@@ -8,12 +9,10 @@ import com.webank.ddcms.vo.common.HotDataRequest;
 import com.webank.ddcms.vo.request.account.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/account")
@@ -64,5 +63,21 @@ public class AccountController {
   @PostMapping("searchCompany")
   public CommonResponse searchCompanies(@RequestBody @Valid SearchAccountRequest request) {
     return companyService.searchCompanies(request);
+  }
+
+  /**
+   * 绑定第三方账号
+   * @param code 第三方授权后获得的code
+   * @param type 第三方类型
+   * @return {@code CommonResponse}
+   * @throws IOException
+   * @throws InterruptedException
+   */
+  @GetMapping("bindThirdParty")
+  public CommonResponse bindThirdParty(@RequestParam("code") String code, @RequestParam("type") int type) throws IOException, InterruptedException {
+    BindThirdPartyRequest request = new BindThirdPartyRequest();
+    request.setCode(code);
+    request.setType(ThirdPartyType.getThirdPartyType(type));
+    return accountService.bindThirdParty(request);
   }
 }
