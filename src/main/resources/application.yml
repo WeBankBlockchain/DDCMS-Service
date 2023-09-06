@@ -93,3 +93,7 @@ system:
     file-dir: "tmp"
 swagger:
   enabled: true
+
+third-party:
+  githubClientId:
+  githubClientSecret:
