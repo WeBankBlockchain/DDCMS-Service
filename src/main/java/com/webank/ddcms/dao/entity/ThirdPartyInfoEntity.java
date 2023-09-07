@@ -11,6 +11,6 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class ThirdPartyInfoEntity {
-    private Long pkId;
+    private String did;
     private Long githubId;
 }

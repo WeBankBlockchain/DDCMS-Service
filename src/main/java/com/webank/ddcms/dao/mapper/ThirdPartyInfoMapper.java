@@ -7,12 +7,15 @@ import org.apache.ibatis.annotations.Update;
 
 public interface ThirdPartyInfoMapper {
 
-    @Insert("INSERT INTO `t_third_party_info` (pk_id, ${field}) VALUES (#{pkId}, #{value})")
-    int insertOne(long pkId, String field, long value);
+    @Insert("INSERT INTO `t_third_party_info` (did, ${field}) VALUES (#{did}, #{value})")
+    int insertOne(String did, String field, long value);
 
-    @Select("SELECT * FROM `t_third_party_info` WHERE pk_id = #{pkId}")
-    ThirdPartyInfoEntity searchOne(long pkId);
+    @Select("SELECT * FROM `t_third_party_info` WHERE did = #{did}")
+    ThirdPartyInfoEntity searchOneByDid(String did);
 
-    @Update("UPDATE `t_third_party_info` SET ${field} = #{value} WHERE pk_id = #{pkId}")
-    int updateOne(long pkId, String field, long value);
+    @Select("SELECT * FROM `t_third_party_info` WHERE ${field} = #{value}")
+    ThirdPartyInfoEntity searchOne(String field, long value);
+
+    @Update("UPDATE `t_third_party_info` SET ${field} = #{value} WHERE did = #{did}")
+    int updateOne(String did, String field, long value);
 }
