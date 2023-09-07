@@ -66,7 +66,9 @@ auth:
     - /webjars/**
     - /csrf
     - /
-  anonymousApi: /api/account/login
+  anonymousApiList:
+    - /api/account/login
+    - /api/account/loginWithThirdParty
   roleAuth:
     companyAuth:
       - /api/product/createProduct
