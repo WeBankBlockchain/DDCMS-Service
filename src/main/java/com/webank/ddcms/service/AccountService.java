@@ -21,5 +21,7 @@ public interface AccountService {
 
   CommonResponse bindThirdParty(BindThirdPartyRequest request) throws IOException, InterruptedException;
 
+  CommonResponse loginWithThirdParty(LoginWithThirdPartyRequest request) throws IOException, InterruptedException;
+
   void initAdmin() throws Exception;
 }

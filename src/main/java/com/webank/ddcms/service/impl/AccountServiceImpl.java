@@ -8,6 +8,7 @@ import com.webank.ddcms.config.SysConfig;
 import com.webank.ddcms.contracts.AccountContract;
 import com.webank.ddcms.dao.entity.AccountInfoEntity;
 import com.webank.ddcms.dao.entity.CompanyInfoEntity;
+import com.webank.ddcms.dao.entity.ThirdPartyInfoEntity;
 import com.webank.ddcms.dao.mapper.AccountInfoMapper;
 import com.webank.ddcms.dao.mapper.CompanyInfoMapper;
 import com.webank.ddcms.dao.mapper.ThirdPartyInfoMapper;
@@ -22,10 +23,7 @@ import com.webank.ddcms.service.AccountService;
 import com.webank.ddcms.utils.BlockchainUtils;
 import com.webank.ddcms.utils.ThirdPartyUtils;
 import com.webank.ddcms.vo.common.CommonResponse;
-import com.webank.ddcms.vo.request.account.ApproveAccountRequest;
-import com.webank.ddcms.vo.request.account.BindThirdPartyRequest;
-import com.webank.ddcms.vo.request.account.LoginRequest;
-import com.webank.ddcms.vo.request.account.RegisterRequest;
+import com.webank.ddcms.vo.request.account.*;
 import com.webank.ddcms.vo.response.LoginResponse;
 import org.fisco.bcos.sdk.v3.client.Client;
 import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
@@ -43,9 +41,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -211,26 +213,56 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public CommonResponse bindThirdParty(BindThirdPartyRequest request) throws IOException, InterruptedException {
-
-        // 获取当前用户pkId
+        // 获取当前用户did
         LoginUserBO loginUserBO =
                 (LoginUserBO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        long pkId = loginUserBO.getEntity().getPkId();
+        String did = loginUserBO.getEntity().getDid();
 
         // 获取githubId
         if (request.getType().equals(ThirdPartyType.github)) {
             long githubId = thirdPartyUtils.getGithubAccountInfo(request.getCode()).get("id").getAsLong();
 
             // 先判断之前是否绑定过
-            if (null != thirdPartyInfoMapper.searchOne(pkId)){
+            if (null != thirdPartyInfoMapper.searchOneByDid(did)){
                 // 之前绑定过第三方账号
-                thirdPartyInfoMapper.updateOne(pkId, "github_id", githubId);
+                thirdPartyInfoMapper.updateOne(did, "github_id", githubId);
             }else {
                 // 之前没绑定过第三方账号
-                thirdPartyInfoMapper.insertOne(pkId, "github_id", githubId);
+                thirdPartyInfoMapper.insertOne(did, "github_id", githubId);
             }
         }
         return CommonResponse.success();
+    }
+
+    @Override
+    public CommonResponse loginWithThirdParty(LoginWithThirdPartyRequest request) throws IOException, InterruptedException {
+        if (request.getType().equals(ThirdPartyType.github)) {
+            long githubId = thirdPartyUtils.getGithubAccountInfo(request.getCode()).get("id").getAsLong();
+
+            ThirdPartyInfoEntity thirdPartyInfoEntity = thirdPartyInfoMapper.searchOne("github_id", githubId);
+            Assert.notNull(thirdPartyInfoEntity, "登陆失败: 该第三方账号并未绑定任何账号");
+
+            AccountInfoEntity accountInfoEntity = accountInfoMapper.selectByDid(thirdPartyInfoEntity.getDid());
+            Assert.notNull(accountInfoEntity, "登陆失败: 查询不到该用户");
+
+            List<String> permissionList = new ArrayList<>();
+            permissionList.add(Objects.requireNonNull(AccountType.getAccountType(accountInfoEntity.getAccountType())).getRoleName());
+
+            LoginUserBO loginInfoBo = new LoginUserBO(accountInfoEntity, permissionList);
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(loginInfoBo, null, loginInfoBo.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+            String token =
+                    JwtTokenHandler.TOKEN_PREFIX
+                            + tokenHandler.generateToken(loginInfoBo.getEntity().getDid());
+            LoginResponse response = new LoginResponse();
+            response.setToken(token);
+            response.setAccountType(String.valueOf(accountInfoEntity.getAccountType()));
+
+            return CommonResponse.success(response);
+        }
+        return null;
     }
 
     @Override

@@ -80,4 +80,12 @@ public class AccountController {
     request.setType(ThirdPartyType.getThirdPartyType(type));
     return accountService.bindThirdParty(request);
   }
+
+  @GetMapping("loginWithThirdParty")
+  public CommonResponse loginWithThirdParty(@RequestParam("code") String code, @RequestParam("type") int type) throws IOException, InterruptedException {
+    LoginWithThirdPartyRequest request = new LoginWithThirdPartyRequest();
+    request.setCode(code);
+    request.setType(ThirdPartyType.getThirdPartyType(type));
+    return accountService.loginWithThirdParty(request);
+  }
 }
