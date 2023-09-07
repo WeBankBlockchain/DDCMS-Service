@@ -161,6 +161,11 @@ CREATE TABLE `t_review_record_info` (
   UNIQUE KEY `item_id_type` (`item_id`,`item_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `t_third_party_info`(
+    `did` varchar(255) NOT NULL PRIMARY KEY,
+    `github_id` bigint unsigned NULL COMMENT 'github账号id'
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 INSERT INTO t_menu_info (pk_id, menu_id, menu_name, parent_id, menu_url, menu_role, create_time, update_time) VALUES (1, 1, '用户管理', 0, '', 3, '2023-03-20 15:46:40', '2023-03-20 16:09:20');
 INSERT INTO t_menu_info (pk_id, menu_id, menu_name, parent_id, menu_url, menu_role, create_time, update_time) VALUES (2, 1, '用户管理', 0, '', 2, '2023-03-20 15:48:21', '2023-03-20 16:09:24');
