@@ -3,6 +3,7 @@ package com.webank.ddcms.service.impl;
 import cn.hutool.core.codec.Base64;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
 import com.webank.ddcms.bo.LoginUserBO;
 import com.webank.ddcms.config.SysConfig;
 import com.webank.ddcms.contracts.AccountContract;
@@ -15,7 +16,6 @@ import com.webank.ddcms.dao.mapper.ThirdPartyInfoMapper;
 import com.webank.ddcms.enums.AccountStatus;
 import com.webank.ddcms.enums.AccountType;
 import com.webank.ddcms.enums.CodeEnum;
-import com.webank.ddcms.enums.ThirdPartyType;
 import com.webank.ddcms.exception.DDCMSException;
 import com.webank.ddcms.handler.JwtTokenHandler;
 import com.webank.ddcms.handler.ThreadLocalKeyPairHandler;
@@ -43,7 +43,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -212,57 +213,72 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public CommonResponse bindThirdParty(BindThirdPartyRequest request) throws IOException, InterruptedException {
+    public CommonResponse bindThirdParty(BindThirdPartyRequest request) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         // 获取当前用户did
         LoginUserBO loginUserBO =
                 (LoginUserBO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String did = loginUserBO.getEntity().getDid();
+        // 使用的第三方账号类型
+        String originThirdPartyName = request.getType().name();
+        // 转化为大驼峰
+        String thirdPartyName = originThirdPartyName.substring(0, 1).toUpperCase() + originThirdPartyName.substring(1);
+        // 调用第三方账号api获取第三方账号id
+        Method getThirdPartyAccountInfo = ThirdPartyUtils.class.getMethod("get" + thirdPartyName + "AccountInfo", String.class);
+        JsonObject thirdPartyAccountInfo = (JsonObject) getThirdPartyAccountInfo.invoke(thirdPartyUtils, request.getCode());
+        long thirdPartyId = thirdPartyAccountInfo.get("id").getAsLong();
 
-        // 获取githubId
-        if (request.getType().equals(ThirdPartyType.github)) {
-            long githubId = thirdPartyUtils.getGithubAccountInfo(request.getCode()).get("id").getAsLong();
-
-            // 先判断之前是否绑定过
-            if (null != thirdPartyInfoMapper.searchOneByDid(did)){
-                // 之前绑定过第三方账号
-                thirdPartyInfoMapper.updateOne(did, "github_id", githubId);
-            }else {
-                // 之前没绑定过第三方账号
-                thirdPartyInfoMapper.insertOne(did, "github_id", githubId);
-            }
+        // 根据did获取表中第三方账号数据
+        ThirdPartyInfoEntity thirdPartyInfoEntity = thirdPartyInfoMapper.searchOneByDid(did);
+        if (null != thirdPartyInfoEntity) {
+            Method getThirdPartyId = ThirdPartyInfoEntity.class.getMethod("get" + thirdPartyName + "Id");
+            Assert.isNull(getThirdPartyId.invoke(thirdPartyInfoEntity), "绑定失败: 请勿重复绑定");
+            // 之前绑定过第三方账号
+            thirdPartyInfoMapper.updateOne(did, originThirdPartyName + "_id", thirdPartyId);
+        } else {
+            // 之前没绑定过第三方账号
+            thirdPartyInfoMapper.insertOne(did, originThirdPartyName + "_id", thirdPartyId);
         }
+
         return CommonResponse.success();
     }
 
     @Override
-    public CommonResponse loginWithThirdParty(LoginWithThirdPartyRequest request) throws IOException, InterruptedException {
-        if (request.getType().equals(ThirdPartyType.github)) {
-            long githubId = thirdPartyUtils.getGithubAccountInfo(request.getCode()).get("id").getAsLong();
+    public CommonResponse loginWithThirdParty(LoginWithThirdPartyRequest request) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        // 使用的第三方账号类型
+        String originThirdPartyName = request.getType().name();
+        // 转化为大驼峰
+        String thirdPartyName = originThirdPartyName.substring(0, 1).toUpperCase() + originThirdPartyName.substring(1);
+        // 调用第三方账号api获取第三方账号id
+        Method getThirdPartyAccountInfo = ThirdPartyUtils.class.getMethod("get" + thirdPartyName + "AccountInfo", String.class);
+        JsonObject thirdPartyAccountInfo = (JsonObject) getThirdPartyAccountInfo.invoke(thirdPartyUtils, request.getCode());
+        long thirdPartyId = thirdPartyAccountInfo.get("id").getAsLong();
 
-            ThirdPartyInfoEntity thirdPartyInfoEntity = thirdPartyInfoMapper.searchOne("github_id", githubId);
-            Assert.notNull(thirdPartyInfoEntity, "登陆失败: 该第三方账号并未绑定任何账号");
+        ThirdPartyInfoEntity thirdPartyInfoEntity = thirdPartyInfoMapper.searchOne(originThirdPartyName + "_id", thirdPartyId);
+        Assert.notNull(thirdPartyInfoEntity, "登陆失败: 该第三方账号并未绑定任何账号");
 
-            AccountInfoEntity accountInfoEntity = accountInfoMapper.selectByDid(thirdPartyInfoEntity.getDid());
-            Assert.notNull(accountInfoEntity, "登陆失败: 查询不到该用户");
+        AccountInfoEntity accountInfoEntity = accountInfoMapper.selectByDid(thirdPartyInfoEntity.getDid());
+        Assert.notNull(accountInfoEntity, "登陆失败: 查询不到该用户");
 
-            List<String> permissionList = new ArrayList<>();
-            permissionList.add(Objects.requireNonNull(AccountType.getAccountType(accountInfoEntity.getAccountType())).getRoleName());
+        // 填充权限
+        List<String> permissionList = new ArrayList<>();
+        permissionList.add(Objects.requireNonNull(AccountType.getAccountType(accountInfoEntity.getAccountType())).getRoleName());
 
-            LoginUserBO loginInfoBo = new LoginUserBO(accountInfoEntity, permissionList);
-            UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(loginInfoBo, null, loginInfoBo.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        LoginUserBO loginInfoBo = new LoginUserBO(accountInfoEntity, permissionList);
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(loginInfoBo, null, loginInfoBo.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
-            String token =
-                    JwtTokenHandler.TOKEN_PREFIX
-                            + tokenHandler.generateToken(loginInfoBo.getEntity().getDid());
-            LoginResponse response = new LoginResponse();
-            response.setToken(token);
-            response.setAccountType(String.valueOf(accountInfoEntity.getAccountType()));
+        // 生成token
+        String token =
+                JwtTokenHandler.TOKEN_PREFIX
+                        + tokenHandler.generateToken(loginInfoBo.getEntity().getDid());
+        LoginResponse response = new LoginResponse();
+        response.setToken(token);
+        // 填充使用第三方账号登录时前端缺失的用户名
+        response.setUserName(accountInfoEntity.getUserName());
+        response.setAccountType(String.valueOf(accountInfoEntity.getAccountType()));
 
-            return CommonResponse.success(response);
-        }
-        return null;
+        return CommonResponse.success(response);
     }
 
     @Override
