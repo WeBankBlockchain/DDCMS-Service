@@ -227,11 +227,9 @@ public class AccountServiceImpl implements AccountService {
         JsonObject thirdPartyAccountInfo = (JsonObject) getThirdPartyAccountInfo.invoke(thirdPartyUtils, request.getCode());
         long thirdPartyId = thirdPartyAccountInfo.get("id").getAsLong();
 
-        // 根据did获取表中第三方账号数据
-        ThirdPartyInfoEntity thirdPartyInfoEntity = thirdPartyInfoMapper.searchOneByDid(did);
-        if (null != thirdPartyInfoEntity) {
-            Method getThirdPartyId = ThirdPartyInfoEntity.class.getMethod("get" + thirdPartyName + "Id");
-            Assert.isNull(getThirdPartyId.invoke(thirdPartyInfoEntity), "绑定失败: 请勿重复绑定");
+        Assert.isNull(thirdPartyInfoMapper.searchOne(originThirdPartyName + "_id", thirdPartyId), "绑定失败: 该第三方账号已被绑定");
+
+        if (null != thirdPartyInfoMapper.searchOneByDid(did)) {
             // 之前绑定过第三方账号
             thirdPartyInfoMapper.updateOne(did, originThirdPartyName + "_id", thirdPartyId);
         } else {
