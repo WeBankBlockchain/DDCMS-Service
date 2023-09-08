@@ -6,7 +6,7 @@ import com.webank.ddcms.vo.common.CommonResponse;
 import com.webank.ddcms.vo.request.account.*;
 import org.fisco.bcos.sdk.v3.transaction.model.exception.TransactionException;
 
-import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 public interface AccountService {
 
@@ -19,9 +19,9 @@ public interface AccountService {
 
   AccountInfoEntity loadAdminAccount() throws Exception;
 
-  CommonResponse bindThirdParty(BindThirdPartyRequest request) throws IOException, InterruptedException;
+  CommonResponse bindThirdParty(BindThirdPartyRequest request) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException;
 
-  CommonResponse loginWithThirdParty(LoginWithThirdPartyRequest request) throws IOException, InterruptedException;
+  CommonResponse loginWithThirdParty(LoginWithThirdPartyRequest request) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException;
 
   void initAdmin() throws Exception;
 }

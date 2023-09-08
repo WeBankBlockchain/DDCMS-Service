@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 @RestController
 @RequestMapping("/api/account")
@@ -74,7 +75,7 @@ public class AccountController {
    * @throws InterruptedException
    */
   @GetMapping("bindThirdParty")
-  public CommonResponse bindThirdParty(@RequestParam("code") String code, @RequestParam("type") int type) throws IOException, InterruptedException {
+  public CommonResponse bindThirdParty(@RequestParam("code") String code, @RequestParam("type") int type) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
     BindThirdPartyRequest request = new BindThirdPartyRequest();
     request.setCode(code);
     request.setType(ThirdPartyType.getThirdPartyType(type));
@@ -82,7 +83,7 @@ public class AccountController {
   }
 
   @GetMapping("loginWithThirdParty")
-  public CommonResponse loginWithThirdParty(@RequestParam("code") String code, @RequestParam("type") int type) throws IOException, InterruptedException {
+  public CommonResponse loginWithThirdParty(@RequestParam("code") String code, @RequestParam("type") int type) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
     LoginWithThirdPartyRequest request = new LoginWithThirdPartyRequest();
     request.setCode(code);
     request.setType(ThirdPartyType.getThirdPartyType(type));
