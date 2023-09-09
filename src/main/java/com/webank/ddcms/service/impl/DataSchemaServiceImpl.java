@@ -327,6 +327,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
     TransactionReceipt dataDetailReceipt = null;
     // determine visibility
     if (schemaRequest.getVisible().equals(DataSchemaType.VISIBLE.getCode())) {
+      // 若可见性为所有人则直接明文上链
       dataDetailReceipt = dataSchemaModule.createDataDetail(
               Bytes32.DEFAULT.getValue(),
               HexUtil.decodeHex(product.getProductBid()),
@@ -335,11 +336,10 @@ public class DataSchemaServiceImpl implements DataSchemaService {
               schemaRequest.getContentSchema(),
               schemaRequest.getDataSchemaName());
     } else {
-      // encode
+      // 使用当前用户的私钥加密数据后上链
       byte[] key = new Keccak256().hash(bo.getEntity().getPrivateKey().getBytes(StandardCharsets.UTF_8));
       SymmetricCrypto ase = new SymmetricCrypto(SymmetricAlgorithm.AES,key);
       String encodeContent = ase.encryptHex(schemaRequest.getContentSchema());
-      String encodeName = ase.encryptHex(schemaRequest.getDataSchemaName());
 
       dataDetailReceipt = dataSchemaModule.createDataDetail(
               hash,
@@ -347,7 +347,7 @@ public class DataSchemaServiceImpl implements DataSchemaService {
               dataSchemaModule.getCreateDataSchemaOutput(receipt).getValue1(),
               String.valueOf(schemaRequest.getProductId()),
               encodeContent,
-              encodeName);
+              schemaRequest.getDataSchemaName());
     }
     BlockchainUtils.ensureTransactionSuccess(dataDetailReceipt, txDecoder);
 
