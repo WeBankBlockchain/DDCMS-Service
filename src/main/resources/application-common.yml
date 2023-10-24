@@ -1,0 +1,50 @@
+auth:
+  permitAllApiList:
+    - /api/account/register
+    - /api/account/pageQueryCompany
+    - /api/account/queryCompanyByUsername
+    - /api/account/queryPersonByUsername
+    - /api/account/queryCompanyByAccountId
+    - /api/account/getHotCompanies
+    - /api/account/searchPerson
+    - /api/schema/pageQuerySchema
+    - /api/schema/querySchemaById
+    - /api/schema/querySchemaAccessById
+    - /api/file/download
+    - /api/file/upload
+    - /api/product/getHotProducts
+    - /api/product/pageQueryProduct
+    - /api/product/queryProductById
+    - /api/tag/getHotTags
+    - /v2/api-docs
+    - /configuration/**
+    - /swagger*/**
+    - /webjars/**
+    - /csrf
+    - /
+  anonymousApi: /api/account/login
+  roleAuth:
+    companyAuth:
+      - /api/product/createProduct
+      - /api/schema/createSchema
+      - /api/product/updateProduct
+    witnessAuth:
+      - /api/product/approveProduct
+    adminAuth:
+      - /api/account/searchCompany
+      - /api/account/approveAccount
+
+
+mybatis:
+  typeAliasesPackage: com.webank.ddcms.dao.entity
+  configuration:
+    map-underscore-to-camel-case: true
+
+spring:
+  mvc:
+    async:
+      request-timeout: 500
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
