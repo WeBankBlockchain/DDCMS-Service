@@ -2,6 +2,8 @@ package com.webank.ddcms.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.HexUtil;
+import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
+import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import com.google.common.collect.Maps;
 import com.webank.ddcms.bo.DataSchemaDetailBO;
 import com.webank.ddcms.bo.DataSchemaWithAccessBO;
@@ -10,10 +12,7 @@ import com.webank.ddcms.config.SysConfig;
 import com.webank.ddcms.contracts.DataSchemaContract;
 import com.webank.ddcms.dao.entity.*;
 import com.webank.ddcms.dao.mapper.*;
-import com.webank.ddcms.enums.AccountType;
-import com.webank.ddcms.enums.CodeEnum;
-import com.webank.ddcms.enums.ReviewItemType;
-import com.webank.ddcms.enums.ReviewStatus;
+import com.webank.ddcms.enums.*;
 import com.webank.ddcms.handler.ThreadLocalKeyPairHandler;
 import com.webank.ddcms.service.DataSchemaService;
 import com.webank.ddcms.utils.BlockchainUtils;
@@ -22,7 +21,9 @@ import com.webank.ddcms.vo.common.PageListData;
 import com.webank.ddcms.vo.request.dataschema.*;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.sdk.v3.client.Client;
+import org.fisco.bcos.sdk.v3.codec.datatypes.generated.Bytes32;
 import org.fisco.bcos.sdk.v3.crypto.CryptoSuite;
+import org.fisco.bcos.sdk.v3.crypto.hash.Keccak256;
 import org.fisco.bcos.sdk.v3.crypto.keypair.CryptoKeyPair;
 import org.fisco.bcos.sdk.v3.model.TransactionReceipt;
 import org.fisco.bcos.sdk.v3.transaction.codec.decode.TransactionDecoderInterface;
@@ -320,8 +321,35 @@ public class DataSchemaServiceImpl implements DataSchemaService {
 
     TransactionReceipt receipt =
         dataSchemaModule.createDataSchema(
-            hash, HexUtil.decodeHex(product.getProductBid())); // TODO:还需要传入product的bid
+            hash, HexUtil.decodeHex(product.getProductBid()));
     BlockchainUtils.ensureTransactionSuccess(receipt, txDecoder);
+
+    TransactionReceipt dataDetailReceipt = null;
+    // determine visibility
+    if (schemaRequest.getVisible().equals(DataSchemaType.VISIBLE.getCode())) {
+      // 若可见性为所有人则直接明文上链
+      dataDetailReceipt = dataSchemaModule.createDataDetail(
+              Bytes32.DEFAULT.getValue(),
+              HexUtil.decodeHex(product.getProductBid()),
+              dataSchemaModule.getCreateDataSchemaOutput(receipt).getValue1(),
+              String.valueOf(schemaRequest.getProductId()),
+              schemaRequest.getContentSchema(),
+              schemaRequest.getDataSchemaName());
+    } else {
+      // 使用当前用户的私钥加密数据后上链
+      byte[] key = new Keccak256().hash(bo.getEntity().getPrivateKey().getBytes(StandardCharsets.UTF_8));
+      SymmetricCrypto ase = new SymmetricCrypto(SymmetricAlgorithm.AES,key);
+      String encodeContent = ase.encryptHex(schemaRequest.getContentSchema());
+
+      dataDetailReceipt = dataSchemaModule.createDataDetail(
+              hash,
+              HexUtil.decodeHex(product.getProductBid()),
+              dataSchemaModule.getCreateDataSchemaOutput(receipt).getValue1(),
+              String.valueOf(schemaRequest.getProductId()),
+              encodeContent,
+              schemaRequest.getDataSchemaName());
+    }
+    BlockchainUtils.ensureTransactionSuccess(dataDetailReceipt, txDecoder);
 
     String dataSchemaId =
         HexUtil.encodeHexStr(dataSchemaModule.getCreateDataSchemaOutput(receipt).getValue1());

@@ -2,83 +2,22 @@ server:
   port: 10880
 
 spring:
-  mvc:
-    async:
-      request-timeout: 500
-  servlet:
-    multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
+  config:
+    import: classpath:application-common.yml
+
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/dbName?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
     username: test
     password:
     driverClassName: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
-    defaultAutoCommit: false
-    initialSize: 25
-    maxActive: 128
-    maxIdle: 50
-    minIdle: 25
-    testOnBorrow: false
-    testOnReturn: false
-    testWhileIdle: true
-    validationQuery: SELECT 1
-    timeBetweenEvictionRunsMillis: 34000
-    minEvictableIdleTimeMillis: 34000
-    removeAbandoned: false
-    logAbandoned: true
-    removeAbandonedTimeout: 54
-    maxWait: 10000
-    poolPreparedStatements: false
-    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
 
-mybatis:
-  typeAliasesPackage: com.webank.ddcms.dao.entity
-  configuration:
-    map-underscore-to-camel-case: true
 
 jwt:
   secret: ""
   expiration: 8640000
 
-auth:
-  permitAllApiList:
-    - /api/account/register
-    - /api/account/pageQueryCompany
-    - /api/account/queryCompanyByUsername
-    - /api/account/queryPersonByUsername
-    - /api/account/queryCompanyByAccountId
-    - /api/account/getHotCompanies
-    - /api/account/searchPerson
-    - /api/schema/pageQuerySchema
-    - /api/schema/querySchemaById
-    - /api/schema/querySchemaAccessById
-    - /api/file/download
-    - /api/file/upload
-    - /api/product/getHotProducts
-    - /api/product/pageQueryProduct
-    - /api/product/queryProductById
-    - /api/tag/getHotTags
-    - /v2/api-docs
-    - /configuration/**
-    - /swagger*/**
-    - /webjars/**
-    - /csrf
-    - /
-  anonymousApiList:
-    - /api/account/login
-    - /api/account/loginWithThirdParty
-  roleAuth:
-    companyAuth:
-      - /api/product/createProduct
-      - /api/schema/createSchema
-      - /api/product/updateProduct
-    witnessAuth:
-      - /api/product/approveProduct
-    adminAuth:
-      - /api/account/searchCompany
-      - /api/account/approveAccount
+
 system:
   bcos-cfg: "conf/config.toml"
   bcos-group-id: "group0"
@@ -93,6 +32,7 @@ system:
     dataSchema-contract: ""
   fileConfig:
     file-dir: "tmp"
+
 swagger:
   enabled: true
 
