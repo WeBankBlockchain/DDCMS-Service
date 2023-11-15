@@ -20,6 +20,7 @@ public enum CodeEnum {
   PRODUCT_NOT_EXISTS(400, "产品不存在"),
 
   UN_AUTHORIZED(401, "用户认证失败"),
+  REPEAT_OPERATION(402, "重复操作"),
   FORBIDDEN(403, "权限不足"),
 
   SCHEMA_NOT_EXISTS(500, "产品不存在"),

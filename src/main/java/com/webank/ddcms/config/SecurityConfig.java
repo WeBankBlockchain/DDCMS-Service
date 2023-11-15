@@ -57,7 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .authorizeRequests()
         .antMatchers(authConfig.getPermitAllApiList().toArray(new String[0]))
         .permitAll()
-        .antMatchers(authConfig.getAnonymousApi())
+        .antMatchers(authConfig.getAnonymousApiList().toArray(new String[0]))
         .anonymous()
         .antMatchers(authConfig.getRoleAuth().getAdminAuth().toArray(new String[0]))
         .hasAnyAuthority(AccountType.ADMIN.getRoleName())

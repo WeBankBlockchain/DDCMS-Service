@@ -13,7 +13,7 @@ import java.util.List;
 public class AuthConfig {
 
   private List<String> permitAllApiList;
-  private String anonymousApi;
+  private List<String> anonymousApiList;
 
   @NestedConfigurationProperty private AuthConfig.RoleAuth roleAuth;
 

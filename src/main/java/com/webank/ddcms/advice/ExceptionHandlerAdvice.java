@@ -53,4 +53,12 @@ public class ExceptionHandlerAdvice {
     log.info("response : {}", objectMapper.writeValueAsString(response));
     return response;
   }
+
+  @ExceptionHandler(value = IllegalArgumentException.class)
+  @ResponseBody
+  public CommonResponse handleIllegalArgumentException(HttpServletRequest req, Exception e) throws JsonProcessingException {
+    CommonResponse response = CommonResponse.error(CodeEnum.REPEAT_OPERATION, e.getMessage());
+      log.info("response : {}", objectMapper.writeValueAsString(response));
+      return response;
+  }
 }

@@ -36,4 +36,6 @@ system:
 swagger:
   enabled: true
 
-
+third-party:
+  githubClientId:
+  githubClientSecret:
