@@ -21,13 +21,13 @@ public interface AccountInfoMapper {
   AccountInfoEntity selectByUserName(String userName);
 
   @Select(
-      "<script>"
-          + "SELECT COUNT(1) FROM t_account_info a INNER JOIN t_company_info c ON a.pk_id = c.account_id "
-          + "WHERE a.account_type &lt; 3 "
-          + "<if test='status &gt; 0'> AND a.status = #{status} </if>"
-          + "<if test='keyWord != null'> AND c.company_name LIKE CONCAT('%', #{keyWord}, '%') </if>"
-          + "</script>")
-  int totalCountWithStatus(String keyWord, int status);
+          "<script>"
+                  + "SELECT COUNT(1) FROM t_account_info a INNER JOIN t_company_info c ON a.pk_id = c.account_id "
+                  + "WHERE a.account_type &lt; 3 "
+                  + "<if test='status &gt; 0'> AND a.status = #{status} </if>"
+                  + "<if test='companyName != null'> AND c.company_name LIKE CONCAT('%', #{companyName}, '%') </if>"
+                  + "</script>")
+  int totalCountWithStatus(@Param("companyName") String companyName,@Param("status") Integer status);
 
   @Select("SELECT * FROM t_account_info  ORDER BY pk_id LIMIT 1")
   @ResultType(AccountInfoEntity.class)
