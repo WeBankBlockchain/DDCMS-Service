@@ -36,15 +36,15 @@ public interface CompanyInfoMapper {
   AccAndComInfoBO queryCompanyByAccountId(long accountId);
 
   @Select(
-      "<script>"
-          + "SELECT a.*, c.* FROM t_company_info c INNER JOIN t_account_info a ON c.account_id = a.pk_id WHERE a.account_type &lt; 3 "
-          + "<if test='status &gt; 0'> AND a.status = #{status} </if>"
-          + "<if test='keyWord != null'> AND c.company_name LIKE CONCAT('%', #{keyWord}, '%') </if>"
-          + "ORDER BY c.create_time DESC LIMIT #{offset}, #{pageSize}"
-          + "</script>")
+          "<script>"
+                  + "SELECT a.*, c.* FROM t_company_info c INNER JOIN t_account_info a ON c.account_id = a.pk_id WHERE a.account_type &lt; 3 "
+                  + "<if test='status &gt; 0'> AND a.status = #{status} </if>"
+                  + "<if test='companyName != null'> AND c.company_name LIKE CONCAT('%', #{companyName}, '%') </if>"
+                  + "ORDER BY c.create_time DESC LIMIT #{offset}, #{pageSize}"
+                  + "</script>")
   @ResultType(AccAndComInfoBO.class)
   List<AccAndComInfoBO> listCompanyWithStatus(
-      int status, String keyWord, long offset, int pageSize);
+          @Param("status") Integer status, @Param("companyName") String companyName, @Param("offset") Long offset, @Param("pageSize") Integer pageSize);
 
   @Insert(
       "INSERT INTO t_company_info (account_id, company_name, company_desc, company_cert_type, company_cert_no, company_cert_file_uri, company_contact) VALUES(#{accountId},#{companyName},#{companyDesc},#{companyCertType},#{companyCertNo},#{companyCertFileUri},#{companyContact})")
