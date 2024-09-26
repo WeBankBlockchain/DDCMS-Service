@@ -75,7 +75,7 @@ public class CompanyServiceImpl implements CompanyService {
         companyInfoMapper.listCompanyWithStatus(
             Integer.parseInt(request.getAccountStatus()),
             request.getKeyWord(),
-            offset,
+            (long) offset,
             request.getPageSize());
     pageListData.setItemList(boList);
 
